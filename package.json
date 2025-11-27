@@ -3,8 +3,15 @@
   "version": "0.0.1",
   "description": "KPTを簡単シンプルにするアプリケーション",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "lint": "eslint . --ext .ts,.tsx --report-unused-disable-directives",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
