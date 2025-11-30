@@ -5,7 +5,15 @@ module.exports = {
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: {
     react: { version: 'detect' },
-    'import/resolver': { typescript: true, node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] } },
+    'import/resolver': {
+      typescript: {
+        project: ['./tsconfig.json'],
+        alwaysTryTypes: true,
+      },
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
+      }
+    },
   },
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'jsx-a11y', 'import', 'vitest'],
   extends: [
