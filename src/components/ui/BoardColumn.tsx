@@ -5,18 +5,21 @@ import { cn } from '@/lib/utils';
 
 import { KPTCard } from './KPTCard';
 
-export const boardColumnVariants = cva(['w-128 p-4', 'flex-initial', 'rounded-md', 'focus-visible:ring-1 focus-visible:ring-ring'], {
-  variants: {
-    type: {
-      keep: 'bg-yellow-100',
-      problem: 'bg-red-100',
-      try: 'bg-blue-100',
+export const boardColumnVariants = cva(
+  ['p-4', 'flex-1 lg:basis-0 lg:min-w-0', 'rounded-md', 'focus-visible:ring-1 focus-visible:ring-ring'],
+  {
+    variants: {
+      type: {
+        keep: 'bg-yellow-100',
+        problem: 'bg-red-100',
+        try: 'bg-blue-100',
+      },
     },
-  },
-  defaultVariants: {
-    type: 'keep',
-  },
-});
+    defaultVariants: {
+      type: 'keep',
+    },
+  }
+);
 
 export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof boardColumnVariants> {
   title: string;
