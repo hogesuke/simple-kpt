@@ -1,9 +1,13 @@
+import { useDroppable } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { KPTCard } from './KPTCard';
+import { SortableKPTCard } from './KPTCard';
+
+import type { KptColumnType, KptItem } from '@/types/kpt';
 
 export const boardColumnVariants = cva(
   ['p-4', 'flex-1 lg:basis-0 lg:min-w-0', 'rounded-md', 'focus-visible:ring-1 focus-visible:ring-ring'],
@@ -23,15 +27,24 @@ export const boardColumnVariants = cva(
 
 export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof boardColumnVariants> {
   title: string;
+  column: KptColumnType;
+  items: KptItem[];
 }
 
-export function BoardColumn({ className, type, ...props }: BoardColumnProps) {
+export function BoardColumn({ className, type, title, column, items, ...props }: BoardColumnProps) {
+  const { setNodeRef, isOver } = useDroppable({ id: column });
+
   return (
-    <section className={cn(boardColumnVariants({ type, className }))} {...props}>
-      <h2 className="p-2 text-lg font-semibold">{props.title}</h2>
-      <ul>
-        <KPTCard text="Sample card content" />
-      </ul>
+    <section ref={setNodeRef} className={cn(boardColumnVariants({ type, className }), isOver && 'ring-ring ring-2')} {...props}>
+      <h2 className="p-2 text-lg font-semibold">{title}</h2>
+
+      <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
+        <ul className="flex flex-col gap-2">
+          {items.map((item) => (
+            <SortableKPTCard key={item.id} item={item} />
+          ))}
+        </ul>
+      </SortableContext>
     </section>
   );
 }
