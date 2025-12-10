@@ -7,10 +7,9 @@ import {
   pointerWithin,
   closestCenter,
   type CollisionDetection,
-  type DragEndEvent,
   type DragStartEvent,
+  type DragOverEvent,
 } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
 import { ReactElement, useMemo, useState } from 'react';
 
 import { BoardColumn } from '@/components/ui/BoardColumn';
@@ -49,15 +48,15 @@ export function KPTBoard(): ReactElement {
     })
   );
 
-  const itemsByColumn = useMemo(
-    () =>
-      columns.reduce<Record<KptColumnType, KptItem[]>>((acc, col) => ({ ...acc, [col]: items.filter((i) => i.column === col) }), {
-        keep: [],
-        problem: [],
-        try: [],
+  const itemsByColumn = useMemo(() => {
+    return columns.reduce<Record<KptColumnType, KptItem[]>>(
+      (result, col) => ({
+        ...result,
+        [col]: items.filter((item) => item.column === col),
       }),
-    [items]
-  );
+      { keep: [], problem: [], try: [] }
+    );
+  }, [items]);
 
   const activeItem = useMemo(() => items.find((i) => i.id === activeId) ?? null, [items, activeId]);
 
@@ -65,49 +64,78 @@ export function KPTBoard(): ReactElement {
     setActiveId(String(event.active.id));
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    setActiveId(null);
 
     if (!over) return;
 
     const activeId = String(active.id);
     const overId = String(over.id);
+
     if (activeId === overId) return;
 
     setItems((prev) => {
-      const activeItem = prev.find((item) => item.id === activeId);
-      if (!activeItem) return prev;
+      const dragged = prev.find((item) => item.id === activeId);
+      if (!dragged) return prev;
 
-      // --- カラムの上にドロップした場合 ---
-      if (columns.includes(overId as KptColumnType)) {
-        const targetColumn = overId as KptColumnType;
+      const isOverColumn = columns.includes(overId as KptColumnType);
+      const overItem = isOverColumn ? undefined : prev.find((item) => item.id === overId);
 
-        // ドロップ先が同一カラムならそのまま
-        if (targetColumn === activeItem.column) return prev;
+      const targetColumn: KptColumnType | undefined = isOverColumn ? (overId as KptColumnType) : overItem?.column;
 
-        return prev.map((item) => (item.id === activeId ? { ...item, column: targetColumn } : item));
+      if (!targetColumn) return prev;
+
+      const itemsByColumn: Record<KptColumnType, KptItem[]> = {
+        keep: [],
+        problem: [],
+        try: [],
+      };
+
+      for (const item of prev) {
+        if (item.id === activeId) continue;
+        itemsByColumn[item.column].push(item);
       }
 
-      // --- カード上にドロップした場合 ---
-      const overItem = prev.find((item) => item.id === overId);
-      if (!overItem) return prev;
+      const updated: KptItem = { ...dragged, column: targetColumn };
 
-      const activeColumn = activeItem.column;
-      const overColumn = overItem.column;
+      if (isOverColumn) {
+        // カラムの余白や空のカラムにカーソルがある場合
+        itemsByColumn[targetColumn].push(updated);
+      } else {
+        // カードの上に乗っている場合
+        const targetList = itemsByColumn[targetColumn];
+        const overIndexInTarget = targetList.findIndex((item) => item.id === overId);
 
-      if (activeColumn === overColumn) {
-        const columnItems = prev.filter((item) => item.column === activeColumn);
-        const otherItems = prev.filter((item) => item.column !== activeColumn);
+        let insertIndex: number;
 
-        const oldIndex = columnItems.findIndex((item) => item.id === activeId);
-        const newIndex = columnItems.findIndex((item) => item.id === overId);
-        const reordered = arrayMove(columnItems, oldIndex, newIndex);
-        return [...otherItems, ...reordered];
+        if (dragged.column === targetColumn) {
+          // 元のカラム内での active / over の位置をprevから取得する
+          const originalColumnItems = prev.filter((item) => item.column === targetColumn);
+          const activeIndexOriginal = originalColumnItems.findIndex((item) => item.id === activeId);
+          const overIndexOriginal = originalColumnItems.findIndex((item) => item.id === overId);
+
+          const movingDown = activeIndexOriginal !== -1 && overIndexOriginal !== -1 && activeIndexOriginal < overIndexOriginal;
+
+          if (overIndexInTarget === -1) {
+            insertIndex = targetList.length;
+          } else {
+            // 下方向にドラッグしているときは、overのカードの下に配置する
+            insertIndex = movingDown ? overIndexInTarget + 1 : overIndexInTarget;
+          }
+        } else {
+          // overのカードの上に配置する
+          insertIndex = overIndexInTarget === -1 ? targetList.length : overIndexInTarget;
+        }
+
+        targetList.splice(insertIndex, 0, updated);
       }
 
-      return prev.map((item) => (item.id === activeId ? { ...item, column: overColumn } : item));
+      return [...itemsByColumn.keep, ...itemsByColumn.problem, ...itemsByColumn.try];
     });
+  };
+
+  const handleDragEnd = () => {
+    setActiveId(null);
   };
 
   const handleDragCancel = () => {
@@ -119,6 +147,7 @@ export function KPTBoard(): ReactElement {
       sensors={sensors}
       collisionDetection={collisionDetectionStrategy}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >

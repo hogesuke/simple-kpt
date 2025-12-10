@@ -32,10 +32,10 @@ export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement>, Var
 }
 
 export function BoardColumn({ className, type, title, column, items, ...props }: BoardColumnProps) {
-  const { setNodeRef, isOver } = useDroppable({ id: column });
+  const { setNodeRef } = useDroppable({ id: column });
 
   return (
-    <section ref={setNodeRef} className={cn(boardColumnVariants({ type, className }), isOver && 'ring-ring ring-2')} {...props}>
+    <section ref={setNodeRef} className={cn(boardColumnVariants({ type, className }))} {...props}>
       <h2 className="p-2 text-lg font-semibold">{title}</h2>
 
       <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
