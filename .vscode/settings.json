@@ -9,5 +9,7 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "deno.enable": true,
+  "deno.enablePaths": ["./supabase/functions"]
 }
