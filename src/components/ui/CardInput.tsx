@@ -1,15 +1,37 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+// src/components/ui/CardInput.tsx
 import * as React from 'react';
+
+import { cn } from '@/lib/utils';
 
 import { Input } from './Input';
 
-export const boardColumnVariants = cva(['bg-white', 'rounded-md', 'focus-visible:ring-1 focus-visible:ring-ring'], {
-  variants: {},
-  defaultVariants: {},
-});
+export interface CardInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  onSubmitText: (value: string) => void | Promise<void>;
+}
 
-export interface CardInputProps extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof boardColumnVariants> {}
+export function CardInput({ onSubmitText, className, ...props }: CardInputProps) {
+  const [value, setValue] = React.useState('');
 
-export function CardInput({ ...props }: CardInputProps) {
-  return <Input className="text-md p-4" {...props} />;
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    // 日本語入力中のEnterキーの入力は無視する
+    if (event.key === 'Enter' && !event.nativeEvent.isComposing) {
+      event.preventDefault();
+
+      const trimmed = value.trim();
+      if (!trimmed) return;
+
+      void Promise.resolve(onSubmitText(trimmed));
+      setValue('');
+    }
+  };
+
+  return (
+    <Input
+      value={value}
+      onChange={(event) => setValue(event.target.value)}
+      onKeyDown={handleKeyDown}
+      className={cn('text-md p-4', className)}
+      {...props}
+    />
+  );
 }

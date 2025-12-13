@@ -9,12 +9,14 @@ import {
   type CollisionDetection,
   type DragStartEvent,
   type DragOverEvent,
+  type DragEndEvent,
 } from '@dnd-kit/core';
 import { ReactElement, useMemo, useState } from 'react';
 
 import { BoardColumn } from '@/components/ui/BoardColumn';
 import { CardInput } from '@/components/ui/CardInput';
 import { KPTCard } from '@/components/ui/KPTCard';
+import { createKptItem } from '@/lib/kpt-api';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
@@ -28,19 +30,20 @@ const initialItems: KptItem[] = [
 ];
 
 const collisionDetectionStrategy: CollisionDetection = (args) => {
-  // マウスカーソルを基準にドラッグ先に判定を行う
+  // マウスカーソルを基準にドラッグ先の判定を行う
   const pointerCollisions = pointerWithin(args);
   if (pointerCollisions.length > 0) {
     return pointerCollisions;
   }
 
-  // 衝突判定がない場合のフォールバック
+  // フォールバック
   return closestCenter(args);
 };
 
 export function KPTBoard(): ReactElement {
   const [items, setItems] = useState<KptItem[]>(initialItems);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [isAdding, setIsAdding] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -48,17 +51,19 @@ export function KPTBoard(): ReactElement {
     })
   );
 
-  const itemsByColumn = useMemo(() => {
-    return columns.reduce<Record<KptColumnType, KptItem[]>>(
-      (result, col) => ({
-        ...result,
-        [col]: items.filter((item) => item.column === col),
-      }),
-      { keep: [], problem: [], try: [] }
-    );
-  }, [items]);
+  const itemsByColumn = useMemo(
+    () =>
+      columns.reduce<Record<KptColumnType, KptItem[]>>(
+        (result, col) => ({
+          ...result,
+          [col]: items.filter((item) => item.column === col),
+        }),
+        { keep: [], problem: [], try: [] }
+      ),
+    [items]
+  );
 
-  const activeItem = useMemo(() => items.find((i) => i.id === activeId) ?? null, [items, activeId]);
+  const activeItem = useMemo(() => items.find((item) => item.id === activeId) ?? null, [items, activeId]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(String(event.active.id));
@@ -66,12 +71,10 @@ export function KPTBoard(): ReactElement {
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-
     if (!over) return;
 
     const activeId = String(active.id);
     const overId = String(over.id);
-
     if (activeId === overId) return;
 
     setItems((prev) => {
@@ -82,7 +85,6 @@ export function KPTBoard(): ReactElement {
       const overItem = isOverColumn ? undefined : prev.find((item) => item.id === overId);
 
       const targetColumn: KptColumnType | undefined = isOverColumn ? (overId as KptColumnType) : overItem?.column;
-
       if (!targetColumn) return prev;
 
       const itemsByColumn: Record<KptColumnType, KptItem[]> = {
@@ -91,6 +93,7 @@ export function KPTBoard(): ReactElement {
         try: [],
       };
 
+      // ドラッグ中のカード以外を各カラムに振り分け
       for (const item of prev) {
         if (item.id === activeId) continue;
         itemsByColumn[item.column].push(item);
@@ -99,17 +102,16 @@ export function KPTBoard(): ReactElement {
       const updated: KptItem = { ...dragged, column: targetColumn };
 
       if (isOverColumn) {
-        // カラムの余白や空のカラムにカーソルがある場合
+        // カラムの何もない場所にドラッグしているときは末尾に配置する
         itemsByColumn[targetColumn].push(updated);
       } else {
-        // カードの上に乗っている場合
         const targetList = itemsByColumn[targetColumn];
         const overIndexInTarget = targetList.findIndex((item) => item.id === overId);
 
         let insertIndex: number;
 
         if (dragged.column === targetColumn) {
-          // 元のカラム内での active / over の位置をprevから取得する
+          // 同一カラム内の並び替え
           const originalColumnItems = prev.filter((item) => item.column === targetColumn);
           const activeIndexOriginal = originalColumnItems.findIndex((item) => item.id === activeId);
           const overIndexOriginal = originalColumnItems.findIndex((item) => item.id === overId);
@@ -123,7 +125,7 @@ export function KPTBoard(): ReactElement {
             insertIndex = movingDown ? overIndexInTarget + 1 : overIndexInTarget;
           }
         } else {
-          // overのカードの上に配置する
+          // 別カラムから移動してきた場合はoverの位置に配置する
           insertIndex = overIndexInTarget === -1 ? targetList.length : overIndexInTarget;
         }
 
@@ -134,12 +136,25 @@ export function KPTBoard(): ReactElement {
     });
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (_event: DragEndEvent) => {
     setActiveId(null);
   };
 
   const handleDragCancel = () => {
     setActiveId(null);
+  };
+
+  const handleAddCard = async (text: string) => {
+    try {
+      setIsAdding(true);
+      const newItem = await createKptItem({ column: 'keep', text });
+      setItems((prev) => [...prev, newItem]);
+    } catch (error) {
+      // TODO: エラーハンドリングを改善する
+      window.alert('カードの追加に失敗しました。');
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   return (
@@ -158,7 +173,7 @@ export function KPTBoard(): ReactElement {
           <BoardColumn title="Try" type="try" column="try" items={itemsByColumn.try} />
         </div>
         <div>
-          <CardInput />
+          <CardInput onSubmitText={handleAddCard} disabled={isAdding} placeholder="Your input here" />
         </div>
       </section>
 
