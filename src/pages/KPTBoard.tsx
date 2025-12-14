@@ -1,22 +1,11 @@
-import {
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragOverlay,
-  pointerWithin,
-  closestCenter,
-  type CollisionDetection,
-  type DragStartEvent,
-  type DragOverEvent,
-  type DragEndEvent,
-} from '@dnd-kit/core';
+import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { RealtimePostgresDeletePayload, RealtimePostgresInsertPayload, RealtimePostgresUpdatePayload } from '@supabase/supabase-js';
 import { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import { BoardColumn } from '@/components/ui/BoardColumn';
 import { CardInput } from '@/components/ui/CardInput';
 import { KPTCard } from '@/components/ui/KPTCard';
+import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { createKptItem } from '@/lib/kpt-api';
 import { supabase } from '@/lib/supabase-client';
 
@@ -32,26 +21,14 @@ const initialItems: KptItem[] = [
   { id: '3', column: 'try', text: 'Sample try card' },
 ];
 
-const collisionDetectionStrategy: CollisionDetection = (args) => {
-  // マウスカーソルを基準にドラッグ先の判定を行う
-  const pointerCollisions = pointerWithin(args);
-  if (pointerCollisions.length > 0) {
-    return pointerCollisions;
-  }
-
-  // フォールバック
-  return closestCenter(args);
-};
-
 export function KPTBoard(): ReactElement {
   const [items, setItems] = useState<KptItem[]>(initialItems);
-  const [activeId, setActiveId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: { distance: 4 },
-    })
+  const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy } = useKPTCardDnD(
+    {
+      columns,
+      onItemsChange: setItems,
+    }
   );
 
   const itemsByColumn = useMemo(
@@ -102,85 +79,6 @@ export function KPTBoard(): ReactElement {
       supabase.removeChannel(channel);
     };
   }, []);
-
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(String(event.active.id));
-  };
-
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeId = String(active.id);
-    const overId = String(over.id);
-    if (activeId === overId) return;
-
-    setItems((prev) => {
-      const dragged = prev.find((item) => item.id === activeId);
-      if (!dragged) return prev;
-
-      const isOverColumn = columns.includes(overId as KptColumnType);
-      const overItem = isOverColumn ? undefined : prev.find((item) => item.id === overId);
-
-      const targetColumn: KptColumnType | undefined = isOverColumn ? (overId as KptColumnType) : overItem?.column;
-      if (!targetColumn) return prev;
-
-      const itemsByColumn: Record<KptColumnType, KptItem[]> = {
-        keep: [],
-        problem: [],
-        try: [],
-      };
-
-      // ドラッグ中のカード以外を各カラムに振り分け
-      for (const item of prev) {
-        if (item.id === activeId) continue;
-        itemsByColumn[item.column].push(item);
-      }
-
-      const updated: KptItem = { ...dragged, column: targetColumn };
-
-      if (isOverColumn) {
-        // カラムの何もない場所にドラッグしているときは末尾に配置する
-        itemsByColumn[targetColumn].push(updated);
-      } else {
-        const targetList = itemsByColumn[targetColumn];
-        const overIndexInTarget = targetList.findIndex((item) => item.id === overId);
-
-        let insertIndex: number;
-
-        if (dragged.column === targetColumn) {
-          // 同一カラム内の並び替え
-          const originalColumnItems = prev.filter((item) => item.column === targetColumn);
-          const activeIndexOriginal = originalColumnItems.findIndex((item) => item.id === activeId);
-          const overIndexOriginal = originalColumnItems.findIndex((item) => item.id === overId);
-
-          const movingDown = activeIndexOriginal !== -1 && overIndexOriginal !== -1 && activeIndexOriginal < overIndexOriginal;
-
-          if (overIndexInTarget === -1) {
-            insertIndex = targetList.length;
-          } else {
-            // 下方向にドラッグしているときは、overのカードの下に配置する
-            insertIndex = movingDown ? overIndexInTarget + 1 : overIndexInTarget;
-          }
-        } else {
-          // 別カラムから移動してきた場合はoverの位置に配置する
-          insertIndex = overIndexInTarget === -1 ? targetList.length : overIndexInTarget;
-        }
-
-        targetList.splice(insertIndex, 0, updated);
-      }
-
-      return [...itemsByColumn.keep, ...itemsByColumn.problem, ...itemsByColumn.try];
-    });
-  };
-
-  const handleDragEnd = (_event: DragEndEvent) => {
-    setActiveId(null);
-  };
-
-  const handleDragCancel = () => {
-    setActiveId(null);
-  };
 
   const handleAddCard = async (text: string) => {
     try {
