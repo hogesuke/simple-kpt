@@ -4,6 +4,7 @@ import { ReactElement, useMemo, useState } from 'react';
 import { BoardColumn } from '@/components/ui/BoardColumn';
 import { CardInput } from '@/components/ui/CardInput';
 import { KPTCard } from '@/components/ui/KPTCard';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/Select';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
 import { createKptItem } from '@/lib/kpt-api';
@@ -22,6 +23,8 @@ const initialItems: KptItem[] = [
 export function KPTBoard(): ReactElement {
   const [items, setItems] = useState<KptItem[]>(initialItems);
   const [isAdding, setIsAdding] = useState(false);
+  const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
+
   const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy } = useKPTCardDnD(
     {
       columns,
@@ -50,7 +53,7 @@ export function KPTBoard(): ReactElement {
   const handleAddCard = async (text: string) => {
     try {
       setIsAdding(true);
-      const newItem = await createKptItem({ column: 'keep', text });
+      const newItem = await createKptItem({ column: newItemColumn, text });
       setItems((prev) => [...prev, newItem]);
     } catch (error) {
       // TODO: エラーハンドリングを改善する
@@ -75,7 +78,21 @@ export function KPTBoard(): ReactElement {
           <BoardColumn title="Problem" type="problem" column="problem" items={itemsByColumn.problem} />
           <BoardColumn title="Try" type="try" column="try" items={itemsByColumn.try} />
         </div>
-        <div>
+
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <Select value={newItemColumn} onValueChange={(value) => setNewItemColumn(value as KptColumnType)}>
+            <SelectTrigger className="w-30">
+              <SelectValue placeholder="カラムを選択" />
+            </SelectTrigger>
+            <SelectContent>
+              {columns.map((col) => (
+                <SelectItem key={col} value={col}>
+                  {col.charAt(0).toUpperCase() + col.slice(1)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           <CardInput onSubmitText={handleAddCard} disabled={isAdding} placeholder="Your input here" />
         </div>
       </section>
