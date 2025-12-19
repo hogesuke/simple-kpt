@@ -29,9 +29,10 @@ export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement>, Var
   title: string;
   column: KptColumnType;
   items: KptItem[];
+  onDeleteItem?: (id: string) => void;
 }
 
-export function BoardColumn({ className, type, title, column, items, ...props }: BoardColumnProps) {
+export function BoardColumn({ className, type, title, column, items, onDeleteItem, ...props }: BoardColumnProps) {
   const { setNodeRef } = useDroppable({ id: column });
 
   return (
@@ -41,7 +42,7 @@ export function BoardColumn({ className, type, title, column, items, ...props }:
       <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
         <ul className="flex flex-col gap-2">
           {items.map((item) => (
-            <SortableKPTCard key={item.id} item={item} />
+            <SortableKPTCard key={item.id} item={item} onDelete={onDeleteItem} />
           ))}
         </ul>
       </SortableContext>
