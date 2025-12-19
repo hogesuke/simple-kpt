@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
 
   if (!supabaseUrl || !serviceRoleKey) {
     return new Response(
-      JSON.stringify({ error: "環境変数の設定に問題があります" }),
+      JSON.stringify({ error: "問題が発生しています" }),
       { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
