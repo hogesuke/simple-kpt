@@ -42,3 +42,19 @@ export async function fetchKptItems(): Promise<KptItem[]> {
 
   return data as KptItem[];
 }
+
+/**
+ * KPTのアイテムを削除する。
+ */
+export async function deleteKptItem(id: string): Promise<void> {
+  const { data, error } = await supabase.functions.invoke('delete-kpt-item', {
+    body: { id },
+  });
+
+  if (error) {
+    // TODO: エラーハンドリングを改善する
+    throw error;
+  }
+
+  void data;
+}
