@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cva } from 'class-variance-authority';
+import { X } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -22,15 +23,16 @@ export function KPTCard({ item, className, onDelete }: KPTCardProps) {
   };
 
   return (
-    <div className={cn(kptCardVariants(), className)}>
-      <p className="text-md p-4">{item.text}</p>
+    <div className={cn(kptCardVariants(), 'relative p-4', className)}>
+      <p className="text-md pr-8 wrap-break-word">{item.text}</p>
       {onDelete && (
         <button
           type="button"
           onClick={handleDeleteClick}
-          className="text-muted-foreground hover:bg-muted ml-2 inline-flex h-6 w-6 items-center justify-center rounded-full text-xs"
+          className="text-muted-foreground hover:bg-muted absolute top-2 right-2 inline-flex h-6 w-6 items-center justify-center rounded-full"
+          aria-label="カードを削除"
         >
-          ×
+          <X className="h-4 w-4" aria-hidden="true" />
         </button>
       )}
     </div>
