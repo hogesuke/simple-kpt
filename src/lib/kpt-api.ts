@@ -93,3 +93,19 @@ export async function createKptItem(input: { boardId: string; column: KptColumnT
 
   return data as KptItem;
 }
+
+/**
+ * KPTのアイテムを削除する。
+ */
+export async function deleteKptItem(id: string, boardId: string): Promise<void> {
+  const { data, error } = await supabase.functions.invoke('delete-kpt-item', {
+    body: { id, boardId },
+  });
+
+  if (error) {
+    // TODO: エラーハンドリングを改善する
+    throw error;
+  }
+
+  void data;
+}

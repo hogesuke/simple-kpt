@@ -28,15 +28,15 @@ Deno.serve(async (req) => {
     });
   }
 
-  const id = (body as { id?: string }).id;
-  if (!id) {
+  const { id, boardId } = (body as { id?: string, boardId?: string });
+  if (!id || !boardId) {
     return new Response(JSON.stringify({ error: "id is required" }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  const { error } = await supabase.from("items").delete().eq("id", id);
+  const { error } = await supabase.from("items").delete().eq("id", id).eq("board_id", boardId);
 
   if (error) {
     console.error("[delete-kpt-item] delete failed", error);
