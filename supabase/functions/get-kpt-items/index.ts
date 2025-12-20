@@ -7,6 +7,27 @@ Deno.serve(async (req) => {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
+  let payload: unknown;
+  try {
+    payload = await req.json();
+  } catch {
+    return new Response(
+      JSON.stringify({ error: "Invalid JSON body" }),
+      { status: 400, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
+  const { boardId } = payload as {
+    boardId?: string;
+  };
+
+  if (!boardId) {
+    return new Response(
+      JSON.stringify({ error: "boardIdは必須です" }),
+      { status: 400, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
@@ -21,26 +42,19 @@ Deno.serve(async (req) => {
 
   const { data, error } = await supabase
     .from("items")
-    .select("id, column_name, text, created_at")
+    .select("id, board_id, column_name, text, created_at")
+    .eq("board_id", boardId)
     .order("created_at", { ascending: true });
 
   if (error) {
-    console.error("[get-kpt-items] select failed", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 
-  const items =
-    data?.map((row) => ({
-      id: row.id,
-      column: row.column_name,
-      text: row.text,
-    })) ?? [];
-
   return new Response(
-    JSON.stringify(items),
+    JSON.stringify(data ?? []),
     { status: 200, headers: { "Content-Type": "application/json" } },
   );
 });

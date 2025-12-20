@@ -8,7 +8,7 @@ import { KPTCard } from '@/components/ui/KPTCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
-import { createKptItem, fetchBoard, fetchKptItemsByBoard } from '@/lib/kpt-api';
+import { createKptItem, fetchBoard, fetchKptItems } from '@/lib/kpt-api';
 
 import type { KptBoard, KptColumnType, KptItem } from '@/types/kpt';
 
@@ -36,7 +36,7 @@ export function KPTBoard(): ReactElement {
     const load = async () => {
       try {
         setIsLoading(true);
-        const [boardData, itemData] = await Promise.all([fetchBoard(boardId), fetchKptItemsByBoard(boardId)]);
+        const [boardData, itemData] = await Promise.all([fetchBoard(boardId), fetchKptItems(boardId)]);
         setBoard(boardData);
         setItems(itemData);
       } catch (error) {

@@ -55,12 +55,10 @@ export async function createBoard(name: string): Promise<KptBoard> {
 /**
  * ボードのKPTアイテム一覧を取得する。
  */
-export async function fetchKptItemsByBoard(boardId: string): Promise<KptItem[]> {
-  const { data, error } = await supabase
-    .from('items')
-    .select('id, board_id, column_name, text, created_at')
-    .eq('board_id', boardId)
-    .order('created_at', { ascending: true });
+export async function fetchKptItems(boardId: string): Promise<KptItem[]> {
+  const { data, error } = await supabase.functions.invoke('get-kpt-items', {
+    body: { boardId },
+  });
 
   if (error) {
     // TODO: エラーハンドリングを改善する
