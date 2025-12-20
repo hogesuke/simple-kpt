@@ -11,21 +11,15 @@ Deno.serve(async (req) => {
   try {
     payload = await req.json();
   } catch {
-    return new Response(
-      JSON.stringify({ error: "Invalid JSON body" }),
-      { status: 400, headers: { "Content-Type": "application/json" } },
-    );
+    payload = {};
   }
 
-  const { boardId, column, text } = payload as {
-    boardId?: string;
-    column?: string;
-    text?: string;
-  };
+  const { name } = payload as { name?: string };
 
-  if (!boardId || !column || !text) {
+  const trimmedName = (name ?? "").trim();
+  if (!trimmedName) {
     return new Response(
-      JSON.stringify({ error: "boardId, column, text は必須です" }),
+      JSON.stringify({ error: "name は必須です" }),
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
@@ -43,17 +37,13 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
   const { data, error } = await supabase
-    .from("items")
-    .insert({
-      board_id: boardId,
-      column_name: column,
-      text,
-    })
-    .select("id, board_id, column_name, text")
+    .from("boards")
+    .insert({ name: trimmedName })
+    .select("id, name")
     .maybeSingle();
 
   if (error || !data) {
-    console.error("[create-kpt-item] insert failed", error);
+    console.error("[create-board] insert failed", error);
     return new Response(
       JSON.stringify({ error: error?.message ?? "unknown error" }),
       { status: 500, headers: { "Content-Type": "application/json" } },
@@ -63,9 +53,7 @@ Deno.serve(async (req) => {
   return new Response(
     JSON.stringify({
       id: data.id,
-      boardId: data.board_id,
-      column: data.column_name,
-      text: data.text,
+      name: data.name,
     }),
     { status: 200, headers: { "Content-Type": "application/json" } },
   );

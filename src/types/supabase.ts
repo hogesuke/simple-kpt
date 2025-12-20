@@ -34,26 +34,55 @@ export type Database = {
   }
   public: {
     Tables: {
+      boards: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       items: {
         Row: {
+          board_id: string
           column_name: string
           created_at: string
           id: string
           text: string
         }
         Insert: {
+          board_id: string
           column_name: string
           created_at?: string
           id?: string
           text: string
         }
         Update: {
+          board_id?: string
           column_name?: string
           created_at?: string
           id?: string
           text?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "items_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
