@@ -1,25 +1,27 @@
 import {
   closestCenter,
-  CollisionDetection,
-  DragEndEvent,
-  DragOverEvent,
-  DragStartEvent,
+  type CollisionDetection,
+  type DragEndEvent,
+  type DragOverEvent,
+  type DragStartEvent,
   PointerSensor,
   pointerWithin,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
 type UseKptCardDndOptions = {
   columns: KptColumnType[];
   onItemsChange: (updater: (prev: KptItem[]) => KptItem[]) => void;
+  onItemDrop?: (item: KptItem) => void | Promise<void>;
 };
 
-export function useKPTCardDnD({ columns, onItemsChange }: UseKptCardDndOptions) {
+export function useKPTCardDnD({ columns, onItemsChange, onItemDrop }: UseKptCardDndOptions) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const lastDraggedItemRef = useRef<KptItem | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -61,6 +63,8 @@ export function useKPTCardDnD({ columns, onItemsChange }: UseKptCardDndOptions) 
       }
 
       const updated: KptItem = { ...dragged, column: targetColumn };
+      // 最後にドラッグした位置のカードを保持しておき、ドロップ時のサーバー更新に利用する
+      lastDraggedItemRef.current = updated;
 
       if (isOverColumn) {
         // カラムの何もない場所にドラッグしているときは末尾に配置する
@@ -98,10 +102,15 @@ export function useKPTCardDnD({ columns, onItemsChange }: UseKptCardDndOptions) 
   };
 
   const handleDragEnd = (_event: DragEndEvent) => {
+    if (lastDraggedItemRef.current && onItemDrop) {
+      void onItemDrop(lastDraggedItemRef.current);
+    }
+    lastDraggedItemRef.current = null;
     setActiveId(null);
   };
 
   const handleDragCancel = () => {
+    lastDraggedItemRef.current = null;
     setActiveId(null);
   };
 

@@ -95,6 +95,31 @@ export async function createKptItem(input: { boardId: string; column: KptColumnT
 }
 
 /**
+ * KPTのアイテムを更新する。
+ */
+export async function updateKptItem(input: { id: string; boardId: string; column: KptColumnType; text: string }): Promise<KptItem> {
+  const { data, error } = await supabase.functions.invoke('update-kpt-item', {
+    body: {
+      id: input.id,
+      boardId: input.boardId,
+      column: input.column,
+      text: input.text,
+    },
+  });
+
+  if (error) {
+    // TODO: エラーハンドリングを改善する
+    throw error;
+  }
+
+  if (!data) {
+    throw new Error('Edge Function からデータが返されませんでした。');
+  }
+
+  return mapRowToItem(data as ItemRow);
+}
+
+/**
  * KPTのアイテムを削除する。
  */
 export async function deleteKptItem(id: string, boardId: string): Promise<void> {

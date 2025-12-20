@@ -8,7 +8,7 @@ import { KPTCard } from '@/components/ui/KPTCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
-import { createKptItem, deleteKptItem, fetchBoard, fetchKptItems } from '@/lib/kpt-api';
+import { createKptItem, deleteKptItem, fetchBoard, fetchKptItems, updateKptItem } from '@/lib/kpt-api';
 
 import type { KptBoard, KptColumnType, KptItem } from '@/types/kpt';
 
@@ -23,10 +23,29 @@ export function KPTBoard(): ReactElement {
   const [isAdding, setIsAdding] = useState(false);
   const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
 
+  const handleItemDrop = async (droppedItem: KptItem) => {
+    if (!boardId) {
+      return;
+    }
+
+    try {
+      await updateKptItem({
+        id: droppedItem.id,
+        boardId,
+        column: droppedItem.column,
+        text: droppedItem.text,
+      });
+    } catch (error) {
+      // TODO: エラーハンドリングを改善する
+      window.alert('カード位置の更新に失敗しました。');
+    }
+  };
+
   const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy } = useKPTCardDnD(
     {
       columns,
       onItemsChange: setItems,
+      onItemDrop: handleItemDrop,
     }
   );
 
