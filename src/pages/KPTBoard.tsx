@@ -8,7 +8,7 @@ import { KPTCard } from '@/components/ui/KPTCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
-import { createKptItem, fetchBoard, fetchKptItems } from '@/lib/kpt-api';
+import { createKptItem, deleteKptItem, fetchBoard, fetchKptItems } from '@/lib/kpt-api';
 
 import type { KptBoard, KptColumnType, KptItem } from '@/types/kpt';
 
@@ -87,6 +87,21 @@ export function KPTBoard(): ReactElement {
     }
   };
 
+  const handleDeleteItem = async (id: string) => {
+    if (!boardId) {
+      window.alert('ボードが見つかりません。');
+      return;
+    }
+
+    try {
+      setItems((prev) => prev.filter((item) => item.id !== id));
+      await deleteKptItem(id, boardId);
+    } catch (error) {
+      // TODO: エラーハンドリングを改善する
+      window.alert('カードの削除に失敗しました。');
+    }
+  };
+
   if (!boardId) {
     return (
       <section className="mx-auto flex h-screen max-w-[960px] items-center justify-center px-4">
@@ -113,9 +128,9 @@ export function KPTBoard(): ReactElement {
         </header>
 
         <div className="flex flex-col items-stretch gap-x-4 gap-y-4 lg:flex-row">
-          <BoardColumn title="Keep" type="keep" column="keep" items={itemsByColumn.keep} />
-          <BoardColumn title="Problem" type="problem" column="problem" items={itemsByColumn.problem} />
-          <BoardColumn title="Try" type="try" column="try" items={itemsByColumn.try} />
+          <BoardColumn title="Keep" type="keep" column="keep" items={itemsByColumn.keep} onDeleteItem={handleDeleteItem} />
+          <BoardColumn title="Problem" type="problem" column="problem" items={itemsByColumn.problem} onDeleteItem={handleDeleteItem} />
+          <BoardColumn title="Try" type="try" column="try" items={itemsByColumn.try} onDeleteItem={handleDeleteItem} />
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
