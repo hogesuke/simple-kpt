@@ -7,6 +7,38 @@ Deno.serve(async (req) => {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+
+  if (!supabaseUrl || !anonKey) {
+    return new Response(
+      JSON.stringify({ error: "問題が発生しています" }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader) {
+    return new Response(
+      JSON.stringify({ error: "認証が必要です" }),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
+  const supabase = createClient(supabaseUrl, anonKey, {
+    global: {
+      headers: { Authorization: authHeader },
+    },
+  });
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    return new Response(
+      JSON.stringify({ error: "認証に失敗しました" }),
+      { status: 401, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
   let payload: unknown;
   try {
     payload = await req.json();
@@ -29,18 +61,6 @@ Deno.serve(async (req) => {
       { status: 400, headers: { "Content-Type": "application/json" } },
     );
   }
-
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
-  if (!supabaseUrl || !serviceRoleKey) {
-    return new Response(
-      JSON.stringify({ error: "問題が発生しています" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
-  }
-
-  const supabase = createClient(supabaseUrl, serviceRoleKey);
 
   const { data, error } = await supabase
     .from("items")
