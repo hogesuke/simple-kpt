@@ -359,7 +359,6 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 [functions.create-kpt-item]
 enabled = true
 verify_jwt = true
-import_map = "./functions/create-kpt-item/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create-kpt-item/index.ts"
@@ -370,7 +369,6 @@ entrypoint = "./functions/create-kpt-item/index.ts"
 [functions.get-kpt-items]
 enabled = true
 verify_jwt = true
-import_map = "./functions/get-kpt-items/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/get-kpt-items/index.ts"
@@ -381,7 +379,6 @@ entrypoint = "./functions/get-kpt-items/index.ts"
 [functions.delete-kpt-item]
 enabled = true
 verify_jwt = true
-import_map = "./functions/delete-kpt-item/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/delete-kpt-item/index.ts"
@@ -392,7 +389,6 @@ entrypoint = "./functions/delete-kpt-item/index.ts"
 [functions.create-board]
 enabled = true
 verify_jwt = true
-import_map = "./functions/create-board/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create-board/index.ts"
@@ -403,7 +399,6 @@ entrypoint = "./functions/create-board/index.ts"
 [functions.update-kpt-item]
 enabled = true
 verify_jwt = true
-import_map = "./functions/update-kpt-item/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/update-kpt-item/index.ts"
