@@ -1,124 +1,43 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { ReactElement, useEffect, useMemo, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BoardColumn } from '@/components/ui/BoardColumn';
 import { CardInput } from '@/components/ui/CardInput';
 import { KPTCard } from '@/components/ui/KPTCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
+import { useBoardActions } from '@/hooks/useBoardActions';
+import { useBoardData } from '@/hooks/useBoardData';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
-import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates';
-import { createKptItem, deleteKptItem, fetchBoard, fetchKptItems, updateKptItem } from '@/lib/kpt-api';
+import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
 
-import type { KptBoard, KptColumnType, KptItem } from '@/types/kpt';
+import type { KptColumnType } from '@/types/kpt';
 
 const columns: KptColumnType[] = ['keep', 'problem', 'try'];
 
 export function KPTBoard(): ReactElement {
   const { boardId } = useParams<{ boardId: string }>();
-
-  const [board, setBoard] = useState<KptBoard | null>(null);
-  const [items, setItems] = useState<KptItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
+  const { handleError } = useErrorHandler();
+  const { board, items, setItems, isLoading } = useBoardData(boardId);
+  const { isAdding, handleAddItem, handleDeleteItem, handleUpdateItem } = useBoardActions({
+    boardId,
+    setItems,
+    onError: handleError,
+  });
   const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
-
-  const handleItemDrop = async (droppedItem: KptItem) => {
-    if (!boardId) {
-      return;
-    }
-
-    try {
-      await updateKptItem({
-        id: droppedItem.id,
-        boardId,
-        column: droppedItem.column,
-        text: droppedItem.text,
-      });
-    } catch (error) {
-      // TODO: エラーハンドリングを改善する
-      window.alert('カード位置の更新に失敗しました。');
-    }
-  };
-
   const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy } = useKPTCardDnD(
     {
       columns,
       onItemsChange: setItems,
-      onItemDrop: handleItemDrop,
+      onItemDrop: handleUpdateItem,
     }
   );
-
-  useEffect(() => {
-    if (!boardId) return;
-
-    const load = async () => {
-      try {
-        setIsLoading(true);
-        const [boardData, itemData] = await Promise.all([fetchBoard(boardId), fetchKptItems(boardId)]);
-        setBoard(boardData);
-        setItems(itemData);
-      } catch (error) {
-        // TODO: エラーハンドリングを改善する
-        window.alert('ボード情報の読み込みに失敗しました。');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void load();
-  }, [boardId]);
-
-  useRealtimeUpdates({
-    boardId: boardId ?? '',
-    onItemsChange: setItems,
-  });
-
-  const itemsByColumn = useMemo(
-    () =>
-      columns.reduce<Record<KptColumnType, KptItem[]>>(
-        (result, col) => ({
-          ...result,
-          [col]: items.filter((item) => item.column === col),
-        }),
-        { keep: [], problem: [], try: [] }
-      ),
-    [items]
-  );
-
-  const activeItem = useMemo(() => items.find((item) => item.id === activeId) ?? null, [items, activeId]);
+  const itemsByColumn = useMemo(() => selectItemsByColumn(items, columns), [items]);
+  const activeItem = useMemo(() => selectActiveItem(items, activeId), [items, activeId]);
 
   const handleAddCard = async (text: string) => {
-    if (!boardId) {
-      window.alert('ボードが見つかりません。');
-      return;
-    }
-
-    try {
-      setIsAdding(true);
-      const newItem = await createKptItem({ boardId, column: newItemColumn, text });
-      setItems((prev) => [...prev, newItem]);
-    } catch (error) {
-      // TODO: エラーハンドリングを改善する
-      window.alert('カードの追加に失敗しました。');
-    } finally {
-      setIsAdding(false);
-    }
-  };
-
-  const handleDeleteItem = async (id: string) => {
-    if (!boardId) {
-      window.alert('ボードが見つかりません。');
-      return;
-    }
-
-    try {
-      setItems((prev) => prev.filter((item) => item.id !== id));
-      await deleteKptItem(id, boardId);
-    } catch (error) {
-      // TODO: エラーハンドリングを改善する
-      window.alert('カードの削除に失敗しました。');
-    }
+    await handleAddItem(newItemColumn, text);
   };
 
   if (!boardId) {
