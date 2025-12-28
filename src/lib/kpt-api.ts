@@ -16,7 +16,9 @@ function mapRowToItem(row: ItemRow): KptItem {
  * ボード一覧を取得する。
  */
 export async function fetchBoards(): Promise<KptBoard[]> {
-  const { data, error } = await supabase.functions.invoke('get-boards');
+  const { data, error } = await supabase.functions.invoke('get-boards', {
+    method: 'GET',
+  });
 
   if (error) {
     // TODO: エラーハンドリングを改善する
@@ -35,8 +37,8 @@ export async function fetchBoards(): Promise<KptBoard[]> {
  * ボードを取得する。
  */
 export async function fetchBoard(boardId: string): Promise<KptBoard | null> {
-  const { data, error } = await supabase.functions.invoke('get-board', {
-    body: { boardId },
+  const { data, error } = await supabase.functions.invoke(`get-board?boardId=${encodeURIComponent(boardId)}`, {
+    method: 'GET',
   });
 
   if (error) {
@@ -77,8 +79,8 @@ export async function createBoard(name: string): Promise<KptBoard> {
  * ボードのKPTアイテム一覧を取得する。
  */
 export async function fetchKptItems(boardId: string): Promise<KptItem[]> {
-  const { data, error } = await supabase.functions.invoke('get-kpt-items', {
-    body: { boardId },
+  const { data, error } = await supabase.functions.invoke(`get-kpt-items?boardId=${encodeURIComponent(boardId)}`, {
+    method: 'GET',
   });
 
   if (error) {
@@ -120,6 +122,7 @@ export async function createKptItem(input: { boardId: string; column: KptColumnT
  */
 export async function updateKptItem(input: { id: string; boardId: string; column: KptColumnType; text: string }): Promise<KptItem> {
   const { data, error } = await supabase.functions.invoke('update-kpt-item', {
+    method: 'PATCH',
     body: {
       id: input.id,
       boardId: input.boardId,
@@ -145,6 +148,7 @@ export async function updateKptItem(input: { id: string; boardId: string; column
  */
 export async function deleteKptItem(id: string, boardId: string): Promise<void> {
   const { data, error } = await supabase.functions.invoke('delete-kpt-item', {
+    method: 'DELETE',
     body: { id, boardId },
   });
 

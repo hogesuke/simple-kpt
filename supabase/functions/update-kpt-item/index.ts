@@ -16,7 +16,7 @@ type UpdateKptItemBody = {
 };
 
 Deno.serve(async (req) => {
-  const methodError = requireMethod(req, "POST");
+  const methodError = requireMethod(req, "PATCH");
   if (methodError) return methodError;
 
   const result = await createAuthenticatedClient(req);

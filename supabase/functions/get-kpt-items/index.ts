@@ -4,12 +4,12 @@ import {
   createAuthenticatedClient,
   generateErrorResponse,
   generateJsonResponse,
-  parseRequestBody,
+  getQueryParam,
   requireMethod,
 } from "../_shared/helpers.ts";
 
 Deno.serve(async (req) => {
-  const methodError = requireMethod(req, "POST");
+  const methodError = requireMethod(req, "GET");
   if (methodError) return methodError;
 
   const result = await createAuthenticatedClient(req);
@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
 
   const { client } = result;
 
-  const { boardId } = await parseRequestBody<{ boardId?: string }>(req);
+  const boardId = getQueryParam(req, "boardId");
 
   if (!boardId) {
     return generateErrorResponse("boardIdは必須です", 400);

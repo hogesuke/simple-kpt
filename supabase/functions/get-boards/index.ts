@@ -8,7 +8,7 @@ import {
 } from "../_shared/helpers.ts";
 
 Deno.serve(async (req) => {
-  const methodError = requireMethod(req, "POST");
+  const methodError = requireMethod(req, "GET");
   if (methodError) return methodError;
 
   const result = await createAuthenticatedClient(req);

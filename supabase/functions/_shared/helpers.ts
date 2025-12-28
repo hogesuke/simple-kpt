@@ -39,6 +39,14 @@ export async function parseRequestBody<T = unknown>(req: Request): Promise<T> {
 }
 
 /**
+ * URLクエリパラメータを取得する。
+ */
+export function getQueryParam(req: Request, key: string): string | null {
+  const url = new URL(req.url);
+  return url.searchParams.get(key);
+}
+
+/**
  * 認証付きSupabaseクライアントとユーザーを作成する。
  * 環境変数や認証ヘッダーが不正な場合はエラーレスポンスを返す。
  */
