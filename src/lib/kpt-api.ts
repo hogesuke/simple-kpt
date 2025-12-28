@@ -16,7 +16,7 @@ function mapRowToItem(row: ItemRow): KptItem {
  * ボード一覧を取得する。
  */
 export async function fetchBoards(): Promise<KptBoard[]> {
-  const { data, error } = await supabase.from('boards').select('id, name, owner_id, created_at').order('created_at', { ascending: false });
+  const { data, error } = await supabase.functions.invoke('get-boards');
 
   if (error) {
     // TODO: エラーハンドリングを改善する
@@ -25,7 +25,7 @@ export async function fetchBoards(): Promise<KptBoard[]> {
 
   if (!data) return [];
 
-  return data.map((row) => ({
+  return (data as BoardRow[]).map((row) => ({
     id: row.id,
     name: row.name,
   }));
@@ -35,7 +35,9 @@ export async function fetchBoards(): Promise<KptBoard[]> {
  * ボードを取得する。
  */
 export async function fetchBoard(boardId: string): Promise<KptBoard | null> {
-  const { data, error } = await supabase.from('boards').select('id, name').eq('id', boardId).maybeSingle();
+  const { data, error } = await supabase.functions.invoke('get-board', {
+    body: { boardId },
+  });
 
   if (error) {
     // TODO: エラーハンドリングを改善する
