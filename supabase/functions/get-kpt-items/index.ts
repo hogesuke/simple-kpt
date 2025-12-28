@@ -25,7 +25,17 @@ Deno.serve(async (req) => {
 
   const { data, error } = await client
     .from("items")
-    .select("id, board_id, column_name, text, created_at")
+    .select(`
+      id,
+      board_id,
+      column_name,
+      text,
+      created_at,
+      author_id,
+      profiles!items_author_id_profiles_fkey (
+        nickname
+      )
+    `)
     .eq("board_id", boardId)
     .order("created_at", { ascending: true });
 
@@ -33,5 +43,16 @@ Deno.serve(async (req) => {
     return generateErrorResponse(error.message, 500);
   }
 
-  return generateJsonResponse(data ?? []);
+  // ニックネーム情報をフラットな構造に変換
+  const items = (data ?? []).map((item: any) => ({
+    id: item.id,
+    board_id: item.board_id,
+    column_name: item.column_name,
+    text: item.text,
+    created_at: item.created_at,
+    author_id: item.author_id,
+    author_nickname: item.profiles?.nickname ?? null,
+  }));
+
+  return generateJsonResponse(items);
 });

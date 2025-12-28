@@ -89,6 +89,7 @@ export type Database = {
       }
       items: {
         Row: {
+          author_id: string | null
           board_id: string
           column_name: string
           created_at: string
@@ -96,6 +97,7 @@ export type Database = {
           text: string
         }
         Insert: {
+          author_id?: string | null
           board_id: string
           column_name: string
           created_at?: string
@@ -103,6 +105,7 @@ export type Database = {
           text: string
         }
         Update: {
+          author_id?: string | null
           board_id?: string
           column_name?: string
           created_at?: string
@@ -281,3 +284,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+

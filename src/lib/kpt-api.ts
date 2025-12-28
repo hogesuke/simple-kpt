@@ -3,12 +3,14 @@ import { supabase } from '@/lib/supabase-client';
 import type { BoardRow, ItemRow, ProfileRow } from '@/types/db';
 import type { KptBoard, KptColumnType, KptItem, UserProfile } from '@/types/kpt';
 
-function mapRowToItem(row: ItemRow): KptItem {
+function mapRowToItem(row: ItemRow & { author_nickname?: string | null }): KptItem {
   return {
     id: row.id,
     boardId: row.board_id,
     column: row.column_name as KptColumnType,
     text: row.text,
+    authorId: row.author_id,
+    authorNickname: row.author_nickname,
   };
 }
 

@@ -10,6 +10,8 @@ export interface KptItem {
   boardId: string;
   column: KptColumnType;
   text: string;
+  authorId: string | null;
+  authorNickname?: string | null;
 }
 
 export interface UserProfile {

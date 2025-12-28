@@ -4,6 +4,7 @@ import { immer } from 'zustand/middleware/immer';
 
 import * as api from '@/lib/kpt-api';
 import { supabase } from '@/lib/supabase-client';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 import type { ItemRow } from '@/types/db';
 import type { KptBoard, KptColumnType, KptItem } from '@/types/kpt';
@@ -38,6 +39,8 @@ const mapRowToItem = (row: ItemRow): KptItem => ({
   boardId: row.board_id,
   column: row.column_name as KptColumnType,
   text: row.text,
+  authorId: row.author_id,
+  authorNickname: null, // Realtime では nickname は取得できないため null
 });
 
 export const useBoardStore = create<BoardState>()(
@@ -63,11 +66,15 @@ export const useBoardStore = create<BoardState>()(
       addItem: async (boardId: string, column: KptColumnType, text: string) => {
         // 楽観的UI更新のために仮のIDを使ってアイテムを追加する
         const tempId = `temp-${Date.now()}`;
+        const { user, profile } = useAuthStore.getState();
+
         const tempItem: KptItem = {
           id: tempId,
           boardId,
           column,
           text,
+          authorId: user?.id ?? null,
+          authorNickname: profile?.nickname ?? null,
         };
 
         set((state) => {
@@ -211,7 +218,12 @@ export const useBoardStore = create<BoardState>()(
         set((state) => {
           const index = state.items.findIndex((i: KptItem) => i.id === item.id);
           if (index !== -1) {
-            state.items[index] = item;
+            // RealtimeではauthorNicknameを取得できないため、既存のitemから取得する
+            const authorNickname = state.items[index].authorNickname;
+            state.items[index] = {
+              ...item,
+              authorNickname,
+            };
           }
         });
       },

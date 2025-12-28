@@ -25,6 +25,7 @@ export function KPTCard({ item, className, onDelete }: KPTCardProps) {
   return (
     <div className={cn(kptCardVariants(), 'relative p-4', className)}>
       <p className="text-md pr-8 wrap-break-word">{item.text}</p>
+      {item.authorNickname && <p className="text-muted-foreground mt-2 text-xs">{item.authorNickname}</p>}
       {onDelete && (
         <button
           type="button"

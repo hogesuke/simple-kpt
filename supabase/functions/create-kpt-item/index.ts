@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
   const result = await createAuthenticatedClient(req);
   if (result instanceof Response) return result;
 
-  const { client } = result;
+  const { client, user } = result;
 
   const { boardId, column, text } = await parseRequestBody<{
     boardId?: string;
@@ -33,8 +33,18 @@ Deno.serve(async (req) => {
       board_id: boardId,
       column_name: column,
       text,
+      author_id: user.id,
     })
-    .select("id, board_id, column_name, text")
+    .select(`
+      id,
+      board_id,
+      column_name,
+      text,
+      author_id,
+      profiles!items_author_id_profiles_fkey (
+        nickname
+      )
+    `)
     .maybeSingle();
 
   if (error || !data) {
@@ -47,5 +57,7 @@ Deno.serve(async (req) => {
     boardId: data.board_id,
     column: data.column_name,
     text: data.text,
+    authorId: data.author_id,
+    authorNickname: (data.profiles as any)?.nickname ?? null,
   });
 });
