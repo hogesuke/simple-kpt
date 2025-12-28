@@ -1,5 +1,5 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { ReactElement, useEffect, useMemo, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BoardColumn } from '@/components/ui/BoardColumn';
@@ -11,7 +11,7 @@ import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
 import { useBoardStore } from '@/stores/useBoardStore';
 
-import type { KptColumnType } from '@/types/kpt';
+import type { KptColumnType, KptItem } from '@/types/kpt';
 
 const columns: KptColumnType[] = ['keep', 'problem', 'try'];
 
@@ -51,25 +51,31 @@ export function KPTBoard(): ReactElement {
     };
   }, [boardId, loadBoard, subscribeToRealtime, reset, handleError]);
 
-  const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy } = useKPTCardDnD(
-    {
-      columns,
-      onItemsChange: (updater) => {
-        const newItems = updater(items);
-        useBoardStore.setState({ items: newItems });
-      },
-      onItemDrop: async (item) => {
-        try {
-          await updateItem(item);
-        } catch (error) {
-          handleError('カード位置の更新に失敗しました。');
-        }
-      },
-    }
+  const handleItemsChange = useCallback((newItems: KptItem[]) => {
+    useBoardStore.setState({ items: newItems });
+  }, []);
+
+  const handleItemDrop = useCallback(
+    async (item: KptItem) => {
+      try {
+        await updateItem(item);
+      } catch (error) {
+        handleError('カード位置の更新に失敗しました。');
+      }
+    },
+    [updateItem, handleError]
   );
 
-  const itemsByColumn = useMemo(() => selectItemsByColumn(items, columns), [items]);
-  const activeItem = useMemo(() => selectActiveItem(items, activeId), [items, activeId]);
+  const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy, displayItems } =
+    useKPTCardDnD({
+      columns,
+      items,
+      onItemsChange: handleItemsChange,
+      onItemDrop: handleItemDrop,
+    });
+
+  const itemsByColumn = useMemo(() => selectItemsByColumn(displayItems, columns), [displayItems]);
+  const activeItem = useMemo(() => selectActiveItem(displayItems, activeId), [displayItems, activeId]);
 
   const handleAddCard = async (text: string) => {
     if (!boardId) return;

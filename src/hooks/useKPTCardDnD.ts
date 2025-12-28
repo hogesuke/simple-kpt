@@ -8,6 +8,8 @@ import {
   pointerWithin,
   useSensor,
   useSensors,
+  type SensorDescriptor,
+  type SensorOptions,
 } from '@dnd-kit/core';
 import { useRef, useState } from 'react';
 
@@ -15,12 +17,31 @@ import type { KptColumnType, KptItem } from '@/types/kpt';
 
 type UseKptCardDndOptions = {
   columns: KptColumnType[];
-  onItemsChange: (updater: (prev: KptItem[]) => KptItem[]) => void;
+  items: KptItem[];
+  onItemsChange: (items: KptItem[]) => void;
   onItemDrop?: (item: KptItem) => void | Promise<void>;
 };
 
-export function useKPTCardDnD({ columns, onItemsChange, onItemDrop }: UseKptCardDndOptions) {
+type UseKptCardDndReturn = {
+  activeId: string | null;
+  sensors: SensorDescriptor<SensorOptions>[];
+  handleDragStart: (event: DragStartEvent) => void;
+  handleDragOver: (event: DragOverEvent) => void;
+  handleDragEnd: (event: DragEndEvent) => void;
+  handleDragCancel: () => void;
+  collisionDetectionStrategy: CollisionDetection;
+  /**
+   * 表示用のアイテム一覧。
+   *
+   * - ドラッグ中: プレビュー表示用のアイテム一覧
+   * - ドラッグ終了後: アイテム位置更新後のアイテム一覧
+   */
+  displayItems: KptItem[];
+};
+
+export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: UseKptCardDndOptions): UseKptCardDndReturn {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [dragPreviewItems, setDragPreviewItems] = useState<KptItem[]>([]);
   const lastDraggedItemRef = useRef<KptItem | null>(null);
 
   const sensors = useSensors(
@@ -31,6 +52,7 @@ export function useKPTCardDnD({ columns, onItemsChange, onItemDrop }: UseKptCard
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(String(event.active.id));
+    setDragPreviewItems(items);
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -41,7 +63,7 @@ export function useKPTCardDnD({ columns, onItemsChange, onItemDrop }: UseKptCard
     const overId = String(over.id);
     if (activeId === overId) return;
 
-    onItemsChange((prev) => {
+    setDragPreviewItems((prev) => {
       const dragged = prev.find((item) => item.id === activeId);
       if (!dragged) return prev;
 
@@ -102,16 +124,24 @@ export function useKPTCardDnD({ columns, onItemsChange, onItemDrop }: UseKptCard
   };
 
   const handleDragEnd = (_event: DragEndEvent) => {
-    if (lastDraggedItemRef.current && onItemDrop) {
-      void onItemDrop(lastDraggedItemRef.current);
+    if (activeId !== null) {
+      // ドラッグ中のローカルstateをグローバルstoreに反映
+      onItemsChange(dragPreviewItems);
+
+      if (lastDraggedItemRef.current && onItemDrop) {
+        void onItemDrop(lastDraggedItemRef.current);
+      }
     }
+
     lastDraggedItemRef.current = null;
     setActiveId(null);
+    setDragPreviewItems([]);
   };
 
   const handleDragCancel = () => {
     lastDraggedItemRef.current = null;
     setActiveId(null);
+    setDragPreviewItems([]);
   };
 
   const collisionDetectionStrategy: CollisionDetection = (args) => {
@@ -133,5 +163,6 @@ export function useKPTCardDnD({ columns, onItemsChange, onItemDrop }: UseKptCard
     handleDragEnd,
     handleDragCancel,
     collisionDetectionStrategy,
+    displayItems: activeId !== null ? dragPreviewItems : items,
   };
 }
