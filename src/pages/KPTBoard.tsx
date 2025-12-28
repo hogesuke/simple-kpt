@@ -1,16 +1,15 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { ReactElement, useMemo, useState } from 'react';
+import { ReactElement, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { BoardColumn } from '@/components/ui/BoardColumn';
 import { CardInput } from '@/components/ui/CardInput';
 import { KPTCard } from '@/components/ui/KPTCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
-import { useBoardActions } from '@/hooks/useBoardActions';
-import { useBoardData } from '@/hooks/useBoardData';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
+import { useBoardStore } from '@/stores/useBoardStore';
 
 import type { KptColumnType } from '@/types/kpt';
 
@@ -19,30 +18,80 @@ const columns: KptColumnType[] = ['keep', 'problem', 'try'];
 export function KPTBoard(): ReactElement {
   const { boardId } = useParams<{ boardId: string }>();
   const { handleError } = useErrorHandler();
-  const { board, items, setItems, isLoading } = useBoardData(boardId);
-  const { isAdding, handleAddItem, handleDeleteItem, handleUpdateItem } = useBoardActions({
-    boardId,
-    setItems,
-    onError: handleError,
-  });
+
+  const board = useBoardStore((state) => state.currentBoard);
+  const items = useBoardStore((state) => state.items);
+  const isLoading = useBoardStore((state) => state.isLoading);
+  const isAdding = useBoardStore((state) => state.isAdding);
+  const loadBoard = useBoardStore((state) => state.loadBoard);
+  const addItem = useBoardStore((state) => state.addItem);
+  const deleteItem = useBoardStore((state) => state.deleteItem);
+  const updateItem = useBoardStore((state) => state.updateItem);
+  const subscribeToRealtime = useBoardStore((state) => state.subscribeToRealtime);
+  const reset = useBoardStore((state) => state.reset);
+
   const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
+
+  useEffect(() => {
+    if (!boardId) return;
+
+    const load = async () => {
+      try {
+        await loadBoard(boardId);
+        subscribeToRealtime(boardId);
+      } catch (error) {
+        handleError('ボード情報の読み込みに失敗しました。');
+      }
+    };
+
+    void load();
+
+    return () => {
+      reset();
+    };
+  }, [boardId, loadBoard, subscribeToRealtime, reset, handleError]);
+
   const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy } = useKPTCardDnD(
     {
       columns,
-      onItemsChange: setItems,
-      onItemDrop: handleUpdateItem,
+      onItemsChange: (updater) => {
+        const newItems = updater(items);
+        useBoardStore.setState({ items: newItems });
+      },
+      onItemDrop: async (item) => {
+        try {
+          await updateItem(item);
+        } catch (error) {
+          handleError('カード位置の更新に失敗しました。');
+        }
+      },
     }
   );
+
   const itemsByColumn = useMemo(() => selectItemsByColumn(items, columns), [items]);
   const activeItem = useMemo(() => selectActiveItem(items, activeId), [items, activeId]);
 
   const handleAddCard = async (text: string) => {
-    await handleAddItem(newItemColumn, text);
+    if (!boardId) return;
+    try {
+      await addItem(boardId, newItemColumn, text);
+    } catch (error) {
+      handleError('カードの追加に失敗しました。');
+    }
+  };
+
+  const handleDeleteItem = async (id: string) => {
+    if (!boardId) return;
+    try {
+      await deleteItem(id, boardId);
+    } catch (error) {
+      handleError('カードの削除に失敗しました。');
+    }
   };
 
   if (!boardId) {
     return (
-      <section className="mx-auto flex h-screen max-w-[960px] items-center justify-center px-4">
+      <section className="mx-auto flex h-screen max-w-240 items-center justify-center px-4">
         <p className="text-destructive text-sm">ボードIDが指定されていません。</p>
       </section>
     );
@@ -57,7 +106,7 @@ export function KPTBoard(): ReactElement {
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <section className="mx-auto grid h-screen w-full max-w-[1920px] grid-rows-[auto_1fr_auto] gap-y-4 p-8">
+      <section className="mx-auto grid h-screen w-full max-w-480 grid-rows-[auto_1fr_auto] gap-y-4 p-8">
         <header>
           <h1 className="text-2xl font-semibold">{board ? board.name : isLoading ? 'ボードを読み込み中...' : 'KPT Board'}</h1>
           <p className="text-muted-foreground mt-1 text-xs">Board ID: {boardId}</p>
