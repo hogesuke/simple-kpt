@@ -34,21 +34,56 @@ export type Database = {
   }
   public: {
     Tables: {
+      board_members: {
+        Row: {
+          board_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          board_id: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          board_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "board_members_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       boards: {
         Row: {
           created_at: string
           id: string
           name: string
+          owner_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          owner_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          owner_id?: string | null
         }
         Relationships: []
       }
@@ -83,6 +118,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          nickname: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          nickname: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nickname?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -225,4 +281,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-

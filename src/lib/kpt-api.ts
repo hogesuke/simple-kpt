@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase-client';
 
-import type { BoardRow, ItemRow } from '@/types/db';
-import type { KptBoard, KptColumnType, KptItem } from '@/types/kpt';
+import type { BoardRow, ItemRow, ProfileRow } from '@/types/db';
+import type { KptBoard, KptColumnType, KptItem, UserProfile } from '@/types/kpt';
 
 function mapRowToItem(row: ItemRow): KptItem {
   return {
@@ -158,4 +158,55 @@ export async function deleteKptItem(id: string, boardId: string): Promise<void> 
   }
 
   void data;
+}
+
+/**
+ * ユーザープロフィールを取得する。
+ */
+export async function fetchProfile(): Promise<UserProfile | null> {
+  const { data, error } = await supabase.functions.invoke('get-profile', {
+    method: 'GET',
+  });
+
+  if (error) {
+    // TODO: エラーハンドリングを改善する
+    throw error;
+  }
+
+  if (!data) return null;
+
+  const row = data as ProfileRow;
+  return {
+    id: row.id,
+    nickname: row.nickname,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+/**
+ * ユーザープロフィールを更新する。
+ */
+export async function updateProfile(nickname: string): Promise<UserProfile> {
+  const { data, error } = await supabase.functions.invoke('update-profile', {
+    method: 'PATCH',
+    body: { nickname },
+  });
+
+  if (error) {
+    // TODO: エラーハンドリングを改善する
+    throw error;
+  }
+
+  if (!data) {
+    throw new Error('Edge Function "update-profile" からデータが返されませんでした。');
+  }
+
+  const row = data as ProfileRow;
+  return {
+    id: row.id,
+    nickname: row.nickname,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
 }

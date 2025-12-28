@@ -11,3 +11,10 @@ export interface KptItem {
   column: KptColumnType;
   text: string;
 }
+
+export interface UserProfile {
+  id: string;
+  nickname: string;
+  createdAt: string;
+  updatedAt: string;
+}

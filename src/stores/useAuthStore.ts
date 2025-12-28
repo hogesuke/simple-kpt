@@ -1,20 +1,25 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+import { fetchProfile } from '@/lib/kpt-api';
 import { supabase } from '@/lib/supabase-client';
 
+import type { UserProfile } from '@/types/kpt';
 import type { Session, User } from '@supabase/supabase-js';
 
 interface AuthState {
   user: User | null;
   session: Session | null;
+  profile: UserProfile | null;
   loading: boolean;
   initialized: boolean;
 
   initialize: () => Promise<void>;
   signOut: () => Promise<void>;
+  loadProfile: () => Promise<void>;
   setUser: (user: User | null) => void;
   setSession: (session: Session | null) => void;
+  setProfile: (profile: UserProfile | null) => void;
   setLoading: (loading: boolean) => void;
 }
 
@@ -23,6 +28,7 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       session: null,
+      profile: null,
       loading: true,
       initialized: false,
 
@@ -40,17 +46,38 @@ export const useAuthStore = create<AuthState>()(
           set({
             session,
             user: session?.user ?? null,
+          });
+
+          // ユーザーがログインしている場合、プロフィールを取得する
+          if (session?.user) {
+            await useAuthStore.getState().loadProfile();
+          }
+
+          set({
             loading: false,
             initialized: true,
           });
 
           // 認証状態の変更を監視
-          supabase.auth.onAuthStateChange((_event, session) => {
-            set({
-              session,
-              user: session?.user ?? null,
-              loading: false,
-            });
+          supabase.auth.onAuthStateChange(async (_event, session) => {
+            // ユーザーがログインした場合
+            if (session?.user) {
+              set({
+                session,
+                user: session?.user ?? null,
+                loading: true,
+              });
+              await useAuthStore.getState().loadProfile();
+              set({ loading: false });
+            } else {
+              // ユーザーがログアウトした場合
+              set({
+                session,
+                user: null,
+                profile: null,
+                loading: false,
+              });
+            }
           });
         } catch (error) {
           console.error('Failed to initialize auth:', error);
@@ -58,10 +85,20 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      loadProfile: async () => {
+        try {
+          const profile = await fetchProfile();
+          set({ profile });
+        } catch (error) {
+          console.error('Failed to load profile:', error);
+          set({ profile: null });
+        }
+      },
+
       signOut: async () => {
         try {
           await supabase.auth.signOut();
-          set({ user: null, session: null });
+          set({ user: null, session: null, profile: null });
         } catch (error) {
           console.error('Failed to sign out:', error);
           throw error;
@@ -70,6 +107,7 @@ export const useAuthStore = create<AuthState>()(
 
       setUser: (user) => set({ user }),
       setSession: (session) => set({ session }),
+      setProfile: (profile) => set({ profile }),
       setLoading: (loading) => set({ loading }),
     }),
     { name: 'AuthStore' }

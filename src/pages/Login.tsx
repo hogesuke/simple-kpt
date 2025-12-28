@@ -8,13 +8,15 @@ import { useAuthStore } from '@/stores/useAuthStore';
 
 export function Login(): ReactElement {
   const user = useAuthStore((state) => state.user);
+  const initialized = useAuthStore((state) => state.initialized);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
+    // 初期化が完了し、ユーザーがログインしている場合のみリダイレクト
+    if (initialized && user) {
       navigate('/', { replace: true });
     }
-  }, [user, navigate]);
+  }, [initialized, user, navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">

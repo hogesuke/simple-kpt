@@ -20,7 +20,7 @@ import type { KptBoard } from '@/types/kpt';
 
 export function Home(): ReactElement {
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
+  const profile = useAuthStore((state) => state.profile);
   const signOut = useAuthStore((state) => state.signOut);
   const [boards, setBoards] = useState<KptBoard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -87,7 +87,7 @@ export function Home(): ReactElement {
       <header className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">KPT App</h1>
-          {user && <p className="text-muted-foreground mt-1 text-sm">{user.email}</p>}
+          {profile && <p className="text-muted-foreground mt-1 text-sm">{profile.nickname}</p>}
         </div>
         <Button type="button" variant="outline" onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
