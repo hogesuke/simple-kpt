@@ -1,62 +1,30 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-import { createClient } from "npm:@supabase/supabase-js";
+import {
+  createAuthenticatedClient,
+  generateErrorResponse,
+  generateJsonResponse,
+  parseRequestBody,
+  requireMethod,
+} from "../_shared/helpers.ts";
 
 Deno.serve(async (req) => {
-  if (req.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
+  const methodError = requireMethod(req, "POST");
+  if (methodError) return methodError;
 
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+  const result = await createAuthenticatedClient(req);
+  if (result instanceof Response) return result;
 
-  if (!supabaseUrl || !anonKey) {
-    return new Response(
-      JSON.stringify({ error: "問題が発生しています" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
-  }
+  const { client, user } = result;
 
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader) {
-    return new Response(
-      JSON.stringify({ error: "認証が必要です" }),
-      { status: 401, headers: { "Content-Type": "application/json" } },
-    );
-  }
-
-  const supabase = createClient(supabaseUrl, anonKey, {
-    global: {
-      headers: { Authorization: authHeader },
-    },
-  });
-
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (authError || !user) {
-    return new Response(
-      JSON.stringify({ error: "認証に失敗しました" }),
-      { status: 401, headers: { "Content-Type": "application/json" } },
-    );
-  }
-
-  let payload: unknown;
-  try {
-    payload = await req.json();
-  } catch {
-    payload = {};
-  }
-
-  const { name } = payload as { name?: string };
+  const { name } = await parseRequestBody<{ name?: string }>(req);
 
   const trimmedName = (name ?? "").trim();
   if (!trimmedName) {
-    return new Response(
-      JSON.stringify({ error: "name は必須です" }),
-      { status: 400, headers: { "Content-Type": "application/json" } },
-    );
+    return generateErrorResponse("name は必須です", 400);
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("boards")
     .insert({ name: trimmedName, owner_id: user.id })
     .select("id, name")
@@ -64,17 +32,11 @@ Deno.serve(async (req) => {
 
   if (error || !data) {
     console.error("[create-board] insert failed", error);
-    return new Response(
-      JSON.stringify({ error: error?.message ?? "unknown error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } },
-    );
+    return generateErrorResponse(error?.message ?? "unknown error", 500);
   }
 
-  return new Response(
-    JSON.stringify({
-      id: data.id,
-      name: data.name,
-    }),
-    { status: 200, headers: { "Content-Type": "application/json" } },
-  );
+  return generateJsonResponse({
+    id: data.id,
+    name: data.name,
+  });
 });
