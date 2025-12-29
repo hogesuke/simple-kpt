@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import {
   createAuthenticatedClient,
+  createServiceClient,
   generateErrorResponse,
   generateJsonResponse,
   parseRequestBody,
@@ -15,7 +16,8 @@ Deno.serve(async (req) => {
   const result = await createAuthenticatedClient(req);
   if (result instanceof Response) return result;
 
-  const { client, user } = result;
+  const { user } = result;
+  const client = createServiceClient();
 
   const { boardId, column, text } = await parseRequestBody<{
     boardId?: string;
@@ -25,6 +27,23 @@ Deno.serve(async (req) => {
 
   if (!boardId || !column || !text) {
     return generateErrorResponse("boardId, column, text は必須です", 400);
+  }
+
+  // boardの所有者チェック
+  const { data: board, error: boardError } = await client
+    .from("boards")
+    .select("id")
+    .eq("id", boardId)
+    .eq("owner_id", user.id)
+    .maybeSingle();
+
+  if (boardError) {
+    console.error("[create-kpt-item] board check failed", boardError);
+    return generateErrorResponse(boardError.message, 500);
+  }
+
+  if (!board) {
+    return generateErrorResponse("ボードが見つかりません", 404);
   }
 
   const { data, error } = await client

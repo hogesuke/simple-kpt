@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import {
   createAuthenticatedClient,
+  createServiceClient,
   generateErrorResponse,
   generateJsonResponse,
   getQueryParam,
@@ -15,7 +16,8 @@ Deno.serve(async (req) => {
   const result = await createAuthenticatedClient(req);
   if (result instanceof Response) return result;
 
-  const { client } = result;
+  const { user } = result;
+  const client = createServiceClient();
 
   const boardId = getQueryParam(req, "boardId");
 
@@ -27,6 +29,7 @@ Deno.serve(async (req) => {
     .from("boards")
     .select("id, name")
     .eq("id", boardId)
+    .eq("owner_id", user.id)
     .maybeSingle();
 
   if (error) {
