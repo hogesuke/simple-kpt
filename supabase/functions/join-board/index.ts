@@ -1,4 +1,4 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
 import {
   createAuthenticatedClient,
@@ -7,10 +7,10 @@ import {
   generateJsonResponse,
   parseRequestBody,
   requireMethod,
-} from "../_shared/helpers.ts";
+} from '../_shared/helpers.ts';
 
 Deno.serve(async (req) => {
-  const methodError = requireMethod(req, "POST");
+  const methodError = requireMethod(req, 'POST');
   if (methodError) return methodError;
 
   const result = await createAuthenticatedClient(req);
@@ -22,30 +22,26 @@ Deno.serve(async (req) => {
   const { boardId } = await parseRequestBody<{ boardId?: string }>(req);
 
   if (!boardId) {
-    return generateErrorResponse("boardIdは必須です", 400);
+    return generateErrorResponse('boardIdは必須です', 400);
   }
 
   // ボードが存在するか確認
-  const { data: board, error: boardError } = await client
-    .from("boards")
-    .select("id")
-    .eq("id", boardId)
-    .maybeSingle();
+  const { data: board, error: boardError } = await client.from('boards').select('id').eq('id', boardId).maybeSingle();
 
   if (boardError) {
     return generateErrorResponse(boardError.message, 500);
   }
 
   if (!board) {
-    return generateErrorResponse("ボードが見つかりません", 404);
+    return generateErrorResponse('ボードが見つかりません', 404);
   }
 
   // すでにメンバーかチェック
   const { data: existingMember } = await client
-    .from("board_members")
-    .select("id")
-    .eq("board_id", boardId)
-    .eq("user_id", user.id)
+    .from('board_members')
+    .select('id')
+    .eq('board_id', boardId)
+    .eq('user_id', user.id)
     .maybeSingle();
 
   if (existingMember) {
@@ -53,9 +49,7 @@ Deno.serve(async (req) => {
   }
 
   // メンバーとして追加
-  const { error: insertError } = await client
-    .from("board_members")
-    .insert({ board_id: boardId, user_id: user.id, role: "member" });
+  const { error: insertError } = await client.from('board_members').insert({ board_id: boardId, user_id: user.id, role: 'member' });
 
   if (insertError) {
     return generateErrorResponse(insertError.message, 500);

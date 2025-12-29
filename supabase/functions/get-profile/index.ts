@@ -1,4 +1,4 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
 import {
   createAuthenticatedClient,
@@ -6,10 +6,10 @@ import {
   generateErrorResponse,
   generateJsonResponse,
   requireMethod,
-} from "../_shared/helpers.ts";
+} from '../_shared/helpers.ts';
 
 Deno.serve(async (req) => {
-  const methodError = requireMethod(req, "GET");
+  const methodError = requireMethod(req, 'GET');
   if (methodError) return methodError;
 
   const result = await createAuthenticatedClient(req);
@@ -18,11 +18,7 @@ Deno.serve(async (req) => {
   const { user } = result;
   const client = createServiceClient();
 
-  const { data, error } = await client
-    .from("profiles")
-    .select("id, nickname, created_at, updated_at")
-    .eq("id", user.id)
-    .maybeSingle();
+  const { data, error } = await client.from('profiles').select('id, nickname, created_at, updated_at').eq('id', user.id).maybeSingle();
 
   if (error) {
     return generateErrorResponse(error.message, 500);

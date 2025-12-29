@@ -1,4 +1,4 @@
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
 import {
   createAuthenticatedClient,
@@ -6,10 +6,10 @@ import {
   generateErrorResponse,
   generateJsonResponse,
   requireMethod,
-} from "../_shared/helpers.ts";
+} from '../_shared/helpers.ts';
 
 Deno.serve(async (req) => {
-  const methodError = requireMethod(req, "GET");
+  const methodError = requireMethod(req, 'GET');
   if (methodError) return methodError;
 
   const result = await createAuthenticatedClient(req);
@@ -19,13 +19,10 @@ Deno.serve(async (req) => {
   const client = createServiceClient();
 
   // 自分がメンバーになっているボードのIDを取得
-  const { data: memberData, error: memberError } = await client
-    .from("board_members")
-    .select("board_id")
-    .eq("user_id", user.id);
+  const { data: memberData, error: memberError } = await client.from('board_members').select('board_id').eq('user_id', user.id);
 
   if (memberError) {
-        return generateErrorResponse(memberError.message, 500);
+    return generateErrorResponse(memberError.message, 500);
   }
 
   const boardIds = (memberData ?? []).map((m: any) => m.board_id);
@@ -36,10 +33,10 @@ Deno.serve(async (req) => {
 
   // それらのボード情報を取得
   const { data, error } = await client
-    .from("boards")
-    .select("id, name, owner_id, created_at")
-    .in("id", boardIds)
-    .order("created_at", { ascending: false });
+    .from('boards')
+    .select('id, name, owner_id, created_at')
+    .in('id', boardIds)
+    .order('created_at', { ascending: false });
 
   if (error) {
     return generateErrorResponse(error.message, 500);
