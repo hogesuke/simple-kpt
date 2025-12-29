@@ -1,6 +1,28 @@
 import { createClient, type SupabaseClient, type User } from "npm:@supabase/supabase-js";
 
 /**
+ * Service Roleキーを使ったSupabaseクライアントを作成する。
+ * 全テーブルへのアクセスはこのクライアントを使用する。
+ *
+ * ## 注意
+ * service_roleはRLSをバイパスするため、必ず認証とユーザーIDベースの権限チェックを行うこと。
+ */
+export function createServiceClient(): SupabaseClient {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error("Service role credentials not configured");
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      persistSession: false,
+    },
+  });
+}
+
+/**
  * JSONレスポンスを生成する。
  */
 export function generateJsonResponse(data: unknown, status = 200): Response {

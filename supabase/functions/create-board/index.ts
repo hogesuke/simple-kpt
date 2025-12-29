@@ -2,6 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 import {
   createAuthenticatedClient,
+  createServiceClient,
   generateErrorResponse,
   generateJsonResponse,
   parseRequestBody,
@@ -15,7 +16,8 @@ Deno.serve(async (req) => {
   const result = await createAuthenticatedClient(req);
   if (result instanceof Response) return result;
 
-  const { client, user } = result;
+  const { user } = result;
+  const client = createServiceClient();
 
   const { name } = await parseRequestBody<{ name?: string }>(req);
 
