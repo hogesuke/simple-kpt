@@ -21,6 +21,7 @@ interface BoardState {
   isLoading: boolean;
   isAdding: boolean;
   realtimeChannel: RealtimeChannel | null;
+  memberNicknameMap: Record<string, string>; // userId -> nickname へ変換するマップ
 
   loadBoard: (boardId: string) => Promise<void>;
   joinBoard: (boardId: string) => Promise<void>;
@@ -29,7 +30,8 @@ interface BoardState {
   deleteItem: (id: string, boardId: string) => Promise<void>;
   subscribeToRealtime: (boardId: string) => void;
   unsubscribeFromRealtime: () => void;
-  handleRealtimeInsert: (item: KptItem) => void;
+  fetchAndCacheNickname: (boardId: string, userId: string) => Promise<string | null>;
+  handleRealtimeInsert: (item: KptItem) => Promise<void>;
   handleRealtimeUpdate: (item: KptItem) => void;
   handleRealtimeDelete: (id: string) => void;
   reset: () => void;
@@ -52,10 +54,20 @@ export const useBoardStore = create<BoardState>()(
       isLoading: false,
       isAdding: false,
       realtimeChannel: null,
+      memberNicknameMap: {},
 
       loadBoard: async (boardId: string) => {
         set({ isLoading: true });
         try {
+          const buildNicknameMap = async (): Promise<Record<string, string>> => {
+            try {
+              const members = await api.fetchBoardMembers(boardId);
+              return Object.fromEntries(members.map((member) => [member.userId, member.nickname ?? '']));
+            } catch {
+              return {};
+            }
+          };
+
           // まずボード情報を取得してメンバーシップを確認
           const board = await api.fetchBoard(boardId);
 
@@ -65,10 +77,14 @@ export const useBoardStore = create<BoardState>()(
 
             const updatedBoard = await api.fetchBoard(boardId);
             const items = await api.fetchKptItems(boardId);
-            set({ currentBoard: updatedBoard, items, isLoading: false });
+            const nicknameMap = await buildNicknameMap();
+
+            set({ currentBoard: updatedBoard, items, memberNicknameMap: nicknameMap, isLoading: false });
           } else {
             const items = await api.fetchKptItems(boardId);
-            set({ currentBoard: board, items, isLoading: false });
+            const nicknameMap = await buildNicknameMap();
+
+            set({ currentBoard: board, items, memberNicknameMap: nicknameMap, isLoading: false });
           }
         } catch (error) {
           set({ isLoading: false });
@@ -243,17 +259,48 @@ export const useBoardStore = create<BoardState>()(
         }
       },
 
-      handleRealtimeInsert: (item: KptItem) => {
-        set((state) => {
-          // 重複チェック（既にあるアイテム、または一時IDのアイテムは追加しない）
-          const existingItem = state.items.find(
-            (i: KptItem) => i.id === item.id || (i.id.startsWith('temp-') && i.text === item.text && i.column === item.column)
-          );
+      fetchAndCacheNickname: async (boardId: string, userId: string): Promise<string | null> => {
+        try {
+          const members = await api.fetchBoardMembers(boardId);
+          const member = members.find((m) => m.userId === userId);
 
-          if (!existingItem) {
-            state.items.push(item);
+          if (member) {
+            const nickname = member.nickname ?? '';
+            // キャッシュを更新
+            set((state) => {
+              state.memberNicknameMap[userId] = nickname;
+            });
+            return nickname || null;
           }
-        });
+        } catch {
+          // NOOP
+        }
+        return null;
+      },
+
+      handleRealtimeInsert: async (item: KptItem) => {
+        const state = get();
+
+        // 重複チェック（既にあるアイテム、または一時IDのアイテムは追加しない）
+        const existingItem = state.items.find(
+          (i: KptItem) => i.id === item.id || (i.id.startsWith('temp-') && i.text === item.text && i.column === item.column)
+        );
+
+        if (!existingItem) {
+          let nickname = item.authorId ? state.memberNicknameMap[item.authorId] : null;
+
+          // キャッシュにない場合はAPIリクエストで取得する
+          if (item.authorId && !nickname) {
+            nickname = await get().fetchAndCacheNickname(item.boardId, item.authorId);
+          }
+
+          set((state) => {
+            state.items.push({
+              ...item,
+              authorNickname: nickname,
+            });
+          });
+        }
       },
 
       handleRealtimeUpdate: (item: KptItem) => {
@@ -285,6 +332,7 @@ export const useBoardStore = create<BoardState>()(
           isLoading: false,
           isAdding: false,
           realtimeChannel: null,
+          memberNicknameMap: {},
         });
       },
     })),
