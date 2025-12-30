@@ -50,7 +50,8 @@ export function KPTBoard(): ReactElement {
     return () => {
       reset();
     };
-  }, [boardId, loadBoard, subscribeToRealtime, reset, handleError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [boardId]);
 
   const handleItemsChange = useCallback((newItems: KptItem[]) => {
     useBoardStore.setState({ items: newItems });

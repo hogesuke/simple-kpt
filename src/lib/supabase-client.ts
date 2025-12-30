@@ -7,4 +7,15 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabaseクライアントが初期化されていません。環境変数を確認してください。');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// リアルタイム機能を有効化した設定でクライアントを作成
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  realtime: {
+    params: {
+      eventsPerSecond: 10,
+    },
+  },
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});

@@ -168,7 +168,11 @@ export const useBoardStore = create<BoardState>()(
         }
 
         const channel = supabase
-          .channel(`kpt-items-${boardId}`)
+          .channel(`kpt-items-${boardId}`, {
+            config: {
+              broadcast: { self: false },
+            },
+          })
           .on(
             'postgres_changes',
             {
@@ -179,7 +183,11 @@ export const useBoardStore = create<BoardState>()(
             },
             (payload: RealtimePostgresInsertPayload<ItemRow>) => {
               const newItem = mapRowToItem(payload.new);
-              get().handleRealtimeInsert(newItem);
+              // 自分が追加したアイテム（楽観的更新）の場合はスキップ
+              const currentUserId = useAuthStore.getState().user?.id;
+              if (newItem.authorId !== currentUserId) {
+                get().handleRealtimeInsert(newItem);
+              }
             }
           )
           .on(
@@ -203,13 +211,26 @@ export const useBoardStore = create<BoardState>()(
               table: 'items',
             },
             (payload: RealtimePostgresDeletePayload<ItemRow>) => {
-              const { id } = payload.old;
-              if (id) {
-                get().handleRealtimeDelete(id);
+              if (payload.old?.id) {
+                // DELETEイベントではRLSによりboard_idが取得できないため、
+                // クライアント側で現在のボードのアイテムかどうかをチェックする
+                const existItem = get().items.some((item) => item.id === payload.old.id);
+                if (existItem) {
+                  get().handleRealtimeDelete(payload.old.id);
+                }
               }
             }
           )
-          .subscribe();
+          .subscribe((status, err) => {
+            if (err) {
+              console.error('[Realtime] サブスクリプションエラー:', err);
+            }
+            if (status === 'CHANNEL_ERROR') {
+              console.error(`[Realtime] チャンネルエラー: ${boardId}`);
+            } else if (status === 'TIMED_OUT') {
+              console.error(`[Realtime] タイムアウト: ${boardId}`);
+            }
+          });
 
         set({ realtimeChannel: channel });
       },
@@ -224,8 +245,12 @@ export const useBoardStore = create<BoardState>()(
 
       handleRealtimeInsert: (item: KptItem) => {
         set((state) => {
-          // 重複チェック
-          if (!state.items.some((i: KptItem) => i.id === item.id)) {
+          // 重複チェック（既にあるアイテム、または一時IDのアイテムは追加しない）
+          const existingItem = state.items.find(
+            (i: KptItem) => i.id === item.id || (i.id.startsWith('temp-') && i.text === item.text && i.column === item.column)
+          );
+
+          if (!existingItem) {
             state.items.push(item);
           }
         });

@@ -89,6 +89,7 @@ export type Database = {
       }
       items: {
         Row: {
+          allowed_user_ids: string[] | null
           author_id: string | null
           board_id: string
           column_name: string
@@ -97,6 +98,7 @@ export type Database = {
           text: string
         }
         Insert: {
+          allowed_user_ids?: string[] | null
           author_id?: string | null
           board_id: string
           column_name: string
@@ -105,6 +107,7 @@ export type Database = {
           text: string
         }
         Update: {
+          allowed_user_ids?: string[] | null
           author_id?: string | null
           board_id?: string
           column_name?: string
