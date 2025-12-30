@@ -21,6 +21,7 @@ interface BoardState {
   isLoading: boolean;
   isAdding: boolean;
   realtimeChannel: RealtimeChannel | null;
+  memberNicknameMap: Record<string, string>; // userId -> nickname のマップ
 
   loadBoard: (boardId: string) => Promise<void>;
   joinBoard: (boardId: string) => Promise<void>;
@@ -52,10 +53,20 @@ export const useBoardStore = create<BoardState>()(
       isLoading: false,
       isAdding: false,
       realtimeChannel: null,
+      memberNicknameMap: {},
 
       loadBoard: async (boardId: string) => {
         set({ isLoading: true });
         try {
+          const buildNicknameMap = async (): Promise<Record<string, string>> => {
+            try {
+              const members = await api.fetchBoardMembers(boardId);
+              return Object.fromEntries(members.map((member) => [member.userId, member.nickname ?? '']));
+            } catch {
+              return {};
+            }
+          };
+
           // まずボード情報を取得してメンバーシップを確認
           const board = await api.fetchBoard(boardId);
 
@@ -65,10 +76,14 @@ export const useBoardStore = create<BoardState>()(
 
             const updatedBoard = await api.fetchBoard(boardId);
             const items = await api.fetchKptItems(boardId);
-            set({ currentBoard: updatedBoard, items, isLoading: false });
+            const nicknameMap = await buildNicknameMap();
+
+            set({ currentBoard: updatedBoard, items, memberNicknameMap: nicknameMap, isLoading: false });
           } else {
             const items = await api.fetchKptItems(boardId);
-            set({ currentBoard: board, items, isLoading: false });
+            const nicknameMap = await buildNicknameMap();
+
+            set({ currentBoard: board, items, memberNicknameMap: nicknameMap, isLoading: false });
           }
         } catch (error) {
           set({ isLoading: false });
@@ -251,7 +266,12 @@ export const useBoardStore = create<BoardState>()(
           );
 
           if (!existingItem) {
-            state.items.push(item);
+            const nickname = item.authorId ? (state.memberNicknameMap[item.authorId] ?? null) : null;
+            const newItem = {
+              ...item,
+              authorNickname: nickname,
+            };
+            state.items.push(newItem);
           }
         });
       },
@@ -285,6 +305,7 @@ export const useBoardStore = create<BoardState>()(
           isLoading: false,
           isAdding: false,
           realtimeChannel: null,
+          memberNicknameMap: {},
         });
       },
     })),
