@@ -13,6 +13,8 @@ export interface KptItem {
   text: string;
   authorId: string | null;
   authorNickname?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface UserProfile {

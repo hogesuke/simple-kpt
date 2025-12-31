@@ -96,6 +96,7 @@ export type Database = {
           created_at: string
           id: string
           text: string
+          updated_at: string
         }
         Insert: {
           allowed_user_ids?: string[] | null
@@ -105,6 +106,7 @@ export type Database = {
           created_at?: string
           id?: string
           text: string
+          updated_at?: string
         }
         Update: {
           allowed_user_ids?: string[] | null
@@ -114,6 +116,7 @@ export type Database = {
           created_at?: string
           id?: string
           text?: string
+          updated_at?: string
         }
         Relationships: [
           {

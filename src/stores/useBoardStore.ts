@@ -18,6 +18,7 @@ import type {
 interface BoardState {
   currentBoard: KptBoard | null;
   items: KptItem[];
+  selectedItem: KptItem | null;
   isLoading: boolean;
   isAdding: boolean;
   realtimeChannel: RealtimeChannel | null;
@@ -34,6 +35,7 @@ interface BoardState {
   handleRealtimeInsert: (item: KptItem) => Promise<void>;
   handleRealtimeUpdate: (item: KptItem) => void;
   handleRealtimeDelete: (id: string) => void;
+  setSelectedItem: (item: KptItem | null) => void;
   reset: () => void;
 }
 
@@ -44,6 +46,8 @@ const mapRowToItem = (row: ItemRow): KptItem => ({
   text: row.text,
   authorId: row.author_id,
   authorNickname: null, // Realtime では nickname は取得できないため null
+  createdAt: row.created_at,
+  updatedAt: row.updated_at,
 });
 
 export const useBoardStore = create<BoardState>()(
@@ -51,6 +55,7 @@ export const useBoardStore = create<BoardState>()(
     immer((set, get) => ({
       currentBoard: null,
       items: [],
+      selectedItem: null,
       isLoading: false,
       isAdding: false,
       realtimeChannel: null,
@@ -323,12 +328,17 @@ export const useBoardStore = create<BoardState>()(
         });
       },
 
+      setSelectedItem: (item: KptItem | null) => {
+        set({ selectedItem: item });
+      },
+
       reset: () => {
         const { unsubscribeFromRealtime } = get();
         unsubscribeFromRealtime();
         set({
           currentBoard: null,
           items: [],
+          selectedItem: null,
           isLoading: false,
           isAdding: false,
           realtimeChannel: null,

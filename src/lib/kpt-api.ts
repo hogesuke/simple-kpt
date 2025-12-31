@@ -11,6 +11,8 @@ function mapRowToItem(row: ItemRow & { author_nickname?: string | null }): KptIt
     text: row.text,
     authorId: row.author_id,
     authorNickname: row.author_nickname,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }
 

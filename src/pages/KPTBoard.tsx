@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { BoardMembersDialog } from '@/components/BoardMembersDialog';
 import { BoardColumn } from '@/components/ui/BoardColumn';
 import { CardInput } from '@/components/ui/CardInput';
+import { ItemDetailPanel } from '@/components/ui/ItemDetailPanel';
 import { KPTCard } from '@/components/ui/KPTCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
@@ -22,6 +23,7 @@ export function KPTBoard(): ReactElement {
 
   const board = useBoardStore((state) => state.currentBoard);
   const items = useBoardStore((state) => state.items);
+  const selectedItem = useBoardStore((state) => state.selectedItem);
   const isLoading = useBoardStore((state) => state.isLoading);
   const isAdding = useBoardStore((state) => state.isAdding);
   const loadBoard = useBoardStore((state) => state.loadBoard);
@@ -29,6 +31,7 @@ export function KPTBoard(): ReactElement {
   const deleteItem = useBoardStore((state) => state.deleteItem);
   const updateItem = useBoardStore((state) => state.updateItem);
   const subscribeToRealtime = useBoardStore((state) => state.subscribeToRealtime);
+  const setSelectedItem = useBoardStore((state) => state.setSelectedItem);
   const reset = useBoardStore((state) => state.reset);
 
   const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
@@ -97,6 +100,17 @@ export function KPTBoard(): ReactElement {
     }
   };
 
+  const handleCardClick = useCallback(
+    (item: KptItem) => {
+      setSelectedItem(item);
+    },
+    [setSelectedItem]
+  );
+
+  const handleClosePanel = useCallback(() => {
+    setSelectedItem(null);
+  }, [setSelectedItem]);
+
   if (!boardId) {
     return (
       <section className="mx-auto flex h-screen max-w-240 items-center justify-center px-4">
@@ -126,9 +140,9 @@ export function KPTBoard(): ReactElement {
         </header>
 
         <div className="flex flex-col items-stretch gap-x-4 gap-y-4 lg:flex-row">
-          <BoardColumn title="Keep" type="keep" column="keep" items={itemsByColumn.keep} onDeleteItem={handleDeleteItem} />
-          <BoardColumn title="Problem" type="problem" column="problem" items={itemsByColumn.problem} onDeleteItem={handleDeleteItem} />
-          <BoardColumn title="Try" type="try" column="try" items={itemsByColumn.try} onDeleteItem={handleDeleteItem} />
+          <BoardColumn title="Keep" type="keep" column="keep" items={itemsByColumn.keep} selectedItemId={selectedItem?.id} onDeleteItem={handleDeleteItem} onCardClick={handleCardClick} />
+          <BoardColumn title="Problem" type="problem" column="problem" items={itemsByColumn.problem} selectedItemId={selectedItem?.id} onDeleteItem={handleDeleteItem} onCardClick={handleCardClick} />
+          <BoardColumn title="Try" type="try" column="try" items={itemsByColumn.try} selectedItemId={selectedItem?.id} onDeleteItem={handleDeleteItem} onCardClick={handleCardClick} />
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -151,6 +165,9 @@ export function KPTBoard(): ReactElement {
 
       {/* ドラッグ中にポインタに追従するカード */}
       <DragOverlay>{activeItem ? <KPTCard item={activeItem} /> : null}</DragOverlay>
+
+      {/* カード詳細パネル */}
+      <ItemDetailPanel item={selectedItem} onClose={handleClosePanel} />
     </DndContext>
   );
 }
