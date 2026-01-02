@@ -59,16 +59,29 @@ export const useAuthStore = create<AuthState>()(
           });
 
           // 認証状態の変更を監視
-          supabase.auth.onAuthStateChange(async (_event, session) => {
+          supabase.auth.onAuthStateChange(async (event, session) => {
+            const currentState = useAuthStore.getState();
+
+            // 既に同じユーザーがログイン済みで、SIGNED_INイベントの場合はスキップ
+            if (event === 'SIGNED_IN' && currentState.user?.id === session?.user?.id && currentState.profile) {
+              return;
+            }
+
             // ユーザーがログインした場合
             if (session?.user) {
-              set({
-                session,
-                user: session?.user ?? null,
-                loading: true,
-              });
-              await useAuthStore.getState().loadProfile();
-              set({ loading: false });
+              try {
+                set({
+                  session,
+                  user: session?.user ?? null,
+                  loading: true,
+                });
+
+                await useAuthStore.getState().loadProfile();
+
+                set({ loading: false });
+              } catch {
+                set({ loading: false });
+              }
             } else {
               // ユーザーがログアウトした場合
               set({
@@ -79,7 +92,7 @@ export const useAuthStore = create<AuthState>()(
               });
             }
           });
-        } catch (error) {
+        } catch {
           set({ loading: false, initialized: true });
         }
       },
@@ -90,6 +103,7 @@ export const useAuthStore = create<AuthState>()(
           set({ profile });
         } catch (error) {
           set({ profile: null });
+          throw error;
         }
       },
 
