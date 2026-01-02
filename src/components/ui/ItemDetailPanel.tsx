@@ -157,6 +157,14 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                   ref={textareaRef}
                   value={editingText}
                   onChange={(e) => setEditingText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                      e.preventDefault();
+                      if (!isSaving && editingText.trim() && editingText !== item?.text) {
+                        handleSaveEdit();
+                      }
+                    }
+                  }}
                   className={cn(
                     'border-input bg-background w-full rounded-md border px-3 py-2',
                     'resize-none text-base leading-relaxed',
