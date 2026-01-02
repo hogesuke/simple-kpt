@@ -95,8 +95,6 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
       document.addEventListener('keydown', handleEscape);
       return () => document.removeEventListener('keydown', handleEscape);
     }
-    // handleCancelEditは状態を変更するだけなので依存配列に含めない
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item, onClose, isEditing]);
 
   if (!item) {
