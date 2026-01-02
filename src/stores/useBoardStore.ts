@@ -143,11 +143,16 @@ export const useBoardStore = create<BoardState>()(
 
       updateItem: async (item: KptItem) => {
         const oldItems = get().items;
+        const oldSelectedItem = get().selectedItem;
 
         set((state) => {
           const index = state.items.findIndex((i: KptItem) => i.id === item.id);
           if (index !== -1) {
             state.items[index] = item;
+          }
+          // selectedItemも更新する
+          if (state.selectedItem?.id === item.id) {
+            state.selectedItem = item;
           }
         });
 
@@ -160,23 +165,28 @@ export const useBoardStore = create<BoardState>()(
           });
         } catch (error) {
           // エラー時はロールバックする
-          set({ items: oldItems });
+          set({ items: oldItems, selectedItem: oldSelectedItem });
           throw error;
         }
       },
 
       deleteItem: async (id: string, boardId: string) => {
         const oldItems = get().items;
+        const oldSelectedItem = get().selectedItem;
 
         set((state) => {
           state.items = state.items.filter((item: KptItem) => item.id !== id);
+          // 削除されたアイテムがselectedItemの場合はクリアする
+          if (state.selectedItem?.id === id) {
+            state.selectedItem = null;
+          }
         });
 
         try {
           await api.deleteKptItem(id, boardId);
         } catch (error) {
           // エラー時はロールバックする
-          set({ items: oldItems });
+          set({ items: oldItems, selectedItem: oldSelectedItem });
           throw error;
         }
       },
@@ -314,10 +324,16 @@ export const useBoardStore = create<BoardState>()(
           if (index !== -1) {
             // RealtimeではauthorNicknameを取得できないため、既存のitemから取得する
             const authorNickname = state.items[index].authorNickname;
-            state.items[index] = {
+            const updatedItem = {
               ...item,
               authorNickname,
             };
+            state.items[index] = updatedItem;
+
+            // selectedItemも更新する
+            if (state.selectedItem?.id === item.id) {
+              state.selectedItem = updatedItem;
+            }
           }
         });
       },
@@ -325,6 +341,10 @@ export const useBoardStore = create<BoardState>()(
       handleRealtimeDelete: (id: string) => {
         set((state) => {
           state.items = state.items.filter((item: KptItem) => item.id !== id);
+          // 削除されたアイテムがselectedItemの場合はクリアする
+          if (state.selectedItem?.id === id) {
+            state.selectedItem = null;
+          }
         });
       },
 
