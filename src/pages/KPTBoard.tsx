@@ -185,8 +185,6 @@ export function KPTBoard(): ReactElement {
 
         <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
           <BoardColumn
-            title="Keep"
-            type="keep"
             column="keep"
             items={itemsByColumn.keep}
             selectedItemId={selectedItem?.id}
@@ -194,8 +192,6 @@ export function KPTBoard(): ReactElement {
             onCardClick={handleCardClick}
           />
           <BoardColumn
-            title="Problem"
-            type="problem"
             column="problem"
             items={itemsByColumn.problem}
             selectedItemId={selectedItem?.id}
@@ -203,8 +199,6 @@ export function KPTBoard(): ReactElement {
             onCardClick={handleCardClick}
           />
           <BoardColumn
-            title="Try"
-            type="try"
             column="try"
             items={itemsByColumn.try}
             selectedItemId={selectedItem?.id}

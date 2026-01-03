@@ -1,46 +1,18 @@
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
+import { columnDotColors, columnLabels } from '@/lib/column-styles';
 import { cn } from '@/lib/utils';
 
 import { SortableKPTCard } from './KPTCard';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
-export const boardColumnVariants = cva(
-  ['p-4', 'flex-1 lg:basis-0 lg:min-w-0', 'rounded-md', 'focus-visible:ring-1 focus-visible:ring-ring'],
-  {
-    variants: {
-      type: {
-        keep: 'bg-yellow-100',
-        problem: 'bg-red-100',
-        try: 'bg-blue-100',
-      },
-    },
-    defaultVariants: {
-      type: 'keep',
-    },
-  }
-);
+const columnStyles = 'p-4 flex-1 lg:basis-0 lg:min-w-0 rounded-md border border-gray-200 bg-gray-50 focus-visible:ring-1 focus-visible:ring-ring';
 
-export const gradientVariants = cva('', {
-  variants: {
-    type: {
-      keep: 'from-yellow-100',
-      problem: 'from-red-100',
-      try: 'from-blue-100',
-    },
-  },
-  defaultVariants: {
-    type: 'keep',
-  },
-});
-
-export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof boardColumnVariants> {
-  title: string;
+export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement> {
   column: KptColumnType;
   items: KptItem[];
   selectedItemId?: string | null;
@@ -50,8 +22,6 @@ export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement>, Var
 
 export function BoardColumn({
   className,
-  type,
-  title,
   column,
   items,
   selectedItemId,
@@ -94,17 +64,16 @@ export function BoardColumn({
     };
   }, [items]);
 
-  const gradientClass = gradientVariants({ type });
-
   return (
-    <section ref={setNodeRef} className={cn(boardColumnVariants({ type, className }), 'relative flex flex-col overflow-hidden')} {...props}>
-      <h2 className="flex-none p-2 text-lg font-semibold">{title}</h2>
+    <section ref={setNodeRef} className={cn(columnStyles, 'relative flex flex-col overflow-hidden', className)} {...props}>
+      <h2 className="flex flex-none items-center gap-2 p-2 text-lg font-semibold">
+        <span className={`h-2 w-2 rounded-full ${columnDotColors[column]}`} aria-hidden="true" />
+        {columnLabels[column]}
+      </h2>
 
       {/* 上部のグラデーションフェードインジケーター */}
       {canScrollUp && (
-        <div
-          className={cn('pointer-events-none absolute top-13 right-0 left-0 z-10 h-8 bg-linear-to-b to-transparent', gradientClass)}
-        />
+        <div className="pointer-events-none absolute top-13 right-0 left-0 z-10 h-8 bg-linear-to-b from-gray-50 to-transparent" />
       )}
 
       <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
@@ -123,9 +92,7 @@ export function BoardColumn({
 
       {/* 下部のグラデーションフェードインジケーター */}
       {canScrollDown && (
-        <div
-          className={cn('pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-8 bg-linear-to-t to-transparent', gradientClass)}
-        />
+        <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-8 bg-linear-to-t from-gray-50 to-transparent" />
       )}
     </section>
   );
