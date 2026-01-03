@@ -1,4 +1,4 @@
-import { LogOut, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import { ReactElement, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,8 +23,6 @@ import type { KptBoard } from '@/types/kpt';
 export function Home(): ReactElement {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
-  const profile = useAuthStore((state) => state.profile);
-  const signOut = useAuthStore((state) => state.signOut);
   const [boards, setBoards] = useState<KptBoard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -78,15 +76,6 @@ export function Home(): ReactElement {
     }
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/login', { replace: true });
-    } catch (error) {
-      window.alert('ログアウトに失敗しました。');
-    }
-  };
-
   const handleDeleteBoard = async (boardId: string) => {
     try {
       setDeletingBoardId(boardId);
@@ -100,18 +89,7 @@ export function Home(): ReactElement {
   };
 
   return (
-    <section className="mx-auto min-h-screen max-w-240 px-4 py-8">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">KPT App</h1>
-          {profile && <p className="text-muted-foreground mt-1 text-sm">{profile.nickname}</p>}
-        </div>
-        <Button type="button" variant="outline" onClick={handleSignOut}>
-          <LogOut className="mr-2 h-4 w-4" />
-          ログアウト
-        </Button>
-      </header>
-
+    <section className="mx-auto max-w-240 px-4 py-8">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-semibold">マイボード</h2>
         <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>

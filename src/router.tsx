@@ -1,5 +1,6 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 
+import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Home } from './pages/Home';
 import { KPTBoard } from './pages/KPTBoard';
@@ -8,7 +9,7 @@ import { SetupNickname } from './pages/SetupNickname';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
-    <>
+    <Route element={<Layout />}>
       <Route path="/login" element={<Login />} />
       <Route
         path="/setup-nickname"
@@ -34,6 +35,6 @@ export const router = createBrowserRouter(
           </ProtectedRoute>
         }
       />
-    </>
+    </Route>
   )
 );

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
 import { BoardMembersDialog } from '@/components/BoardMembersDialog';
+import { HeaderActions } from '@/components/HeaderActions';
 import { BoardColumn } from '@/components/ui/BoardColumn';
 import { CardInput } from '@/components/ui/CardInput';
 import { ItemDetailPanel } from '@/components/ui/ItemDetailPanel';
@@ -150,44 +151,35 @@ export function KPTBoard(): ReactElement {
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <section className="mx-auto flex h-screen w-full max-w-480 flex-col p-8">
+      <HeaderActions>
+        {user?.id && (!board || user.id === board.ownerId) && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label="ボードセッティング" disabled={isLoading || !board}>
+                <Settings className="text-muted-foreground h-4 w-4" />
+                セッティング
+              </Button>
+            </DropdownMenuTrigger>
+            {!isLoading && board && (
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  削除
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            )}
+          </DropdownMenu>
+        )}
+        <BoardMembersDialog boardId={boardId} disabled={isLoading} />
+      </HeaderActions>
+
+      <section className="mx-auto flex h-full w-full max-w-480 flex-col p-8">
         <header className="flex-none">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold">{board ? board.name : isLoading ? 'ボードを読み込み中...' : 'KPT Board'}</h1>
-              <p className="text-muted-foreground mt-1 text-xs">Board ID: {boardId}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              {user?.id && (!board || user.id === board.ownerId) && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="hover:bg-muted"
-                      aria-label="ボードセッティング"
-                      disabled={isLoading || !board}
-                    >
-                      <Settings className="text-muted-foreground h-4 w-4" />
-                      セッティング
-                    </Button>
-                  </DropdownMenuTrigger>
-                  {!isLoading && board && (
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        削除
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  )}
-                </DropdownMenu>
-              )}
-              <BoardMembersDialog boardId={boardId} disabled={isLoading} />
-            </div>
-          </div>
+          <h1 className="text-2xl font-semibold">{board ? board.name : isLoading ? 'ボードを読み込み中...' : 'KPT Board'}</h1>
+          <p className="text-muted-foreground mt-1 text-xs">Board ID: {boardId}</p>
         </header>
 
-        <div className="flex flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
+        <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
           <BoardColumn
             title="Keep"
             type="keep"
