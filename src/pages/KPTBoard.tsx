@@ -12,7 +12,6 @@ import { ItemDetailPanel } from '@/components/ui/ItemDetailPanel';
 import { KPTCard } from '@/components/ui/KPTCard';
 import { Button } from '@/components/ui/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
@@ -214,21 +213,29 @@ export function KPTBoard(): ReactElement {
           />
         </div>
 
-        <div className="flex flex-none flex-col gap-2 pt-4 sm:flex-row sm:items-center">
-          <Select value={newItemColumn} onValueChange={(value) => setNewItemColumn(value as KptColumnType)}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="カラムを選択" />
-            </SelectTrigger>
-            <SelectContent>
-              {columns.map((col) => (
-                <SelectItem key={col} value={col}>
-                  {col.charAt(0).toUpperCase() + col.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <CardInput onSubmitText={handleAddCard} disabled={isAdding || isLoading} placeholder="Your input here" />
+        <div className="flex flex-none flex-col gap-3 pt-4">
+          <div className="flex gap-2">
+            {columns.map((col) => (
+              <button
+                key={col}
+                type="button"
+                onClick={() => setNewItemColumn(col)}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors ${
+                  newItemColumn === col
+                    ? 'bg-gray-700 text-white'
+                    : 'border border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600'
+                }`}
+              >
+                <span
+                  className={`h-2 w-2 rounded-full ${
+                    newItemColumn === col ? 'bg-white' : 'border border-current'
+                  }`}
+                />
+                {col.charAt(0).toUpperCase() + col.slice(1)}
+              </button>
+            ))}
+          </div>
+          <CardInput onSubmitText={handleAddCard} disabled={isAdding || isLoading} placeholder="アイテムを追加..." />
         </div>
       </section>
 
