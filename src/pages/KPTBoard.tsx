@@ -1,7 +1,7 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { Settings, Trash2 } from 'lucide-react';
+import { ArrowLeft, Settings, Trash2 } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
 import { BoardMembersDialog } from '@/components/BoardMembersDialog';
@@ -175,8 +175,13 @@ export function KPTBoard(): ReactElement {
 
       <section className="mx-auto flex h-full w-full max-w-480 flex-col p-8">
         <header className="flex-none">
+          <nav aria-label="パンくずリスト" className="mb-2">
+            <Link to="/" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors">
+              <ArrowLeft className="h-4 w-4" />
+              ボード一覧に戻る
+            </Link>
+          </nav>
           <h1 className="text-2xl font-semibold">{board ? board.name : isLoading ? 'ボードを読み込み中...' : 'KPT Board'}</h1>
-          <p className="text-muted-foreground mt-1 text-xs">Board ID: {boardId}</p>
         </header>
 
         <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
