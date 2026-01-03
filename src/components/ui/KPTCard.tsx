@@ -1,6 +1,5 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { cva } from 'class-variance-authority';
 import { X } from 'lucide-react';
 import * as React from 'react';
 
@@ -8,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 import type { KptItem } from '@/types/kpt';
 
-export const kptCardVariants = cva('rounded-md bg-white shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring');
+const cardStyles = 'rounded-md border border-gray-200 bg-white shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
 
 export interface KPTCardProps {
   item: KptItem;
@@ -36,7 +35,7 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
   };
 
   return (
-    <article className={cn(kptCardVariants(), 'relative', className)} aria-label={`KPTカード: ${item.text}`}>
+    <article className={cn(cardStyles, 'relative', className)} aria-label={`KPTカード: ${item.text}`}>
       <div
         role="button"
         tabIndex={onClick ? 0 : undefined}

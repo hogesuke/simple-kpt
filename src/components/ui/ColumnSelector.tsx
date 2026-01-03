@@ -1,5 +1,7 @@
 import { ReactElement } from 'react';
 
+import { columnDotColors, columnLabels } from '@/lib/column-styles';
+
 import type { KptColumnType } from '@/types/kpt';
 
 interface ColumnSelectorProps {
@@ -26,12 +28,8 @@ export function ColumnSelector({
               : 'border border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600'
           }`}
         >
-          <span
-            className={`h-2 w-2 rounded-full ${
-              selectedColumn === col ? 'bg-white' : 'border border-current'
-            }`}
-          />
-          {col.charAt(0).toUpperCase() + col.slice(1)}
+          <span className={`h-2 w-2 rounded-full ${columnDotColors[col]}`} />
+          {columnLabels[col]}
         </button>
       ))}
     </div>
