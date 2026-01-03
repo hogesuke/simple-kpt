@@ -6,13 +6,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
 import { BoardMembersDialog } from '@/components/BoardMembersDialog';
 import { HeaderActions } from '@/components/HeaderActions';
+import { ItemAddForm } from '@/components/ItemAddForm';
 import { BoardColumn } from '@/components/ui/BoardColumn';
-import { CardInput } from '@/components/ui/CardInput';
 import { ItemDetailPanel } from '@/components/ui/ItemDetailPanel';
 import { KPTCard } from '@/components/ui/KPTCard';
 import { Button } from '@/components/ui/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
@@ -214,21 +213,14 @@ export function KPTBoard(): ReactElement {
           />
         </div>
 
-        <div className="flex flex-none flex-col gap-2 pt-4 sm:flex-row sm:items-center">
-          <Select value={newItemColumn} onValueChange={(value) => setNewItemColumn(value as KptColumnType)}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="カラムを選択" />
-            </SelectTrigger>
-            <SelectContent>
-              {columns.map((col) => (
-                <SelectItem key={col} value={col}>
-                  {col.charAt(0).toUpperCase() + col.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <CardInput onSubmitText={handleAddCard} disabled={isAdding || isLoading} placeholder="Your input here" />
+        <div className="flex-none pt-4">
+          <ItemAddForm
+            columns={columns}
+            selectedColumn={newItemColumn}
+            onColumnChange={setNewItemColumn}
+            onSubmit={handleAddCard}
+            disabled={isAdding || isLoading}
+          />
         </div>
       </section>
 
