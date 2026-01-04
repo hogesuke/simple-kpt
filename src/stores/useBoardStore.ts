@@ -44,11 +44,19 @@ const mapRowToItem = (row: ItemRow): KptItem => ({
   boardId: row.board_id,
   column: row.column_name as KptColumnType,
   text: row.text,
+  position: row.position,
   authorId: row.author_id,
-  authorNickname: null, // Realtime では nickname は取得できないため null
+  authorNickname: null, // Realtimeではnicknameは取得できないためnull
   createdAt: row.created_at,
   updatedAt: row.updated_at,
 });
+
+/**
+ * アイテムをpositionでソートする
+ */
+const sortItemsByPosition = (items: KptItem[]): KptItem[] => {
+  return [...items].sort((a, b) => a.position - b.position);
+};
 
 export const useBoardStore = create<BoardState>()(
   devtools(
@@ -106,11 +114,17 @@ export const useBoardStore = create<BoardState>()(
         const tempId = `temp-${Date.now()}`;
         const { user, profile } = useAuthStore.getState();
 
+        // 同じカラム内の最大positionを取得して、その後ろに配置する
+        const columnItems = get().items.filter((item) => item.column === column);
+        const maxPosition = columnItems.length > 0 ? Math.max(...columnItems.map((item) => item.position)) : 0;
+        const tempPosition = maxPosition + 1000;
+
         const tempItem: KptItem = {
           id: tempId,
           boardId,
           column,
           text,
+          position: tempPosition,
           authorId: user?.id ?? null,
           authorNickname: profile?.nickname ?? null,
         };
@@ -162,6 +176,7 @@ export const useBoardStore = create<BoardState>()(
             boardId: item.boardId,
             column: item.column,
             text: item.text,
+            position: item.position,
           });
         } catch (error) {
           // エラー時はロールバックする
@@ -314,6 +329,8 @@ export const useBoardStore = create<BoardState>()(
               ...item,
               authorNickname: nickname,
             });
+            // positionでソート
+            state.items = sortItemsByPosition(state.items);
           });
         }
       },
@@ -334,6 +351,9 @@ export const useBoardStore = create<BoardState>()(
             if (state.selectedItem?.id === item.id) {
               state.selectedItem = updatedItem;
             }
+
+            // positionでソート（カード移動時の順序同期のため）
+            state.items = sortItemsByPosition(state.items);
           }
         });
       },

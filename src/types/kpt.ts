@@ -12,6 +12,7 @@ export interface KptItem {
   boardId: string;
   column: KptColumnType;
   text: string;
+  position: number;
   authorId: string | null;
   authorNickname?: string | null;
   createdAt?: string;

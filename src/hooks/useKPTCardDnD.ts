@@ -15,6 +15,30 @@ import { useRef, useState } from 'react';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
+/**
+ * 挿入位置に基づいて新しいpositionを計算する（浮動小数点方式）
+ * @param targetList ドラッグ先のカラム内のアイテム一覧（ドラッグ中のアイテムを除く）
+ * @param insertIndex 挿入位置
+ */
+function calculateNewPosition(targetList: KptItem[], insertIndex: number): number {
+  const prevItem = insertIndex > 0 ? targetList[insertIndex - 1] : null;
+  const nextItem = insertIndex < targetList.length ? targetList[insertIndex] : null;
+
+  if (!prevItem && !nextItem) {
+    // 空のカラムに最初のアイテムを配置
+    return 1000;
+  } else if (!prevItem && nextItem) {
+    // 先頭に配置
+    return nextItem.position / 2;
+  } else if (prevItem && !nextItem) {
+    // 末尾に配置
+    return prevItem.position + 1000;
+  } else {
+    // 2つのアイテムの間に配置
+    return (prevItem!.position + nextItem!.position) / 2;
+  }
+}
+
 type UseKptCardDndOptions = {
   columns: KptColumnType[];
   items: KptItem[];
@@ -84,18 +108,14 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
         itemsByColumn[item.column].push(item);
       }
 
-      const updated: KptItem = { ...dragged, column: targetColumn };
-      // 最後にドラッグした位置のカードを保持しておき、ドロップ時のサーバー更新に利用する
-      lastDraggedItemRef.current = updated;
+      const targetList = itemsByColumn[targetColumn];
+      let insertIndex: number;
 
       if (isOverColumn) {
         // カラムの何もない場所にドラッグしているときは末尾に配置する
-        itemsByColumn[targetColumn].push(updated);
+        insertIndex = targetList.length;
       } else {
-        const targetList = itemsByColumn[targetColumn];
         const overIndexInTarget = targetList.findIndex((item) => item.id === overId);
-
-        let insertIndex: number;
 
         if (dragged.column === targetColumn) {
           // 同一カラム内の並び替え
@@ -115,9 +135,16 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
           // 別カラムから移動してきた場合はoverの位置に配置する
           insertIndex = overIndexInTarget === -1 ? targetList.length : overIndexInTarget;
         }
-
-        targetList.splice(insertIndex, 0, updated);
       }
+
+      // 新しいpositionを計算
+      const newPosition = calculateNewPosition(targetList, insertIndex);
+      const updated: KptItem = { ...dragged, column: targetColumn, position: newPosition };
+
+      // 最後にドラッグした位置のカードを保持しておき、ドロップ時のサーバー更新に利用する
+      lastDraggedItemRef.current = updated;
+
+      targetList.splice(insertIndex, 0, updated);
 
       return [...itemsByColumn.keep, ...itemsByColumn.problem, ...itemsByColumn.try];
     });

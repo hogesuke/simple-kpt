@@ -52,7 +52,9 @@ Deno.serve(async (req) => {
       board_id,
       column_name,
       text,
+      position,
       created_at,
+      updated_at,
       author_id,
       profiles!items_author_id_profiles_fkey (
         nickname
@@ -60,7 +62,7 @@ Deno.serve(async (req) => {
     `
     )
     .eq('board_id', boardId)
-    .order('created_at', { ascending: true });
+    .order('position', { ascending: true });
 
   if (error) {
     return generateErrorResponse(error.message, 500);
@@ -72,7 +74,9 @@ Deno.serve(async (req) => {
     board_id: item.board_id,
     column_name: item.column_name,
     text: item.text,
+    position: item.position,
     created_at: item.created_at,
+    updated_at: item.updated_at,
     author_id: item.author_id,
     author_nickname: item.profiles?.nickname ?? null,
   }));

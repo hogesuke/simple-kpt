@@ -95,6 +95,7 @@ export type Database = {
           column_name: string
           created_at: string
           id: string
+          position: number
           text: string
           updated_at: string
         }
@@ -105,6 +106,7 @@ export type Database = {
           column_name: string
           created_at?: string
           id?: string
+          position?: number
           text: string
           updated_at?: string
         }
@@ -115,6 +117,7 @@ export type Database = {
           column_name?: string
           created_at?: string
           id?: string
+          position?: number
           text?: string
           updated_at?: string
         }

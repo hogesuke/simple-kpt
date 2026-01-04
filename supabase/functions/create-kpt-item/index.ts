@@ -47,6 +47,18 @@ Deno.serve(async (req) => {
     return generateErrorResponse('このボードへのアクセス権限がありません', 403);
   }
 
+  // 同じカラム内の最大positionを取得して、その後ろに配置する
+  const { data: maxPositionData } = await client
+    .from('items')
+    .select('position')
+    .eq('board_id', boardId)
+    .eq('column_name', column)
+    .order('position', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const newPosition = (maxPositionData?.position ?? 0) + 1000;
+
   const { data, error } = await client
     .from('items')
     .insert({
@@ -54,6 +66,7 @@ Deno.serve(async (req) => {
       column_name: column,
       text,
       author_id: user.id,
+      position: newPosition,
     })
     .select(
       `
@@ -61,7 +74,10 @@ Deno.serve(async (req) => {
       board_id,
       column_name,
       text,
+      position,
       author_id,
+      created_at,
+      updated_at,
       profiles!items_author_id_profiles_fkey (
         nickname
       )
@@ -78,7 +94,10 @@ Deno.serve(async (req) => {
     boardId: data.board_id,
     column: data.column_name,
     text: data.text,
+    position: data.position,
     authorId: data.author_id,
     authorNickname: (data.profiles as any)?.nickname ?? null,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
   });
 });

@@ -400,7 +400,7 @@ INSERT INTO public.board_members (board_id, user_id, role, created_at) VALUES
 -- テストアイテムの作成
 -- ============================================================
 
-INSERT INTO public.items (id, board_id, column_name, text, author_id, created_at) VALUES
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'keep', 'チームワークが良い', '11111111-1111-1111-1111-111111111111'::uuid, now()),
-  ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'problem', 'コミュニケーション不足', '22222222-2222-2222-2222-222222222222'::uuid, now()),
-  ('dddddddd-dddd-dddd-dddd-dddddddddddd'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'try', '定期的なミーティングを開催する', '11111111-1111-1111-1111-111111111111'::uuid, now());
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, created_at) VALUES
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'keep', 'チームワークが良い', 1000, '11111111-1111-1111-1111-111111111111'::uuid, now()),
+  ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'problem', 'コミュニケーション不足', 1000, '22222222-2222-2222-2222-222222222222'::uuid, now()),
+  ('dddddddd-dddd-dddd-dddd-dddddddddddd'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'try', '定期的なミーティングを開催する', 1000, '11111111-1111-1111-1111-111111111111'::uuid, now());

@@ -9,6 +9,7 @@ function mapRowToItem(row: ItemRow & { author_nickname?: string | null }): KptIt
     boardId: row.board_id,
     column: row.column_name as KptColumnType,
     text: row.text,
+    position: row.position,
     authorId: row.author_id,
     authorNickname: row.author_nickname,
     createdAt: row.created_at,
@@ -127,7 +128,13 @@ export async function createKptItem(input: { boardId: string; column: KptColumnT
 /**
  * KPTのアイテムを更新する。
  */
-export async function updateKptItem(input: { id: string; boardId: string; column: KptColumnType; text: string }): Promise<KptItem> {
+export async function updateKptItem(input: {
+  id: string;
+  boardId: string;
+  column: KptColumnType;
+  text: string;
+  position?: number;
+}): Promise<KptItem> {
   const { data, error } = await supabase.functions.invoke('update-kpt-item', {
     method: 'PATCH',
     body: {
@@ -135,6 +142,7 @@ export async function updateKptItem(input: { id: string; boardId: string; column
       boardId: input.boardId,
       column: input.column,
       text: input.text,
+      position: input.position,
     },
   });
 

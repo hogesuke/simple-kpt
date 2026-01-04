@@ -14,6 +14,7 @@ type UpdateKptItemBody = {
   boardId?: string;
   column?: string;
   text?: string;
+  position?: number;
 };
 
 Deno.serve(async (req) => {
@@ -26,7 +27,7 @@ Deno.serve(async (req) => {
   const { user } = result;
   const client = createServiceClient();
 
-  const { id, boardId, column, text } = await parseRequestBody<UpdateKptItemBody>(req);
+  const { id, boardId, column, text, position } = await parseRequestBody<UpdateKptItemBody>(req);
 
   if (!id || !boardId) {
     return generateErrorResponse('id, boardIdは必須です。', 400);
@@ -57,6 +58,9 @@ Deno.serve(async (req) => {
   if (typeof text === 'string') {
     updates.text = text;
   }
+  if (typeof position === 'number') {
+    updates.position = position;
+  }
 
   if (Object.keys(updates).length === 0) {
     return generateErrorResponse('更新内容が指定されていません。', 400);
@@ -67,7 +71,7 @@ Deno.serve(async (req) => {
     .update(updates)
     .eq('id', id)
     .eq('board_id', boardId)
-    .select('id, board_id, column_name, text')
+    .select('id, board_id, column_name, text, position, author_id, created_at, updated_at')
     .maybeSingle();
 
   if (error || !data) {
