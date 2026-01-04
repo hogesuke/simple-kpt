@@ -72,28 +72,329 @@ INSERT INTO auth.users (
   ''
 );
 
+-- テストユーザー3: test3@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  '33333333-3333-3333-3333-333333333333'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'test3@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- テストユーザー4: test4@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  '44444444-4444-4444-4444-444444444444'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'test4@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- テストユーザー5: test5@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  '55555555-5555-5555-5555-555555555555'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'test5@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- テストユーザー6: test6@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  '66666666-6666-6666-6666-666666666666'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'test6@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- テストユーザー7: test7@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  '77777777-7777-7777-7777-777777777777'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'test7@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- テストユーザー8: test8@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  '88888888-8888-8888-8888-888888888888'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'test8@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- テストユーザー9: test9@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  '99999999-9999-9999-9999-999999999999'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'test9@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- テストユーザー10: test10@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  'aaaaaaaa-0000-0000-0000-000000000010'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'test10@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
 -- ============================================================
 -- プロフィールの作成
 -- ============================================================
 
 INSERT INTO public.profiles (id, nickname, created_at, updated_at) VALUES
   ('11111111-1111-1111-1111-111111111111'::uuid, 'テストユーザー1', now(), now()),
-  ('22222222-2222-2222-2222-222222222222'::uuid, 'テストユーザー2', now(), now());
+  ('22222222-2222-2222-2222-222222222222'::uuid, 'テストユーザー2', now(), now()),
+  ('33333333-3333-3333-3333-333333333333'::uuid, 'テストユーザー3', now(), now()),
+  ('44444444-4444-4444-4444-444444444444'::uuid, 'テストユーザー4', now(), now()),
+  ('55555555-5555-5555-5555-555555555555'::uuid, 'テストユーザー5', now(), now()),
+  ('66666666-6666-6666-6666-666666666666'::uuid, 'テストユーザー6', now(), now()),
+  ('77777777-7777-7777-7777-777777777777'::uuid, 'テストユーザー7', now(), now()),
+  ('88888888-8888-8888-8888-888888888888'::uuid, 'テストユーザー8', now(), now()),
+  ('99999999-9999-9999-9999-999999999999'::uuid, 'テストユーザー9', now(), now()),
+  ('aaaaaaaa-0000-0000-0000-000000000010'::uuid, 'テストユーザー10', now(), now());
 
 -- ============================================================
 -- テストボードの作成
 -- ============================================================
 
 INSERT INTO public.boards (id, name, owner_id, created_at) VALUES
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '開発テストボード', '11111111-1111-1111-1111-111111111111'::uuid, now());
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '開発テストボード', '11111111-1111-1111-1111-111111111111'::uuid, now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '10人メンバーボード', '11111111-1111-1111-1111-111111111111'::uuid, now());
 
 -- ============================================================
 -- ボードメンバーシップの作成
 -- ============================================================
 
-INSERT INTO public.board_members (board_id, user_id, created_at) VALUES
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, now()),
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '22222222-2222-2222-2222-222222222222'::uuid, now());
+INSERT INTO public.board_members (board_id, user_id, role, created_at) VALUES
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, 'owner', now()),
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '22222222-2222-2222-2222-222222222222'::uuid, 'member', now());
+
+INSERT INTO public.board_members (board_id, user_id, role, created_at) VALUES
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, 'owner', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '22222222-2222-2222-2222-222222222222'::uuid, 'member', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '33333333-3333-3333-3333-333333333333'::uuid, 'member', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '44444444-4444-4444-4444-444444444444'::uuid, 'member', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '55555555-5555-5555-5555-555555555555'::uuid, 'member', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '66666666-6666-6666-6666-666666666666'::uuid, 'member', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '77777777-7777-7777-7777-777777777777'::uuid, 'member', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '88888888-8888-8888-8888-888888888888'::uuid, 'member', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '99999999-9999-9999-9999-999999999999'::uuid, 'member', now()),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, 'aaaaaaaa-0000-0000-0000-000000000010'::uuid, 'member', now());
 
 -- ============================================================
 -- テストアイテムの作成
