@@ -69,6 +69,14 @@ export function getQueryParam(req: Request, key: string): string | null {
 }
 
 /**
+ * UUID形式かどうか検証する。
+ */
+export function isValidUUID(value: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(value);
+}
+
+/**
  * 認証付きSupabaseクライアントとユーザーを作成する。
  * 環境変数や認証ヘッダーが不正な場合はエラーレスポンスを返す。
  */

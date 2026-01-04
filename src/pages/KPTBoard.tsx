@@ -15,7 +15,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
-import { deleteBoard } from '@/lib/kpt-api';
+import { ApiError, deleteBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBoardStore } from '@/stores/useBoardStore';
 
@@ -54,6 +54,10 @@ export function KPTBoard(): ReactElement {
         await loadBoard(boardId);
         subscribeToRealtime(boardId);
       } catch (error) {
+        if (error instanceof ApiError && error.status === 404) {
+          navigate('/not-found', { replace: true });
+          return;
+        }
         handleError('ボード情報の読み込みに失敗しました。');
       }
     };
