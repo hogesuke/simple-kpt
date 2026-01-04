@@ -61,7 +61,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" disabled={disabled}>
           <Users className="h-4 w-4" />
-          メンバー管理
+          ボードメンバー
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

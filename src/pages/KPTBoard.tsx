@@ -151,12 +151,13 @@ export function KPTBoard(): ReactElement {
       onDragCancel={handleDragCancel}
     >
       <HeaderActions>
+        <BoardMembersDialog boardId={boardId} disabled={isLoading} />
         {user?.id && (!board || user.id === board.ownerId) && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label="ボードセッティング" disabled={isLoading || !board}>
+              <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label="ボード設定" disabled={isLoading || !board}>
                 <Settings className="text-muted-foreground h-4 w-4" />
-                セッティング
+                ボード設定
               </Button>
             </DropdownMenuTrigger>
             {!isLoading && board && (
@@ -169,7 +170,6 @@ export function KPTBoard(): ReactElement {
             )}
           </DropdownMenu>
         )}
-        <BoardMembersDialog boardId={boardId} disabled={isLoading} />
       </HeaderActions>
 
       <section className="mx-auto flex h-full w-full max-w-480 flex-col p-8">
