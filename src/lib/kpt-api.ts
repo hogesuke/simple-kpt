@@ -3,6 +3,32 @@ import { supabase } from '@/lib/supabase-client';
 import type { BoardRow, ItemRow, ProfileRow } from '@/types/db';
 import type { KptBoard, KptColumnType, KptItem, UserProfile } from '@/types/kpt';
 
+/**
+ * API Errorクラス
+ */
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public status?: number
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+/**
+ * FunctionsHttpErrorからステータスコードを抽出する
+ */
+function extractStatusCode(error: unknown): number | undefined {
+  if (error && typeof error === 'object' && 'context' in error) {
+    const context = (error as { context: unknown }).context;
+    if (context && typeof context === 'object' && 'status' in context) {
+      return (context as { status: number }).status;
+    }
+  }
+  return undefined;
+}
+
 function mapRowToItem(row: ItemRow & { author_nickname?: string | null }): KptItem {
   return {
     id: row.id,
@@ -48,8 +74,9 @@ export async function fetchBoard(boardId: string): Promise<KptBoard | null> {
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    const status = extractStatusCode(error);
+    const message = error instanceof Error ? error.message : 'ボードの取得に失敗しました';
+    throw new ApiError(message, status);
   }
 
   if (!data) return null;

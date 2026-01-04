@@ -6,6 +6,7 @@ import {
   generateErrorResponse,
   generateJsonResponse,
   getQueryParam,
+  isValidUUID,
   requireMethod,
 } from '../_shared/helpers.ts';
 
@@ -23,6 +24,10 @@ Deno.serve(async (req) => {
 
   if (!boardId) {
     return generateErrorResponse('boardIdは必須です', 400);
+  }
+
+  if (!isValidUUID(boardId)) {
+    return generateErrorResponse('ボードが見つかりません', 404);
   }
 
   const { data: board, error: boardError } = await client.from('boards').select('id, name, owner_id').eq('id', boardId).maybeSingle();

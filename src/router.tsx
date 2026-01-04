@@ -1,10 +1,11 @@
-import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, Navigate, Route } from 'react-router-dom';
 
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Home } from './pages/Home';
 import { KPTBoard } from './pages/KPTBoard';
 import { Login } from './pages/Login';
+import { NotFound } from './pages/NotFound';
 import { SetupNickname } from './pages/SetupNickname';
 
 export const router = createBrowserRouter(
@@ -35,6 +36,8 @@ export const router = createBrowserRouter(
           </ProtectedRoute>
         }
       />
+      <Route path="/not-found" element={<NotFound />} />
+      <Route path="*" element={<Navigate to="/not-found" replace />} />
     </Route>
   )
 );
