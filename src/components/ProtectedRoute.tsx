@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -12,9 +12,19 @@ export function ProtectedRoute({ children, requireProfile = true }: ProtectedRou
   const user = useAuthStore((state) => state.user);
   const profile = useAuthStore((state) => state.profile);
   const loading = useAuthStore((state) => state.loading);
+  const isLoadingProfile = useAuthStore((state) => state.isLoadingProfile);
+  const loadProfile = useAuthStore((state) => state.loadProfile);
   const location = useLocation();
 
-  if (loading) {
+  // userが存在するがprofileがない場合、プロファイルを再読み込みする
+  // （pnpm run devでセッション復帰後などの対策）
+  useEffect(() => {
+    if (user && !profile && !isLoadingProfile && !loading) {
+      loadProfile();
+    }
+  }, [user, profile, isLoadingProfile, loading, loadProfile]);
+
+  if (loading || isLoadingProfile) {
     return (
       <div className="flex h-screen items-center justify-center">
         <p className="text-muted-foreground">読み込み中...</p>
