@@ -13,6 +13,7 @@ interface AuthState {
   profile: UserProfile | null;
   loading: boolean;
   initialized: boolean;
+  isLoadingProfile: boolean;
 
   initialize: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -31,6 +32,7 @@ export const useAuthStore = create<AuthState>()(
       profile: null,
       loading: true,
       initialized: false,
+      isLoadingProfile: false,
 
       initialize: async () => {
         // 既に初期化済みなら何もしない
@@ -62,17 +64,18 @@ export const useAuthStore = create<AuthState>()(
           supabase.auth.onAuthStateChange(async (event, session) => {
             const currentState = useAuthStore.getState();
 
-            // 既に同じユーザーがログイン済みで、SIGNED_INイベントの場合はスキップ
-            if (event === 'SIGNED_IN' && currentState.user?.id === session?.user?.id && currentState.profile) {
+            // 初期化中（または初期化直後のSIGNED_IN）はスキップする
+            // initialize内で既にセッションとプロファイルを処理済み
+            if (event === 'SIGNED_IN' && currentState.user?.id === session?.user?.id) {
               return;
             }
 
-            // ユーザーがログインした場合
-            if (session?.user) {
+            // 別のユーザーがログインした場合（ユーザー切り替え）
+            if (event === 'SIGNED_IN' && session?.user) {
               try {
                 set({
                   session,
-                  user: session?.user ?? null,
+                  user: session.user,
                   loading: true,
                 });
 
@@ -82,10 +85,19 @@ export const useAuthStore = create<AuthState>()(
               } catch {
                 set({ loading: false });
               }
-            } else {
-              // ユーザーがログアウトした場合
+              return;
+            }
+
+            // TOKEN_REFRESHEDイベントはセッションのみ更新
+            if (event === 'TOKEN_REFRESHED' && session) {
+              set({ session });
+              return;
+            }
+
+            // ユーザーがログアウトした場合
+            if (event === 'SIGNED_OUT') {
               set({
-                session,
+                session: null,
                 user: null,
                 profile: null,
                 loading: false,
@@ -98,11 +110,17 @@ export const useAuthStore = create<AuthState>()(
       },
 
       loadProfile: async () => {
+        const { isLoadingProfile } = useAuthStore.getState();
+
+        // 既に読み込み中なら何もしない
+        if (isLoadingProfile) return;
+
+        set({ isLoadingProfile: true });
         try {
           const profile = await fetchProfile();
-          set({ profile });
+          set({ profile, isLoadingProfile: false });
         } catch (error) {
-          set({ profile: null });
+          set({ profile: null, isLoadingProfile: false });
           throw error;
         }
       },
@@ -121,7 +139,9 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-// 初期化用のヘルパー関数
+/**
+ * 初期化用のヘルパー関数
+ */
 export const initializeAuth = () => {
   const initialize = useAuthStore.getState().initialize;
   return initialize();

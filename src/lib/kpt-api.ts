@@ -53,11 +53,12 @@ export async function fetchBoard(boardId: string): Promise<KptBoard | null> {
 
   if (!data) return null;
 
-  const row = data as BoardRow;
+  const row = data as BoardRow & { isMember?: boolean };
   return {
     id: row.id,
     name: row.name,
     ownerId: row.owner_id ?? undefined,
+    isMember: row.isMember,
   };
 }
 
