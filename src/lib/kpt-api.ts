@@ -1,3 +1,5 @@
+import { FunctionsHttpError } from '@supabase/supabase-js';
+
 import { supabase } from '@/lib/supabase-client';
 
 import type { BoardRow, ItemRow, ProfileRow } from '@/types/db';
@@ -5,6 +7,9 @@ import type { KptBoard, KptColumnType, KptItem, UserProfile } from '@/types/kpt'
 
 /**
  * APIエラークラス
+ *
+ * Supabaseの`FunctionsHttpError`から詰め替えて変換する。
+ * 呼び出し側のSupabaseへの依存を減らし、将来的にバックエンドを変更するような場合に備える。
  */
 export class APIError extends Error {
   constructor(
@@ -17,16 +22,12 @@ export class APIError extends Error {
 }
 
 /**
- * FunctionsHttpErrorからステータスコードを抽出する
+ * エラーをAPIErrorに変換する。
  */
-function extractStatusCode(error: unknown): number | undefined {
-  if (error && typeof error === 'object' && 'context' in error) {
-    const context = (error as { context: unknown }).context;
-    if (context && typeof context === 'object' && 'status' in context) {
-      return (context as { status: number }).status;
-    }
-  }
-  return undefined;
+function convertToAPIError(error: unknown, fallbackMessage: string): APIError {
+  const status = error instanceof FunctionsHttpError ? error.context.status : undefined;
+  const message = error instanceof Error ? error.message : fallbackMessage;
+  return new APIError(message, status);
 }
 
 function mapRowToItem(row: ItemRow & { author_nickname?: string | null }): KptItem {
@@ -52,8 +53,7 @@ export async function fetchBoards(): Promise<KptBoard[]> {
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'ボード一覧の取得に失敗しました');
   }
 
   if (!data) return [];
@@ -74,9 +74,7 @@ export async function fetchBoard(boardId: string): Promise<KptBoard | null> {
   });
 
   if (error) {
-    const status = extractStatusCode(error);
-    const message = error instanceof Error ? error.message : 'ボードの取得に失敗しました';
-    throw new APIError(message, status);
+    throw convertToAPIError(error, 'ボードの取得に失敗しました');
   }
 
   if (!data) return null;
@@ -99,12 +97,11 @@ export async function createBoard(name: string): Promise<KptBoard> {
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'ボードの作成に失敗しました');
   }
 
   if (!data) {
-    throw new Error('Edge Function "create-board" からデータが返されませんでした。');
+    throw new APIError('ボードの作成に失敗しました');
   }
 
   return data as KptBoard;
@@ -119,8 +116,7 @@ export async function fetchKptItems(boardId: string): Promise<KptItem[]> {
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'アイテム一覧の取得に失敗しました');
   }
 
   if (!data) return [];
@@ -141,12 +137,11 @@ export async function createKptItem(input: { boardId: string; column: KptColumnT
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'アイテムの作成に失敗しました');
   }
 
   if (!data) {
-    throw new Error('Edge Function からデータが返されませんでした。');
+    throw new APIError('アイテムの作成に失敗しました');
   }
 
   return data as KptItem;
@@ -174,12 +169,11 @@ export async function updateKptItem(input: {
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'アイテムの更新に失敗しました');
   }
 
   if (!data) {
-    throw new Error('Edge Function からデータが返されませんでした。');
+    throw new APIError('アイテムの更新に失敗しました');
   }
 
   return mapRowToItem(data as ItemRow);
@@ -195,8 +189,7 @@ export async function deleteKptItem(id: string, boardId: string): Promise<void> 
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'アイテムの削除に失敗しました');
   }
 
   void data;
@@ -211,8 +204,7 @@ export async function fetchProfile(): Promise<UserProfile | null> {
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'プロフィールの取得に失敗しました');
   }
 
   if (!data) return null;
@@ -236,12 +228,11 @@ export async function updateProfile(nickname: string): Promise<UserProfile> {
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'プロフィールの更新に失敗しました');
   }
 
   if (!data) {
-    throw new Error('Edge Function "update-profile" からデータが返されませんでした。');
+    throw new APIError('プロフィールの更新に失敗しました');
   }
 
   const row = data as ProfileRow;
@@ -270,8 +261,7 @@ export async function fetchBoardMembers(boardId: string): Promise<BoardMember[]>
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'メンバー一覧の取得に失敗しました');
   }
 
   if (!data) return [];
@@ -289,12 +279,11 @@ export async function joinBoard(boardId: string): Promise<{ success: boolean; al
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'ボードへの参加に失敗しました');
   }
 
   if (!data) {
-    throw new Error('Edge Function "join-board" からデータが返されませんでした。');
+    throw new APIError('ボードへの参加に失敗しました');
   }
 
   return data as { success: boolean; alreadyMember: boolean };
@@ -310,8 +299,7 @@ export async function deleteBoard(boardId: string): Promise<void> {
   });
 
   if (error) {
-    // TODO: エラーハンドリングを改善する
-    throw error;
+    throw convertToAPIError(error, 'ボードの削除に失敗しました');
   }
 
   void data;
