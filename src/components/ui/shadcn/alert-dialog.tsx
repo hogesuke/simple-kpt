@@ -16,7 +16,7 @@ const AlertDialogOverlay = forwardRef<
   ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Overlay
-    className={cn('fixed inset-0 z-50 bg-black/80', className)}
+    className={cn('fixed inset-0 z-50 bg-black/60', className)}
     {...props}
     ref={ref}
   />

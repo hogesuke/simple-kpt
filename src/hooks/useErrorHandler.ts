@@ -1,13 +1,41 @@
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+
+import { APIError } from '@/lib/kpt-api';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 /**
  * エラーハンドリングを実行するフック
  */
 export function useErrorHandler() {
-  const handleError = useCallback((message: string) => {
-    // TODO: エラー時のUI表示を改善する
-    window.alert(message);
-  }, []);
+  const navigate = useNavigate();
+  const signOut = useAuthStore((state) => state.signOut);
+
+  const handleError = useCallback(
+    (error: unknown, message?: string) => {
+      if (error instanceof APIError) {
+        switch (error.status) {
+          case 401:
+            toast.error('セッションが切れました。再度ログインしてください。');
+            signOut();
+            navigate('/login', { replace: true });
+            return;
+          case 404:
+            navigate('/not-found', { replace: true });
+            return;
+          default:
+            toast.error(message || error.message || 'エラーが発生しました');
+            return;
+        }
+      }
+
+      // APIError以外のエラー
+      const displayMessage = message || (error instanceof Error ? error.message : 'エラーが発生しました');
+      toast.error(displayMessage);
+    },
+    [navigate, signOut]
+  );
 
   return { handleError };
 }

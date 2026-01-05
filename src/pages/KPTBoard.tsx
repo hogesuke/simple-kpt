@@ -8,6 +8,7 @@ import { BoardMembersDialog } from '@/components/BoardMembersDialog';
 import { HeaderActions } from '@/components/HeaderActions';
 import { ItemAddForm } from '@/components/ItemAddForm';
 import { BoardColumn } from '@/components/ui/BoardColumn';
+import { ErrorAlert, ErrorAlertAction } from '@/components/ui/ErrorAlert';
 import { ItemDetailPanel } from '@/components/ui/ItemDetailPanel';
 import { KPTCard } from '@/components/ui/KPTCard';
 import { Button } from '@/components/ui/shadcn/button';
@@ -15,7 +16,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
-import { APIError, deleteBoard } from '@/lib/kpt-api';
+import { deleteBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBoardStore } from '@/stores/useBoardStore';
 
@@ -34,6 +35,8 @@ export function KPTBoard(): ReactElement {
   const selectedItem = useBoardStore((state) => state.selectedItem);
   const isLoading = useBoardStore((state) => state.isLoading);
   const isAdding = useBoardStore((state) => state.isAdding);
+  const loadError = useBoardStore((state) => state.loadError);
+  const isNotFound = useBoardStore((state) => state.isNotFound);
   const loadBoard = useBoardStore((state) => state.loadBoard);
   const addItem = useBoardStore((state) => state.addItem);
   const deleteItem = useBoardStore((state) => state.deleteItem);
@@ -49,26 +52,28 @@ export function KPTBoard(): ReactElement {
   useEffect(() => {
     if (!boardId) return;
 
-    const load = async () => {
+    const load = async (id: string) => {
       try {
-        await loadBoard(boardId);
-        subscribeToRealtime(boardId);
-      } catch (error) {
-        if (error instanceof APIError && error.status === 404) {
-          navigate('/not-found', { replace: true });
-          return;
-        }
-        handleError('ボード情報の読み込みに失敗しました。');
+        await loadBoard(id);
+        subscribeToRealtime(id);
+      } catch {
+        // loadErrorはuseBoardStore内で設定されるため、ここでは何もしない
       }
     };
 
-    void load();
+    void load(boardId);
 
     return () => {
       reset();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardId]);
+
+  useEffect(() => {
+    if (isNotFound) {
+      navigate('/not-found', { replace: true });
+    }
+  }, [isNotFound, navigate]);
 
   const handleItemsChange = useCallback((newItems: KptItem[]) => {
     useBoardStore.setState({ items: newItems });
@@ -79,7 +84,7 @@ export function KPTBoard(): ReactElement {
       try {
         await updateItem(item);
       } catch (error) {
-        handleError('カード位置の更新に失敗しました。');
+        handleError(error, 'カード位置の更新に失敗しました');
       }
     },
     [updateItem, handleError]
@@ -101,7 +106,7 @@ export function KPTBoard(): ReactElement {
     try {
       await addItem(boardId, newItemColumn, text);
     } catch (error) {
-      handleError('カードの追加に失敗しました。');
+      handleError(error, 'カードの追加に失敗しました');
     }
   };
 
@@ -110,7 +115,7 @@ export function KPTBoard(): ReactElement {
     try {
       await deleteItem(id, boardId);
     } catch (error) {
-      handleError('カードの削除に失敗しました。');
+      handleError(error, 'カードの削除に失敗しました');
     }
   };
 
@@ -132,7 +137,7 @@ export function KPTBoard(): ReactElement {
       await deleteBoard(boardId);
       navigate('/', { replace: true });
     } catch (error) {
-      handleError('ボードの削除に失敗しました。');
+      handleError(error, 'ボードの削除に失敗しました');
       setIsDeleting(false);
     }
   };
@@ -186,6 +191,18 @@ export function KPTBoard(): ReactElement {
           </nav>
           <h1 className="text-2xl font-semibold">{board ? board.name : isLoading ? 'ボードを読み込み中...' : 'KPT Board'}</h1>
         </header>
+
+        {loadError && (
+          <div className="py-4">
+            <ErrorAlert message="ボード情報の読み込みに失敗しました">
+              <ErrorAlertAction>
+                <Button size="sm" variant="destructive" onClick={() => window.location.reload()}>
+                  再読み込み
+                </Button>
+              </ErrorAlertAction>
+            </ErrorAlert>
+          </div>
+        )}
 
         <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
           <BoardColumn

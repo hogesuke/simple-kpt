@@ -2,6 +2,7 @@ import { StrictMode, useEffect } from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 
+import { Toaster } from '@/components/ui/shadcn/sonner';
 import { router } from '@/router';
 import { initializeAuth } from '@/stores/useAuthStore';
 import './index.css';
@@ -11,7 +12,12 @@ function App() {
     initializeAuth();
   }, []);
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Toaster />
+    </>
+  );
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

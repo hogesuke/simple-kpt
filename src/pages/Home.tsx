@@ -3,6 +3,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
+import { ErrorAlert, ErrorAlertAction } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/shadcn/button';
 import {
   Dialog,
@@ -15,6 +16,7 @@ import {
 } from '@/components/ui/shadcn/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
 import { Input } from '@/components/ui/shadcn/input';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { createBoard, deleteBoard, fetchBoards } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -23,8 +25,10 @@ import type { KptBoard } from '@/types/kpt';
 export function Home(): ReactElement {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  const { handleError } = useErrorHandler();
   const [boards, setBoards] = useState<KptBoard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [boardName, setBoardName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
@@ -43,10 +47,11 @@ export function Home(): ReactElement {
     const loadBoards = async () => {
       try {
         setIsLoading(true);
+        setLoadError(null);
         const data = await fetchBoards();
         setBoards(data);
-      } catch (error) {
-        window.alert('ボードの読み込みに失敗しました。');
+      } catch {
+        setLoadError('ボード一覧の読み込みに失敗しました');
       } finally {
         setIsLoading(false);
       }
@@ -69,8 +74,7 @@ export function Home(): ReactElement {
       setBoardName('');
       navigate(`/board/${board.id}`);
     } catch (error) {
-      // TODO: エラーハンドリングを改善する
-      window.alert('ボードの作成に失敗しました。');
+      handleError(error, 'ボードの作成に失敗しました');
     } finally {
       setIsCreating(false);
     }
@@ -82,7 +86,7 @@ export function Home(): ReactElement {
       await deleteBoard(boardId);
       setBoards((prev) => prev.filter((board) => board.id !== boardId));
     } catch (error) {
-      window.alert('ボードの削除に失敗しました。');
+      handleError(error, 'ボードの削除に失敗しました');
     } finally {
       setDeletingBoardId(null);
     }
@@ -135,6 +139,18 @@ export function Home(): ReactElement {
           </DialogContent>
         </Dialog>
       </div>
+
+      {loadError && (
+        <div className="mb-6">
+          <ErrorAlert message={loadError}>
+            <ErrorAlertAction>
+              <Button size="sm" variant="destructive" onClick={() => window.location.reload()}>
+                再読み込み
+              </Button>
+            </ErrorAlertAction>
+          </ErrorAlert>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="text-muted-foreground text-center">読み込み中...</div>
