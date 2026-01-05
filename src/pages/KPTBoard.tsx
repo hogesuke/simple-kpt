@@ -13,10 +13,10 @@ import { ItemDetailPanel } from '@/components/ui/ItemDetailPanel';
 import { KPTCard } from '@/components/ui/KPTCard';
 import { Button } from '@/components/ui/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
+import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
-import { deleteBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBoardStore } from '@/stores/useBoardStore';
 
@@ -46,8 +46,13 @@ export function KPTBoard(): ReactElement {
   const reset = useBoardStore((state) => state.reset);
 
   const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
-  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const { handleDeleteBoard, deletingBoardId } = useDeleteBoard({
+    onSuccess: () => {
+      navigate('/', { replace: true });
+    },
+  });
 
   useEffect(() => {
     if (!boardId) return;
@@ -129,18 +134,6 @@ export function KPTBoard(): ReactElement {
   const handleClosePanel = useCallback(() => {
     setSelectedItem(null);
   }, [setSelectedItem]);
-
-  const handleDeleteBoard = async () => {
-    if (!boardId) return;
-    try {
-      setIsDeleting(true);
-      await deleteBoard(boardId);
-      navigate('/', { replace: true });
-    } catch (error) {
-      handleError(error, 'ボードの削除に失敗しました');
-      setIsDeleting(false);
-    }
-  };
 
   if (!boardId) {
     return (
@@ -249,8 +242,8 @@ export function KPTBoard(): ReactElement {
       {board && (
         <BoardDeleteDialog
           boardName={board.name}
-          isDeleting={isDeleting}
-          onDelete={handleDeleteBoard}
+          isDeleting={deletingBoardId !== null}
+          onDelete={() => handleDeleteBoard(boardId)}
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
         />

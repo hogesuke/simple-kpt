@@ -16,8 +16,9 @@ import {
 } from '@/components/ui/shadcn/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
 import { Input } from '@/components/ui/shadcn/input';
+import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
-import { createBoard, deleteBoard, fetchBoards } from '@/lib/kpt-api';
+import { createBoard, fetchBoards } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 import type { KptBoard } from '@/types/kpt';
@@ -32,8 +33,13 @@ export function Home(): ReactElement {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [boardName, setBoardName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const [deletingBoardId, setDeletingBoardId] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<{ [key: string]: boolean }>({});
+
+  const { handleDeleteBoard, deletingBoardId } = useDeleteBoard({
+    onSuccess: (boardId) => {
+      setBoards((prev) => prev.filter((board) => board.id !== boardId));
+    },
+  });
 
   const handleOpenChange = (open: boolean) => {
     setIsDialogOpen(open);
@@ -77,18 +83,6 @@ export function Home(): ReactElement {
       handleError(error, 'ボードの作成に失敗しました');
     } finally {
       setIsCreating(false);
-    }
-  };
-
-  const handleDeleteBoard = async (boardId: string) => {
-    try {
-      setDeletingBoardId(boardId);
-      await deleteBoard(boardId);
-      setBoards((prev) => prev.filter((board) => board.id !== boardId));
-    } catch (error) {
-      handleError(error, 'ボードの削除に失敗しました');
-    } finally {
-      setDeletingBoardId(null);
     }
   };
 
