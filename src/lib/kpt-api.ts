@@ -3,7 +3,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase-client';
 
 import type { BoardRow, ItemRow, ProfileRow } from '@/types/db';
-import type { KptBoard, KptColumnType, KptItem, UserProfile } from '@/types/kpt';
+import type { BoardMember, KptBoard, KptColumnType, KptItem, UserProfile } from '@/types/kpt';
 
 /**
  * APIエラークラス
@@ -242,14 +242,6 @@ export async function updateProfile(nickname: string): Promise<UserProfile> {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
-}
-
-export interface BoardMember {
-  id: string;
-  userId: string;
-  role: string;
-  createdAt: string;
-  nickname: string | null;
 }
 
 /**

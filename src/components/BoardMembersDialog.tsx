@@ -6,13 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { fetchBoardMembers } from '@/lib/kpt-api';
 
-interface BoardMember {
-  id: string;
-  userId: string;
-  role: string;
-  createdAt: string;
-  nickname: string | null;
-}
+import type { BoardMember } from '@/types/kpt';
 
 interface BoardMembersDialogProps {
   boardId: string;

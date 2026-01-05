@@ -25,3 +25,11 @@ export interface UserProfile {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface BoardMember {
+  id: string;
+  userId: string;
+  role: string;
+  createdAt: string;
+  nickname: string | null;
+}
