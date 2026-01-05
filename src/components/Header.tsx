@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/shadcn/dropdown-menu';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export function Header(): ReactElement {
@@ -20,13 +21,14 @@ export function Header(): ReactElement {
   const user = useAuthStore((state) => state.user);
   const profile = useAuthStore((state) => state.profile);
   const signOut = useAuthStore((state) => state.signOut);
+  const { handleError } = useErrorHandler();
 
   const handleSignOut = async () => {
     try {
       await signOut();
       navigate('/login', { replace: true });
     } catch (error) {
-      window.alert('ログアウトに失敗しました。');
+      handleError(error, 'ログアウトに失敗しました');
     }
   };
 

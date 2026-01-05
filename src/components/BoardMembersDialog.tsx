@@ -37,7 +37,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
         const data = await fetchBoardMembers(boardId);
         setMembers(data);
       } catch (error) {
-        handleError('メンバー一覧の取得に失敗しました。');
+        handleError(error, 'メンバー一覧の取得に失敗しました');
       } finally {
         setIsLoading(false);
       }
@@ -52,7 +52,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      handleError('URLのコピーに失敗しました。');
+      handleError(error, 'URLのコピーに失敗しました');
     }
   };
 

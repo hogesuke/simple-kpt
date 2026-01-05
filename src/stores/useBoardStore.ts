@@ -3,6 +3,7 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import * as api from '@/lib/kpt-api';
+import { APIError } from '@/lib/kpt-api';
 import { supabase } from '@/lib/supabase-client';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -21,6 +22,8 @@ interface BoardState {
   selectedItem: KptItem | null;
   isLoading: boolean;
   isAdding: boolean;
+  loadError: string | null;
+  isNotFound: boolean;
   realtimeChannel: RealtimeChannel | null;
   memberNicknameMap: Record<string, string>; // userId -> nickname へ変換するマップ
 
@@ -66,11 +69,13 @@ export const useBoardStore = create<BoardState>()(
       selectedItem: null,
       isLoading: false,
       isAdding: false,
+      loadError: null,
+      isNotFound: false,
       realtimeChannel: null,
       memberNicknameMap: {},
 
       loadBoard: async (boardId: string) => {
-        set({ isLoading: true });
+        set({ isLoading: true, loadError: null, isNotFound: false });
         try {
           const buildNicknameMap = async (): Promise<Record<string, string>> => {
             try {
@@ -100,7 +105,12 @@ export const useBoardStore = create<BoardState>()(
             set({ currentBoard: board, items, memberNicknameMap: nicknameMap, isLoading: false });
           }
         } catch (error) {
-          set({ isLoading: false });
+          if (error instanceof APIError && error.status === 404) {
+            set({ isLoading: false, isNotFound: true });
+          } else {
+            const message = error instanceof Error ? error.message : 'ボードの読み込みに失敗しました';
+            set({ isLoading: false, loadError: message });
+          }
           throw error;
         }
       },
@@ -381,6 +391,8 @@ export const useBoardStore = create<BoardState>()(
           selectedItem: null,
           isLoading: false,
           isAdding: false,
+          loadError: null,
+          isNotFound: false,
           realtimeChannel: null,
           memberNicknameMap: {},
         });
