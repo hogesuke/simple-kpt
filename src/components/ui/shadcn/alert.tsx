@@ -24,6 +24,7 @@ const Alert = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEleme
 Alert.displayName = 'Alert';
 
 const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(({ className, ...props }, ref) => (
+  // eslint-disable-next-line jsx-a11y/heading-has-content -- コンテンツはprops.childrenで渡される
   <h5 ref={ref} className={cn('mb-1 leading-none font-medium tracking-tight', className)} {...props} />
 ));
 AlertTitle.displayName = 'AlertTitle';
