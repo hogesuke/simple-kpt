@@ -16,13 +16,13 @@ export function ProtectedRoute({ children, requireProfile = true }: ProtectedRou
   const loadProfile = useAuthStore((state) => state.loadProfile);
   const location = useLocation();
 
-  // userが存在するがprofileがない場合、プロファイルを再読み込みする
-  // （pnpm run devでセッション復帰後などの対策）
+  // userが存在するがprofileがない場合、プロファイルを再読み込みする（pnpm run devでセッション復帰後などの対策）
+  // requireProfile=falseの場合はプロファイルが必須ではないため、再読み込みしない
   useEffect(() => {
-    if (user && !profile && !isLoadingProfile && !loading) {
+    if (requireProfile && user && !profile && !isLoadingProfile && !loading) {
       loadProfile();
     }
-  }, [user, profile, isLoadingProfile, loading, loadProfile]);
+  }, [requireProfile, user, profile, isLoadingProfile, loading, loadProfile]);
 
   if (loading || isLoadingProfile) {
     return (
