@@ -79,8 +79,8 @@ export function Login(): ReactElement {
               variables: {
                 default: {
                   colors: {
-                    brand: '#3b82f6',
-                    brandAccent: '#2563eb',
+                    brand: '#4278d2',
+                    brandAccent: '#2a5fb7',
                   },
                 },
               },

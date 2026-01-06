@@ -24,7 +24,7 @@ export function ColumnSelector({
           onClick={() => onColumnChange(col)}
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs transition-colors ${
             selectedColumn === col
-              ? 'bg-gray-700 text-white'
+              ? 'border border-primary bg-primary/10 text-primary'
               : 'border border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600'
           }`}
         >

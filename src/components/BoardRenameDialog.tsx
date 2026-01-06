@@ -85,7 +85,7 @@ export function BoardRenameDialog({ boardName, isUpdating, onRename, open, onOpe
               キャンセル
             </Button>
             <Button type="submit" disabled={!newName.trim() || isUnchanged || isUpdating}>
-              {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isUpdating && <Loader2 className="h-4 w-4 animate-spin" />}
               変更
             </Button>
           </DialogFooter>

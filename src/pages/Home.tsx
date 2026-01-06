@@ -95,7 +95,7 @@ export function Home(): ReactElement {
             onBoardCreated={handleBoardCreated}
             trigger={
               <Button type="button">
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="h-4 w-4" />
                 最初のボードを作成
               </Button>
             }

@@ -49,10 +49,10 @@ export function Header(): ReactElement {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 rounded-full bg-blue-100 hover:bg-blue-200"
+                  className="h-9 w-9 rounded-full border border-primary/30 bg-primary/10 hover:bg-primary/20"
                   aria-label="ユーザーメニュー"
                 >
-                  <User className="h-5 w-5 text-blue-600" />
+                  <User className="h-5 w-5 text-primary" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
@@ -68,12 +68,12 @@ export function Header(): ReactElement {
                   </>
                 )}
                 <DropdownMenuItem onClick={() => navigate('/setup-nickname', { state: { from: location.pathname } })}>
-                  <Pencil className="mr-2 h-4 w-4" />
+                  <Pencil className="h-4 w-4" />
                   ニックネームの変更
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut className="h-4 w-4" />
                   ログアウト
                 </DropdownMenuItem>
               </DropdownMenuContent>

@@ -49,7 +49,7 @@ export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemI
         onClick={handleSubmit}
         onMouseDown={(e) => e.preventDefault()}
         disabled={!canSubmit}
-        className="absolute top-1/2 right-2 -translate-y-1/2 rounded-md bg-gray-700 p-1.5 text-white transition-colors hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+        className="absolute top-1/2 right-2 -translate-y-1/2 rounded-md bg-primary p-1.5 text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/50"
         aria-label="送信"
       >
         <SendHorizonal className="h-4 w-4" />

@@ -185,11 +185,11 @@ export function KPTBoard(): ReactElement {
             {!isLoading && board && (
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
-                  <Pencil className="mr-2 h-4 w-4" />
+                  <Pencil className="h-4 w-4" />
                   ボード名を変更
                 </DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
-                  <Trash2 className="mr-2 h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                   削除
                 </DropdownMenuItem>
               </DropdownMenuContent>

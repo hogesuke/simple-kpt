@@ -60,7 +60,7 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
 
   const defaultTrigger = (
     <Button type="button">
-      <Plus className="mr-2 h-4 w-4" />
+      <Plus className="h-4 w-4" />
       ボードを作成
     </Button>
   );
@@ -97,7 +97,7 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
               キャンセル
             </Button>
             <Button type="submit" disabled={!boardName.trim() || isCreating}>
-              {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isCreating && <Loader2 className="h-4 w-4 animate-spin" />}
               作成
             </Button>
           </DialogFooter>
