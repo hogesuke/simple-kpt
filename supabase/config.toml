@@ -446,6 +446,11 @@ entrypoint = "./functions/update-profile/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/update-profile/*.html" ]
 
+[functions.update-board]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/update-board/index.ts"
+
 [functions.delete-board]
 enabled = true
 verify_jwt = true

@@ -1,10 +1,11 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { ArrowLeft, Settings, Trash2 } from 'lucide-react';
+import { ArrowLeft, Pencil, Settings, Trash2 } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
 import { BoardMembersDialog } from '@/components/BoardMembersDialog';
+import { BoardRenameDialog } from '@/components/BoardRenameDialog';
 import { HeaderActions } from '@/components/HeaderActions';
 import { ItemAddForm } from '@/components/ItemAddForm';
 import { BoardColumn } from '@/components/ui/BoardColumn';
@@ -17,6 +18,7 @@ import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
+import { updateBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBoardStore } from '@/stores/useBoardStore';
 
@@ -47,6 +49,8 @@ export function KPTBoard(): ReactElement {
 
   const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
 
   const { handleDeleteBoard, deletingBoardId } = useDeleteBoard({
     onSuccess: () => {
@@ -135,6 +139,20 @@ export function KPTBoard(): ReactElement {
     setSelectedItem(null);
   }, [setSelectedItem]);
 
+  const handleRenameBoard = async (newName: string) => {
+    if (!boardId) return;
+    try {
+      setIsRenaming(true);
+      const updatedBoard = await updateBoard(boardId, newName);
+      useBoardStore.setState({ currentBoard: updatedBoard });
+      setRenameDialogOpen(false);
+    } catch (error) {
+      handleError(error, 'ボード名の変更に失敗しました');
+    } finally {
+      setIsRenaming(false);
+    }
+  };
+
   if (!boardId) {
     return (
       <section className="mx-auto flex h-screen max-w-240 items-center justify-center px-4">
@@ -164,6 +182,10 @@ export function KPTBoard(): ReactElement {
             </DropdownMenuTrigger>
             {!isLoading && board && (
               <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  ボード名を変更
+                </DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
                   <Trash2 className="mr-2 h-4 w-4" />
                   削除
@@ -246,6 +268,17 @@ export function KPTBoard(): ReactElement {
           onDelete={() => handleDeleteBoard(boardId)}
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
+        />
+      )}
+
+      {/* ボード名変更ダイアログ */}
+      {board && (
+        <BoardRenameDialog
+          boardName={board.name}
+          isUpdating={isRenaming}
+          onRename={handleRenameBoard}
+          open={renameDialogOpen}
+          onOpenChange={setRenameDialogOpen}
         />
       )}
     </DndContext>

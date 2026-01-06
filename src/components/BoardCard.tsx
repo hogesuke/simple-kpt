@@ -1,7 +1,8 @@
-import { MoreHorizontal, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 
 import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
+import { BoardRenameDialog } from '@/components/BoardRenameDialog';
 import { Button } from '@/components/ui/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
 
@@ -11,15 +12,23 @@ interface BoardCardProps {
   board: KptBoard;
   isOwner: boolean;
   isDeleting: boolean;
+  isRenaming: boolean;
   onDelete: () => void;
+  onRename: (newName: string) => void | Promise<void>;
   onClick: () => void;
 }
 
 /**
  * ボード一覧に表示する個別のボードカード
  */
-export function BoardCard({ board, isOwner, isDeleting, onDelete, onClick }: BoardCardProps): ReactElement {
+export function BoardCard({ board, isOwner, isDeleting, isRenaming, onDelete, onRename, onClick }: BoardCardProps): ReactElement {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+
+  const handleRename = async (newName: string) => {
+    await onRename(newName);
+    setRenameDialogOpen(false);
+  };
 
   return (
     <div className="relative">
@@ -40,10 +49,11 @@ export function BoardCard({ board, isOwner, isDeleting, onDelete, onClick }: Boa
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
-                onClick={() => setDeleteDialogOpen(true)}
-              >
+              <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
+                <Pencil className="mr-2 h-4 w-4" />
+                ボード名を変更
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
                 <Trash2 className="mr-2 h-4 w-4" />
                 削除
               </DropdownMenuItem>
@@ -58,6 +68,14 @@ export function BoardCard({ board, isOwner, isDeleting, onDelete, onClick }: Boa
         onDelete={onDelete}
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
+      />
+
+      <BoardRenameDialog
+        boardName={board.name}
+        isUpdating={isRenaming}
+        onRename={handleRename}
+        open={renameDialogOpen}
+        onOpenChange={setRenameDialogOpen}
       />
     </div>
   );

@@ -7,7 +7,8 @@ import { BoardCreateDialog } from '@/components/BoardCreateDialog';
 import { ErrorAlert, ErrorAlertAction } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/shadcn/button';
 import { useDeleteBoard } from '@/hooks/useDeleteBoard';
-import { fetchBoards } from '@/lib/kpt-api';
+import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { fetchBoards, updateBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 import type { KptBoard } from '@/types/kpt';
@@ -15,9 +16,11 @@ import type { KptBoard } from '@/types/kpt';
 export function Home(): ReactElement {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
+  const { handleError } = useErrorHandler();
   const [boards, setBoards] = useState<KptBoard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [renamingBoardId, setRenamingBoardId] = useState<string | null>(null);
 
   const { handleDeleteBoard, deletingBoardId } = useDeleteBoard({
     onSuccess: (boardId) => {
@@ -45,6 +48,18 @@ export function Home(): ReactElement {
   const handleBoardCreated = (board: KptBoard) => {
     setBoards((prev) => [board, ...prev]);
     navigate(`/board/${board.id}`);
+  };
+
+  const handleRenameBoard = async (boardId: string, newName: string) => {
+    try {
+      setRenamingBoardId(boardId);
+      const updatedBoard = await updateBoard(boardId, newName);
+      setBoards((prev) => prev.map((board) => (board.id === boardId ? updatedBoard : board)));
+    } catch (error) {
+      handleError(error, 'ボード名の変更に失敗しました');
+    } finally {
+      setRenamingBoardId(null);
+    }
   };
 
   return (
@@ -89,7 +104,9 @@ export function Home(): ReactElement {
               board={board}
               isOwner={user?.id === board.ownerId}
               isDeleting={deletingBoardId === board.id}
+              isRenaming={renamingBoardId === board.id}
               onDelete={() => handleDeleteBoard(board.id)}
+              onRename={(newName) => handleRenameBoard(board.id, newName)}
               onClick={() => navigate(`/board/${board.id}`)}
             />
           ))}

@@ -69,7 +69,7 @@ export function Header(): ReactElement {
                 )}
                 <DropdownMenuItem onClick={() => navigate('/setup-nickname', { state: { from: location.pathname } })}>
                   <Pencil className="mr-2 h-4 w-4" />
-                  ニックネーム変更
+                  ニックネームの変更
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>

@@ -296,3 +296,28 @@ export async function deleteBoard(boardId: string): Promise<void> {
 
   void data;
 }
+
+/**
+ * ボード名を更新する。
+ */
+export async function updateBoard(boardId: string, name: string): Promise<KptBoard> {
+  const { data, error } = await supabase.functions.invoke('update-board', {
+    method: 'PATCH',
+    body: { boardId, name },
+  });
+
+  if (error) {
+    throw convertToAPIError(error, 'ボード名の更新に失敗しました');
+  }
+
+  if (!data) {
+    throw new APIError('ボード名の更新に失敗しました');
+  }
+
+  const row = data as BoardRow;
+  return {
+    id: row.id,
+    name: row.name,
+    ownerId: row.owner_id ?? undefined,
+  };
+}
