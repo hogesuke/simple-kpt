@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 
 import { Button } from '@/components/ui/shadcn/button';
@@ -97,7 +97,8 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
               キャンセル
             </Button>
             <Button type="submit" disabled={!boardName.trim() || isCreating}>
-              {isCreating ? '作成中...' : '作成'}
+              {isCreating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              作成
             </Button>
           </DialogFooter>
         </form>
