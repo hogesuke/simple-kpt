@@ -8,12 +8,14 @@ import { BoardMembersDialog } from '@/components/BoardMembersDialog';
 import { BoardRenameDialog } from '@/components/BoardRenameDialog';
 import { HeaderActions } from '@/components/HeaderActions';
 import { ItemAddForm } from '@/components/ItemAddForm';
+import { KPTColumnSkeleton } from '@/components/KPTColumnSkeleton';
 import { BoardColumn } from '@/components/ui/BoardColumn';
 import { ErrorAlert, ErrorAlertAction } from '@/components/ui/ErrorAlert';
 import { ItemDetailPanel } from '@/components/ui/ItemDetailPanel';
 import { KPTCard } from '@/components/ui/KPTCard';
 import { Button } from '@/components/ui/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
+import { Skeleton } from '@/components/ui/shadcn/skeleton';
 import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
@@ -204,7 +206,7 @@ export function KPTBoard(): ReactElement {
               ボード一覧に戻る
             </Link>
           </nav>
-          <h1 className="text-2xl font-semibold">{board ? board.name : isLoading ? 'ボードを読み込み中...' : 'KPT Board'}</h1>
+          {isLoading ? <Skeleton className="h-8 w-48" /> : <h1 className="text-2xl font-semibold">{board ? board.name : 'KPT Board'}</h1>}
         </header>
 
         {loadError && (
@@ -220,27 +222,37 @@ export function KPTBoard(): ReactElement {
         )}
 
         <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
-          <BoardColumn
-            column="keep"
-            items={itemsByColumn.keep}
-            selectedItemId={selectedItem?.id}
-            onDeleteItem={handleDeleteItem}
-            onCardClick={handleCardClick}
-          />
-          <BoardColumn
-            column="problem"
-            items={itemsByColumn.problem}
-            selectedItemId={selectedItem?.id}
-            onDeleteItem={handleDeleteItem}
-            onCardClick={handleCardClick}
-          />
-          <BoardColumn
-            column="try"
-            items={itemsByColumn.try}
-            selectedItemId={selectedItem?.id}
-            onDeleteItem={handleDeleteItem}
-            onCardClick={handleCardClick}
-          />
+          {isLoading ? (
+            <>
+              <KPTColumnSkeleton />
+              <KPTColumnSkeleton />
+              <KPTColumnSkeleton />
+            </>
+          ) : (
+            <>
+              <BoardColumn
+                column="keep"
+                items={itemsByColumn.keep}
+                selectedItemId={selectedItem?.id}
+                onDeleteItem={handleDeleteItem}
+                onCardClick={handleCardClick}
+              />
+              <BoardColumn
+                column="problem"
+                items={itemsByColumn.problem}
+                selectedItemId={selectedItem?.id}
+                onDeleteItem={handleDeleteItem}
+                onCardClick={handleCardClick}
+              />
+              <BoardColumn
+                column="try"
+                items={itemsByColumn.try}
+                selectedItemId={selectedItem?.id}
+                onDeleteItem={handleDeleteItem}
+                onCardClick={handleCardClick}
+              />
+            </>
+          )}
         </div>
 
         <div className="flex-none pt-4">

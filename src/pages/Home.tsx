@@ -3,6 +3,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BoardCard } from '@/components/BoardCard';
+import { BoardCardSkeleton } from '@/components/BoardCardSkeleton';
 import { BoardCreateDialog } from '@/components/BoardCreateDialog';
 import { ErrorAlert, ErrorAlertAction } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/shadcn/button';
@@ -82,7 +83,11 @@ export function Home(): ReactElement {
       )}
 
       {isLoading ? (
-        <div className="text-muted-foreground text-center">読み込み中...</div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <BoardCardSkeleton key={i} />
+          ))}
+        </div>
       ) : boards.length === 0 ? (
         <div className="text-muted-foreground rounded-lg border border-dashed p-12 text-center">
           <p className="mb-4">まだボードがありません</p>

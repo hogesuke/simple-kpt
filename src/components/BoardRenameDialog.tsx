@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 
 import { Button } from '@/components/ui/shadcn/button';
@@ -84,7 +85,8 @@ export function BoardRenameDialog({ boardName, isUpdating, onRename, open, onOpe
               キャンセル
             </Button>
             <Button type="submit" disabled={!newName.trim() || isUnchanged || isUpdating}>
-              {isUpdating ? '変更中...' : '変更する'}
+              {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              変更
             </Button>
           </DialogFooter>
         </form>
