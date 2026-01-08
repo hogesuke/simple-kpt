@@ -12,8 +12,9 @@
     "jsx": "react-jsx",
     "strict": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@shared/*": ["./shared/*"]
     }
   },
-  "include": ["src", "vitest.config.ts, vite-env.d.ts"]
+  "include": ["src", "shared", "vitest.config.ts, vite-env.d.ts"]
 }

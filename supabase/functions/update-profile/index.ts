@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
+import { NICKNAME_MAX_LENGTH } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -26,6 +27,10 @@ Deno.serve(async (req) => {
   }
 
   const trimmedNickname = nickname.trim();
+
+  if (trimmedNickname.length > NICKNAME_MAX_LENGTH) {
+    return generateErrorResponse(`ニックネームは${NICKNAME_MAX_LENGTH}文字以内で入力してください`, 400);
+  }
 
   // プロフィールが存在するか確認
   const { data: existing } = await client.from('profiles').select('id').eq('id', user.id).maybeSingle();

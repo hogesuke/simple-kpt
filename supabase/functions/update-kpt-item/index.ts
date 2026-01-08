@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
+import { ITEM_TEXT_MAX_LENGTH } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -33,6 +34,16 @@ Deno.serve(async (req) => {
     return generateErrorResponse('id, boardIdは必須です。', 400);
   }
 
+  const trimmedText = text?.trim();
+  if (trimmedText !== undefined) {
+    if (trimmedText.length === 0) {
+      return generateErrorResponse('text は空にできません', 400);
+    }
+    if (trimmedText.length > ITEM_TEXT_MAX_LENGTH) {
+      return generateErrorResponse(`テキストは${ITEM_TEXT_MAX_LENGTH}文字以内で入力してください`, 400);
+    }
+  }
+
   // boardが存在するか確認
   const { data: board, error: boardError } = await client.from('boards').select('id').eq('id', boardId).maybeSingle();
 
@@ -55,8 +66,8 @@ Deno.serve(async (req) => {
   if (typeof column === 'string') {
     updates.column_name = column;
   }
-  if (typeof text === 'string') {
-    updates.text = text;
+  if (typeof trimmedText === 'string') {
+    updates.text = trimmedText;
   }
   if (typeof position === 'number') {
     updates.position = position;

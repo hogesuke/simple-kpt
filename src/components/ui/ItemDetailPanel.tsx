@@ -4,7 +4,9 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { columnDotColors, columnLabels } from '@/lib/column-styles';
 import { cn } from '@/lib/utils';
 import { useBoardStore } from '@/stores/useBoardStore';
+import { ITEM_TEXT_MAX_LENGTH } from '@shared/constants';
 
+import { CharacterCounter } from './CharacterCounter';
 import { TextWithHashtags } from './KPTCard';
 
 import type { KptItem } from '@/types/kpt';
@@ -165,28 +167,32 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
             </div>
             {isEditing ? (
               <div className="space-y-4">
-                <textarea
-                  ref={textareaRef}
-                  value={editingText}
-                  onChange={(e) => setEditingText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                      e.preventDefault();
-                      if (!isSaving && editingText.trim() && editingText !== item?.text) {
-                        handleSaveEdit();
+                <div className="relative">
+                  <CharacterCounter current={editingText.length} max={ITEM_TEXT_MAX_LENGTH} className="absolute -top-7 right-0" />
+                  <textarea
+                    ref={textareaRef}
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                        e.preventDefault();
+                        const isOverLimit = editingText.length > ITEM_TEXT_MAX_LENGTH;
+                        if (!isSaving && editingText.trim() && !isOverLimit && editingText !== item?.text) {
+                          handleSaveEdit();
+                        }
                       }
-                    }
-                  }}
-                  className={cn(
-                    'border-input bg-background w-full rounded-md border px-3 py-2',
-                    'resize-none text-base leading-relaxed',
-                    'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
-                    'disabled:cursor-not-allowed disabled:opacity-50'
-                  )}
-                  rows={6}
-                  disabled={isSaving}
-                  placeholder="テキストを入力してください"
-                />
+                    }}
+                    className={cn(
+                      'border-input bg-background w-full rounded-md border px-3 py-2',
+                      'resize-none text-base leading-relaxed',
+                      'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
+                      'disabled:cursor-not-allowed disabled:opacity-50'
+                    )}
+                    rows={6}
+                    disabled={isSaving}
+                    placeholder="テキストを入力してください"
+                  />
+                </div>
                 <div className="flex justify-end gap-2">
                   <button
                     type="button"
@@ -204,7 +210,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                   <button
                     type="button"
                     onClick={handleSaveEdit}
-                    disabled={isSaving || !editingText.trim()}
+                    disabled={isSaving || !editingText.trim() || editingText.length > ITEM_TEXT_MAX_LENGTH}
                     className={cn(
                       'px-3 py-1.5 text-sm font-medium',
                       'bg-primary text-primary-foreground rounded-md',

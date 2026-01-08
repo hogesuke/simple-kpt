@@ -1,8 +1,10 @@
 import { ReactElement, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { CharacterCounter } from '@/components/ui/CharacterCounter';
 import { updateProfile } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { NICKNAME_MAX_LENGTH } from '@shared/constants';
 
 interface LocationState {
   from?: string;
@@ -34,6 +36,11 @@ export function SetupNickname(): ReactElement {
       return;
     }
 
+    if (nickname.length > NICKNAME_MAX_LENGTH) {
+      setError(`ニックネームは${NICKNAME_MAX_LENGTH}文字以内で入力してください`);
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
@@ -49,6 +56,8 @@ export function SetupNickname(): ReactElement {
   };
 
   const isEditing = !!profile?.nickname;
+  const isOverLimit = nickname.length > NICKNAME_MAX_LENGTH;
+  const canSubmit = nickname.trim().length > 0 && !isOverLimit && !isSubmitting;
 
   return (
     <div className="flex h-full items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -64,9 +73,12 @@ export function SetupNickname(): ReactElement {
         <div className="rounded-lg bg-white px-8 py-8 shadow">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">
-                ニックネーム
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">
+                  ニックネーム
+                </label>
+                <CharacterCounter current={nickname.length} max={NICKNAME_MAX_LENGTH} />
+              </div>
               <div className="mt-1">
                 <input
                   id="nickname"
@@ -74,7 +86,6 @@ export function SetupNickname(): ReactElement {
                   type="text"
                   autoComplete="nickname"
                   required
-                  maxLength={50}
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none sm:text-sm"
@@ -103,7 +114,7 @@ export function SetupNickname(): ReactElement {
               )}
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={!canSubmit}
                 className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isEditing ? '更新' : '設定'}

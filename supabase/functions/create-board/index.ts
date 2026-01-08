@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
+import { BOARD_NAME_MAX_LENGTH } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -24,6 +25,10 @@ Deno.serve(async (req) => {
   const trimmedName = (name ?? '').trim();
   if (!trimmedName) {
     return generateErrorResponse('name は必須です', 400);
+  }
+
+  if (trimmedName.length > BOARD_NAME_MAX_LENGTH) {
+    return generateErrorResponse(`ボード名は${BOARD_NAME_MAX_LENGTH}文字以内で入力してください`, 400);
   }
 
   const { data, error } = await client.rpc('create_board_with_owner', {

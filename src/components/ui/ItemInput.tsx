@@ -2,7 +2,9 @@ import { SendHorizonal } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
+import { ITEM_TEXT_MAX_LENGTH } from '@shared/constants';
 
+import { CharacterCounter } from './CharacterCounter';
 import { Input } from './shadcn/input';
 
 export interface ItemInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -31,10 +33,12 @@ export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemI
     }
   };
 
-  const canSubmit = value.trim().length > 0 && !disabled;
+  const isOverLimit = value.length > ITEM_TEXT_MAX_LENGTH;
+  const canSubmit = value.trim().length > 0 && !isOverLimit && !disabled;
 
   return (
     <div className="relative">
+      <CharacterCounter current={value.length} max={ITEM_TEXT_MAX_LENGTH} className="absolute -top-7 right-0" />
       <Input
         ref={inputRef}
         value={value}
@@ -49,7 +53,7 @@ export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemI
         onClick={handleSubmit}
         onMouseDown={(e) => e.preventDefault()}
         disabled={!canSubmit}
-        className="absolute top-1/2 right-2 -translate-y-1/2 rounded-md bg-primary p-1.5 text-primary-foreground transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-primary/50"
+        className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary/50 absolute top-1/2 right-2 -translate-y-1/2 rounded-md p-1.5 transition-colors disabled:cursor-not-allowed"
         aria-label="送信"
       >
         <SendHorizonal className="h-4 w-4" />

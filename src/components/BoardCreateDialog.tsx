@@ -1,6 +1,7 @@
 import { Loader2, Plus } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 
+import { CharacterCounter } from '@/components/ui/CharacterCounter';
 import { Button } from '@/components/ui/shadcn/button';
 import {
   Dialog,
@@ -14,6 +15,7 @@ import {
 import { Input } from '@/components/ui/shadcn/input';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { createBoard } from '@/lib/kpt-api';
+import { BOARD_NAME_MAX_LENGTH } from '@shared/constants';
 
 import type { KptBoard } from '@/types/kpt';
 
@@ -77,10 +79,13 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1">
-            <label htmlFor="boardName" className="block text-sm font-medium">
-              ボード名
-              <span className="text-red-500"> *</span>
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="boardName" className="block text-sm font-medium">
+                ボード名
+                <span className="text-red-500"> *</span>
+              </label>
+              <CharacterCounter current={boardName.length} max={BOARD_NAME_MAX_LENGTH} />
+            </div>
             <Input
               id="boardName"
               // NOTE: 本来はautoFocusの使用は極力避けるべきだが、モーダルを開いた際の利便性を重視し例外として許容する
@@ -96,7 +101,7 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isCreating}>
               キャンセル
             </Button>
-            <Button type="submit" disabled={!boardName.trim() || isCreating}>
+            <Button type="submit" disabled={!boardName.trim() || boardName.length > BOARD_NAME_MAX_LENGTH || isCreating}>
               {isCreating && <Loader2 className="h-4 w-4 animate-spin" />}
               作成
             </Button>
