@@ -48,7 +48,7 @@ export function SetupNickname(): ReactElement {
       const updatedProfile = await updateProfile(nickname.trim());
       setProfileStore(updatedProfile);
       navigate(returnTo, { replace: true });
-    } catch (err) {
+    } catch {
       setError('ニックネームの設定に失敗しました。もう一度お試しください。');
     } finally {
       setIsSubmitting(false);
@@ -88,7 +88,7 @@ export function SetupNickname(): ReactElement {
                   required
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-primary focus:ring-primary focus:outline-none sm:text-sm"
+                  className="focus:border-primary focus:ring-primary block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:outline-none sm:text-sm"
                   placeholder="e.g. Taro"
                   disabled={isSubmitting}
                 />
@@ -107,7 +107,7 @@ export function SetupNickname(): ReactElement {
                   type="button"
                   onClick={() => navigate(returnTo, { replace: true })}
                   disabled={isSubmitting}
-                  className="flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="focus:ring-primary flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   キャンセル
                 </button>
@@ -115,7 +115,7 @@ export function SetupNickname(): ReactElement {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className="flex w-full justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isEditing ? '更新' : '設定'}
               </button>

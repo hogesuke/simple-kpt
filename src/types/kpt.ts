@@ -5,6 +5,7 @@ export interface KptBoard {
   name: string;
   isMember?: boolean;
   ownerId?: string;
+  createdAt: string;
 }
 
 export interface KptItem {

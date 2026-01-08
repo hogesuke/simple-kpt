@@ -62,6 +62,7 @@ export async function fetchBoards(): Promise<KptBoard[]> {
     id: row.id,
     name: row.name,
     ownerId: row.owner_id ?? undefined,
+    createdAt: row.created_at,
   }));
 }
 
@@ -85,6 +86,7 @@ export async function fetchBoard(boardId: string): Promise<KptBoard | null> {
     name: row.name,
     ownerId: row.owner_id ?? undefined,
     isMember: row.isMember,
+    createdAt: row.created_at,
   };
 }
 
@@ -104,7 +106,13 @@ export async function createBoard(name: string): Promise<KptBoard> {
     throw new APIError('ボードの作成に失敗しました');
   }
 
-  return data as KptBoard;
+  const row = data as BoardRow;
+  return {
+    id: row.id,
+    name: row.name,
+    ownerId: row.owner_id ?? undefined,
+    createdAt: row.created_at,
+  };
 }
 
 /**
@@ -319,5 +327,6 @@ export async function updateBoard(boardId: string, name: string): Promise<KptBoa
     id: row.id,
     name: row.name,
     ownerId: row.owner_id ?? undefined,
+    createdAt: row.created_at,
   };
 }
