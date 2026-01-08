@@ -2,11 +2,12 @@ import { Plus } from 'lucide-react';
 import { ReactElement, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { BoardCard } from '@/components/BoardCard';
-import { BoardCardSkeleton } from '@/components/BoardCardSkeleton';
 import { BoardCreateDialog } from '@/components/BoardCreateDialog';
+import { BoardTableRow } from '@/components/BoardTableRow';
+import { BoardTableRowSkeleton } from '@/components/BoardTableRowSkeleton';
 import { ErrorAlert, ErrorAlertAction } from '@/components/ui/ErrorAlert';
 import { Button } from '@/components/ui/shadcn/button';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/shadcn/table';
 import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { fetchBoards, updateBoard } from '@/lib/kpt-api';
@@ -83,11 +84,21 @@ export function Home(): ReactElement {
       )}
 
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[...Array(6)].map((_, i) => (
-            <BoardCardSkeleton key={i} />
-          ))}
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ボード名</TableHead>
+              <TableHead className="w-24">ロール</TableHead>
+              <TableHead className="w-28">作成日</TableHead>
+              <TableHead className="w-12"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {[...Array(4)].map((_, i) => (
+              <BoardTableRowSkeleton key={i} />
+            ))}
+          </TableBody>
+        </Table>
       ) : boards.length === 0 ? (
         <div className="text-muted-foreground rounded-lg border border-dashed p-12 text-center">
           <p className="mb-4">まだボードがありません</p>
@@ -102,20 +113,30 @@ export function Home(): ReactElement {
           />
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {boards.map((board) => (
-            <BoardCard
-              key={board.id}
-              board={board}
-              isOwner={user?.id === board.ownerId}
-              isDeleting={deletingBoardId === board.id}
-              isRenaming={renamingBoardId === board.id}
-              onDelete={() => handleDeleteBoard(board.id)}
-              onRename={(newName) => handleRenameBoard(board.id, newName)}
-              onClick={() => navigate(`/board/${board.id}`)}
-            />
-          ))}
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ボード名</TableHead>
+              <TableHead className="w-24">ロール</TableHead>
+              <TableHead className="w-28">作成日</TableHead>
+              <TableHead className="w-12"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {boards.map((board) => (
+              <BoardTableRow
+                key={board.id}
+                board={board}
+                isOwner={user?.id === board.ownerId}
+                isDeleting={deletingBoardId === board.id}
+                isRenaming={renamingBoardId === board.id}
+                onDelete={() => handleDeleteBoard(board.id)}
+                onRename={(newName) => handleRenameBoard(board.id, newName)}
+                onClick={() => navigate(`/board/${board.id}`)}
+              />
+            ))}
+          </TableBody>
+        </Table>
       )}
     </section>
   );
