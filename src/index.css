@@ -218,6 +218,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  button {
+    cursor: pointer;
+  }
 }
 
 /* Supabase Auth UIのカスタムスタイル */
