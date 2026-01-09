@@ -3,7 +3,7 @@ import { ja } from 'date-fns/locale';
 import { CalendarIcon, Edit2, X } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
-import { columnDotColors, columnLabels } from '@/lib/column-styles';
+import { columnDot, columnLabels } from '@/lib/column-styles';
 import { fetchBoardMembers } from '@/lib/kpt-api';
 import { cn } from '@/lib/utils';
 import { useBoardStore } from '@/stores/useBoardStore';
@@ -183,7 +183,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
         {/* ヘッダー */}
         <div className="flex items-center justify-between px-6 py-4">
           <span className="inline-flex items-center gap-2 text-lg font-semibold">
-            <span className={`h-2 w-2 rounded-full ${columnDotColors[item.column]}`} aria-hidden="true" />
+            <span className={columnDot({ column: item.column })} aria-hidden="true" />
             {columnLabels[item.column]}
           </span>
           <button

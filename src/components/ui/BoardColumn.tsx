@@ -3,14 +3,15 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 
-import { columnDotColors, columnLabels } from '@/lib/column-styles';
+import { columnDot, columnLabels } from '@/lib/column-styles';
 import { cn } from '@/lib/utils';
 
 import { SortableKPTCard } from './KPTCard';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
-const columnStyles = 'p-4 flex-1 lg:basis-0 lg:min-w-0 rounded-md border border-slate-200 bg-slate-50 focus-visible:ring-1 focus-visible:ring-ring';
+const columnStyles =
+  'p-4 flex-1 lg:basis-0 lg:min-w-0 rounded-md border border-slate-200 bg-slate-50 focus-visible:ring-1 focus-visible:ring-ring';
 
 export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement> {
   column: KptColumnType;
@@ -71,7 +72,7 @@ export function BoardColumn({
   return (
     <section ref={setNodeRef} className={cn(columnStyles, 'relative flex flex-col overflow-hidden', className)} {...props}>
       <h2 className="flex flex-none items-center gap-2 p-2 text-lg font-semibold">
-        <span className={`h-2 w-2 rounded-full ${columnDotColors[column]}`} aria-hidden="true" />
+        <span className={columnDot({ column })} aria-hidden="true" />
         {columnLabels[column]}
       </h2>
 
