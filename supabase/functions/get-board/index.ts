@@ -42,8 +42,13 @@ Deno.serve(async (req) => {
 
   const { data: member } = await client.from('board_members').select('id').eq('board_id', boardId).eq('user_id', user.id).maybeSingle();
 
+  const isMember = !!member;
+
+  // 非メンバーにはボード名とオーナー情報を隠す
   return generateJsonResponse({
-    ...board,
-    isMember: !!member,
+    id: board.id,
+    name: isMember ? board.name : null,
+    owner_id: isMember ? board.owner_id : null,
+    isMember,
   });
 });
