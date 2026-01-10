@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router';
 import { BoardCreateDialog } from '@/components/BoardCreateDialog';
 import { BoardTableRow } from '@/components/BoardTableRow';
 import { BoardTableRowSkeleton } from '@/components/BoardTableRowSkeleton';
+import { LoadMoreButton } from '@/components/LoadMoreButton';
 import { StatusFilter } from '@/components/StatusFilter';
 import { TryItemsTable } from '@/components/TryItemsTable';
 import { ErrorAlert, ErrorAlertAction } from '@/components/ui/ErrorAlert';
@@ -19,6 +20,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import type { KptBoard, TryItemWithBoard, TryStatus } from '@/types/kpt';
 
 const DEFAULT_STATUSES: TryStatus[] = ['pending', 'in_progress'];
+const PAGE_SIZE = 20;
 
 export function Home(): ReactElement {
   const navigate = useNavigate();
@@ -26,14 +28,20 @@ export function Home(): ReactElement {
   const { handleError } = useErrorHandler();
   const [boards, setBoards] = useState<KptBoard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [renamingBoardId, setRenamingBoardId] = useState<string | null>(null);
+  const [boardsCursor, setBoardsCursor] = useState<string | null>(null);
+  const [boardsHasMore, setBoardsHasMore] = useState(false);
 
   // Tryリスト用のstate
   const [tryItems, setTryItems] = useState<TryItemWithBoard[]>([]);
   const [isTryLoading, setIsTryLoading] = useState(false);
+  const [isTryLoadingMore, setIsTryLoadingMore] = useState(false);
   const [tryLoadError, setTryLoadError] = useState<string | null>(null);
   const [selectedStatuses, setSelectedStatuses] = useState<TryStatus[]>(DEFAULT_STATUSES);
+  const [tryOffset, setTryOffset] = useState(0);
+  const [tryHasMore, setTryHasMore] = useState(false);
 
   const { handleDeleteBoard, deletingBoardId } = useDeleteBoard({
     onSuccess: (boardId) => {
@@ -41,35 +49,86 @@ export function Home(): ReactElement {
     },
   });
 
-  useEffect(() => {
-    const loadBoards = async () => {
+  const loadBoards = useCallback(
+    async (reset = true) => {
+      if (!reset && (!boardsCursor || isLoadingMore)) return;
       try {
-        setIsLoading(true);
-        setLoadError(null);
-        const data = await fetchBoards();
-        setBoards(data);
-      } catch {
-        setLoadError('ボードリストの読み込みに失敗しました');
+        if (reset) {
+          setIsLoading(true);
+          setLoadError(null);
+        } else {
+          setIsLoadingMore(true);
+        }
+        const cursor = reset ? undefined : boardsCursor;
+        const response = await fetchBoards({ limit: PAGE_SIZE, cursor: cursor ?? undefined });
+        if (reset) {
+          setBoards(response.items);
+        } else {
+          setBoards((prev) => [...prev, ...response.items]);
+        }
+        setBoardsCursor(response.nextCursor);
+        setBoardsHasMore(response.hasMore);
+      } catch (error) {
+        if (reset) {
+          setLoadError('ボードリストの読み込みに失敗しました');
+        } else {
+          handleError(error, 'ボードリストの読み込みに失敗しました');
+        }
       } finally {
         setIsLoading(false);
+        setIsLoadingMore(false);
       }
-    };
+    },
+    [boardsCursor, isLoadingMore, handleError]
+  );
 
+  const loadMoreBoards = () => {
+    if (isLoadingMore || !boardsHasMore) return;
+    void loadBoards(false);
+  };
+
+  useEffect(() => {
     void loadBoards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 初回レンダリング時のみ実行
   }, []);
 
-  const loadTryItems = useCallback(async (statuses: TryStatus[]) => {
-    try {
-      setIsTryLoading(true);
-      setTryLoadError(null);
-      const data = await fetchTryItems({ status: statuses.length > 0 ? statuses : undefined });
-      setTryItems(data);
-    } catch {
-      setTryLoadError('Tryアイテムの読み込みに失敗しました');
-    } finally {
-      setIsTryLoading(false);
-    }
-  }, []);
+  const loadTryItems = useCallback(
+    async (statuses: TryStatus[], reset = true) => {
+      try {
+        if (reset) {
+          setIsTryLoading(true);
+          setTryOffset(0);
+        } else {
+          setIsTryLoadingMore(true);
+        }
+        setTryLoadError(null);
+        const offset = reset ? 0 : tryOffset;
+        const response = await fetchTryItems({
+          status: statuses.length > 0 ? statuses : undefined,
+          limit: PAGE_SIZE,
+          offset,
+        });
+        if (reset) {
+          setTryItems(response.items);
+        } else {
+          setTryItems((prev) => [...prev, ...response.items]);
+        }
+        setTryOffset(offset + response.items.length);
+        setTryHasMore(response.hasMore);
+      } catch {
+        setTryLoadError('Tryアイテムの読み込みに失敗しました');
+      } finally {
+        setIsTryLoading(false);
+        setIsTryLoadingMore(false);
+      }
+    },
+    [tryOffset]
+  );
+
+  const loadMoreTryItems = () => {
+    if (isTryLoadingMore || !tryHasMore) return;
+    void loadTryItems(selectedStatuses, false);
+  };
 
   const handleTabChange = (value: string) => {
     if (value === 'try' && tryItems.length === 0 && !isTryLoading) {
@@ -100,7 +159,7 @@ export function Home(): ReactElement {
   };
 
   return (
-    <section className="mx-auto max-w-320 px-4 py-8">
+    <section className="mx-auto max-w-7xl px-4 py-8">
       <Tabs defaultValue="boards" onValueChange={handleTabChange}>
         <div className="mb-6 flex items-center justify-between">
           <TabsList>
@@ -153,30 +212,33 @@ export function Home(): ReactElement {
               />
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ボード名</TableHead>
-                  <TableHead className="w-24">ロール</TableHead>
-                  <TableHead className="w-28">作成日</TableHead>
-                  <TableHead className="w-12"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {boards.map((board) => (
-                  <BoardTableRow
-                    key={board.id}
-                    board={board}
-                    isOwner={user?.id === board.ownerId}
-                    isDeleting={deletingBoardId === board.id}
-                    isRenaming={renamingBoardId === board.id}
-                    onDelete={() => handleDeleteBoard(board.id)}
-                    onRename={(newName) => handleRenameBoard(board.id, newName)}
-                    onClick={() => navigate(`/board/${board.id}`)}
-                  />
-                ))}
-              </TableBody>
-            </Table>
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ボード名</TableHead>
+                    <TableHead className="w-24">ロール</TableHead>
+                    <TableHead className="w-28">作成日</TableHead>
+                    <TableHead className="w-12"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {boards.map((board) => (
+                    <BoardTableRow
+                      key={board.id}
+                      board={board}
+                      isOwner={user?.id === board.ownerId}
+                      isDeleting={deletingBoardId === board.id}
+                      isRenaming={renamingBoardId === board.id}
+                      onDelete={() => handleDeleteBoard(board.id)}
+                      onRename={(newName) => handleRenameBoard(board.id, newName)}
+                      onClick={() => navigate(`/board/${board.id}`)}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
+              {boardsHasMore && <LoadMoreButton onClick={loadMoreBoards} isLoading={isLoadingMore} />}
+            </>
           )}
         </TabsContent>
 
@@ -197,7 +259,12 @@ export function Home(): ReactElement {
             </div>
           )}
 
-          {!tryLoadError && <TryItemsTable items={tryItems} isLoading={isTryLoading} />}
+          {!tryLoadError && (
+            <>
+              <TryItemsTable items={tryItems} isLoading={isTryLoading} />
+              {tryHasMore && !isTryLoading && <LoadMoreButton onClick={loadMoreTryItems} isLoading={isTryLoadingMore} />}
+            </>
+          )}
         </TabsContent>
       </Tabs>
     </section>

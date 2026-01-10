@@ -6,6 +6,23 @@ import type { BoardRow, ItemRow, ProfileRow } from '@/types/db';
 import type { BoardMember, KptBoard, KptColumnType, KptItem, TryItemWithBoard, TryStatus, UserProfile } from '@/types/kpt';
 
 /**
+ * ページネーション付きレスポンスの型（カーソルベース）
+ */
+export interface PaginatedResponse<T> {
+  items: T[];
+  nextCursor: string | null;
+  hasMore: boolean;
+}
+
+/**
+ * ページネーション付きレスポンスの型（オフセットベース）
+ */
+export interface OffsetPaginatedResponse<T> {
+  items: T[];
+  hasMore: boolean;
+}
+
+/**
  * APIエラークラス
  *
  * Supabaseの`FunctionsHttpError`から詰め替えて変換する。
@@ -63,11 +80,27 @@ function mapRowToItem(row: ItemRowWithProfiles): KptItem {
   };
 }
 
+export interface FetchBoardsOptions {
+  limit?: number;
+  cursor?: string;
+}
+
 /**
  * ボードリストを取得する。
  */
-export async function fetchBoards(): Promise<KptBoard[]> {
-  const { data, error } = await supabase.functions.invoke('get-boards', {
+export async function fetchBoards(options?: FetchBoardsOptions): Promise<PaginatedResponse<KptBoard>> {
+  const params = new URLSearchParams();
+  if (options?.limit) {
+    params.set('limit', options.limit.toString());
+  }
+  if (options?.cursor) {
+    params.set('cursor', options.cursor);
+  }
+
+  const queryString = params.toString();
+  const url = queryString ? `get-boards?${queryString}` : 'get-boards';
+
+  const { data, error } = await supabase.functions.invoke(url, {
     method: 'GET',
   });
 
@@ -75,14 +108,21 @@ export async function fetchBoards(): Promise<KptBoard[]> {
     throw await convertToAPIError(error, 'ボードリストの取得に失敗しました');
   }
 
-  if (!data) return [];
+  if (!data) {
+    return { items: [], nextCursor: null, hasMore: false };
+  }
 
-  return (data as BoardRow[]).map((row) => ({
-    id: row.id,
-    name: row.name,
-    ownerId: row.owner_id ?? undefined,
-    createdAt: row.created_at,
-  }));
+  const response = data as { items: BoardRow[]; nextCursor: string | null; hasMore: boolean };
+  return {
+    items: response.items.map((row) => ({
+      id: row.id,
+      name: row.name,
+      ownerId: row.owner_id ?? undefined,
+      createdAt: row.created_at,
+    })),
+    nextCursor: response.nextCursor,
+    hasMore: response.hasMore,
+  };
 }
 
 /**
@@ -358,6 +398,8 @@ export async function updateBoard(boardId: string, name: string): Promise<KptBoa
 
 export interface FetchTryItemsOptions {
   status?: TryStatus[];
+  limit?: number;
+  offset?: number;
 }
 
 type TryItemRow = ItemRow & {
@@ -369,10 +411,16 @@ type TryItemRow = ItemRow & {
 /**
  * 全ボードのTryアイテム一覧を取得する。
  */
-export async function fetchTryItems(options?: FetchTryItemsOptions): Promise<TryItemWithBoard[]> {
+export async function fetchTryItems(options?: FetchTryItemsOptions): Promise<OffsetPaginatedResponse<TryItemWithBoard>> {
   const params = new URLSearchParams();
   if (options?.status && options.status.length > 0) {
     params.set('status', options.status.join(','));
+  }
+  if (options?.limit) {
+    params.set('limit', options.limit.toString());
+  }
+  if (options?.offset) {
+    params.set('offset', options.offset.toString());
   }
 
   const queryString = params.toString();
@@ -386,22 +434,28 @@ export async function fetchTryItems(options?: FetchTryItemsOptions): Promise<Try
     throw await convertToAPIError(error, 'Tryアイテム一覧の取得に失敗しました');
   }
 
-  if (!data) return [];
+  if (!data) {
+    return { items: [], hasMore: false };
+  }
 
-  return (data as TryItemRow[]).map((row) => ({
-    id: row.id,
-    boardId: row.board_id,
-    boardName: row.board_name ?? null,
-    column: row.column_name as KptColumnType,
-    text: row.text,
-    position: row.position,
-    authorId: row.author_id,
-    authorNickname: row.author_nickname,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
-    status: (row.status as TryStatus) ?? null,
-    assigneeId: row.assignee_id,
-    assigneeNickname: row.assignee_nickname ?? null,
-    dueDate: row.due_date,
-  }));
+  const response = data as { items: TryItemRow[]; hasMore: boolean };
+  return {
+    items: response.items.map((row) => ({
+      id: row.id,
+      boardId: row.board_id,
+      boardName: row.board_name ?? null,
+      column: row.column_name as KptColumnType,
+      text: row.text,
+      position: row.position,
+      authorId: row.author_id,
+      authorNickname: row.author_nickname,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      status: (row.status as TryStatus) ?? null,
+      assigneeId: row.assignee_id,
+      assigneeNickname: row.assignee_nickname ?? null,
+      dueDate: row.due_date,
+    })),
+    hasMore: response.hasMore,
+  };
 }

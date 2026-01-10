@@ -1,6 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
-import { VALID_TRY_STATUSES } from '../../../shared/constants.ts';
+import { ITEMS_PER_PAGE, VALID_TRY_STATUSES } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -19,6 +19,10 @@ Deno.serve(async (req) => {
 
   const { user } = result;
   const client = createServiceClient();
+
+  const url = new URL(req.url);
+  const limit = Math.min(Number(url.searchParams.get('limit')) || ITEMS_PER_PAGE, 100);
+  const offset = Math.max(Number(url.searchParams.get('offset')) || 0, 0);
 
   // ステータスパラメータをパース（カンマ区切り）
   const statusParam = getQueryParam(req, 'status');
@@ -40,7 +44,7 @@ Deno.serve(async (req) => {
 
   // 所属するボードがない場合は空配列を返す
   if (!memberships || memberships.length === 0) {
-    return generateJsonResponse([]);
+    return generateJsonResponse({ items: [], hasMore: false });
   }
 
   const boardIds = memberships.map((m) => m.board_id);
@@ -80,8 +84,11 @@ Deno.serve(async (req) => {
     query = query.in('status', statuses);
   }
 
-  // 期日が近い順にソート（NULLは末尾）
-  query = query.order('due_date', { ascending: true, nullsFirst: false });
+  // 期日が近い順にソート（NULLは末尾）、同一日付はcreated_at順
+  query = query
+    .order('due_date', { ascending: true, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit); // NOTE: 1件多く取得してhasMoreの判定に用いる
 
   const { data, error } = await query;
 
@@ -89,7 +96,11 @@ Deno.serve(async (req) => {
     return generateErrorResponse('Tryアイテムの取得に失敗しました', 500);
   }
 
-  const items = (data ?? []).map((item: any) => ({
+  const allItems = data ?? [];
+  const hasMore = allItems.length > limit;
+  const resultItems = hasMore ? allItems.slice(0, limit) : allItems;
+
+  const items = resultItems.map((item: any) => ({
     id: item.id,
     board_id: item.board_id,
     board_name: item.boards?.name ?? null,
@@ -106,5 +117,5 @@ Deno.serve(async (req) => {
     due_date: item.due_date,
   }));
 
-  return generateJsonResponse(items);
+  return generateJsonResponse({ items, hasMore });
 });

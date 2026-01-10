@@ -404,3 +404,86 @@ INSERT INTO public.items (id, board_id, column_name, text, position, author_id, 
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'keep', 'チームワークが良い', 1000, '11111111-1111-1111-1111-111111111111'::uuid, now()),
   ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'problem', 'コミュニケーション不足', 1000, '22222222-2222-2222-2222-222222222222'::uuid, now()),
   ('dddddddd-dddd-dddd-dddd-dddddddddddd'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'try', '定期的なミーティングを開催する', 1000, '11111111-1111-1111-1111-111111111111'::uuid, now());
+
+-- ============================================================
+-- ページネーションテスト用ユーザー（100ボード、100 Tryアイテム）
+-- ============================================================
+
+-- ページネーションテストユーザー: pagination@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'pagination@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- プロフィール
+INSERT INTO public.profiles (id, nickname, created_at, updated_at) VALUES
+  ('ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid, 'ページネーションテスト', now(), now());
+
+-- 100件のボードを作成（generate_seriesを使用）
+INSERT INTO public.boards (id, name, owner_id, created_at)
+SELECT
+  ('00000000-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
+  'テストボード ' || n,
+  'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
+  now() - (n || ' minutes')::interval
+FROM generate_series(1, 100) AS n;
+
+-- 100件のボードメンバーシップを作成
+INSERT INTO public.board_members (board_id, user_id, role, created_at)
+SELECT
+  ('00000000-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
+  'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
+  'owner',
+  now()
+FROM generate_series(1, 100) AS n;
+
+-- 最初のボードに100件のTryアイテムを作成
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, status, due_date, created_at)
+SELECT
+  ('10000000-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
+  '00000000-0000-0000-0000-000000000001'::uuid,
+  'try',
+  'Tryアイテム ' || n,
+  n * 1000,
+  'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
+  CASE
+    WHEN n % 4 = 0 THEN 'done'
+    WHEN n % 4 = 1 THEN 'pending'
+    WHEN n % 4 = 2 THEN 'in_progress'
+    ELSE 'wont_fix'
+  END,
+  CASE
+    WHEN n % 3 = 0 THEN NULL
+    ELSE (now() + (n || ' days')::interval)::date
+  END,
+  now() - (n || ' minutes')::interval
+FROM generate_series(1, 100) AS n;
