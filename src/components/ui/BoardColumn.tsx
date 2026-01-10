@@ -16,7 +16,7 @@ const columnStyles =
 export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement> {
   column: KptColumnType;
   items: KptItem[];
-  selectedItemId?: string | null;
+  selectedItemId?: string;
   onDeleteItem?: (id: string) => void;
   onCardClick?: (item: KptItem) => void;
   onTagClick?: (tag: string) => void;

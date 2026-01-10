@@ -128,27 +128,12 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
     onClick?.(item);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleCardClick();
-    }
-  };
-
   return (
     <article className={cn(cardStyles, 'relative', className)} aria-label={`KPTカード: ${item.text}`}>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- キーボードアクセシビリティは別途「詳細を開く」ボタンで提供している */}
       <div
-        role="button"
-        tabIndex={onClick ? 0 : undefined}
-        className={cn(
-          'p-4',
-          onClick && 'focus-visible:ring-ring cursor-pointer transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2'
-        )}
+        className={cn('p-4', onClick && 'cursor-pointer transition-shadow hover:shadow-md')}
         onClick={onClick ? handleCardClick : undefined}
-        onKeyDown={onClick ? handleKeyDown : undefined}
-        aria-expanded={onClick ? isSelected : undefined}
-        aria-controls={onClick && isSelected ? `detail-panel-${item.id}` : undefined}
-        aria-label={onClick ? `${item.text}の詳細を${isSelected ? '閉じる' : '開く'}` : undefined}
       >
         <p className="text-md pr-8 wrap-break-word">
           <TextWithHashtags text={item.text} onTagClick={onTagClick} />
@@ -174,16 +159,22 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
         {/* Try専用フィールドの表示 */}
         {item.column === 'try' && (item.status || item.assigneeNickname || item.dueDate) && (
           <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-gray-200 pt-3 text-xs">
-            {item.status && (
-              <span className={statusBadge({ status: item.status })}>
-                {STATUS_LABELS[item.status]}
-              </span>
-            )}
+            {item.status && <span className={statusBadge({ status: item.status })}>{STATUS_LABELS[item.status]}</span>}
             {item.assigneeNickname && <span className="text-muted-foreground">担当: {item.assigneeNickname}</span>}
             {item.dueDate && <span className="text-muted-foreground">期日: {item.dueDate.replace(/-/g, '/')}</span>}
           </div>
         )}
       </div>
+      {onClick && (
+        <button
+          type="button"
+          onClick={handleCardClick}
+          className="text-muted-foreground sr-only rounded bg-white px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2 focus-visible:ring-2"
+          aria-expanded={isSelected}
+        >
+          詳細を開く
+        </button>
+      )}
       {onDelete && (
         <button
           type="button"
