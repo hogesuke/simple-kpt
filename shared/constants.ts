@@ -6,3 +6,9 @@ export const BOARD_NAME_MAX_LENGTH = 50;
 
 /** ニックネームの最大文字数 */
 export const NICKNAME_MAX_LENGTH = 15;
+
+/** 有効なカラム名 */
+export const VALID_COLUMNS = ['keep', 'problem', 'try'] as const;
+
+/** 有効なTryのステータス */
+export const VALID_TRY_STATUSES = ['pending', 'in_progress', 'done', 'wont_fix'] as const;

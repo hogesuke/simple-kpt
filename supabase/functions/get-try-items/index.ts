@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
+import { VALID_STATUSES } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -8,8 +9,6 @@ import {
   getQueryParam,
   requireMethod,
 } from '../_shared/helpers.ts';
-
-const VALID_STATUSES = ['pending', 'in_progress', 'done', 'wont_fix'];
 
 Deno.serve(async (req) => {
   const methodError = requireMethod(req, 'GET');
@@ -26,7 +25,7 @@ Deno.serve(async (req) => {
   let statuses: string[] = [];
 
   if (statusParam) {
-    statuses = statusParam.split(',').filter((s) => VALID_STATUSES.includes(s));
+    statuses = statusParam.split(',').filter((s) => VALID_STATUSES.includes(s as (typeof VALID_STATUSES)[number]));
     if (statuses.length === 0) {
       return generateErrorResponse('無効なステータスが指定されました', 400);
     }

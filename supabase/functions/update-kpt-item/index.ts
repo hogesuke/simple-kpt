@@ -1,6 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
-import { ITEM_TEXT_MAX_LENGTH } from '../../../shared/constants.ts';
+import { ITEM_TEXT_MAX_LENGTH, VALID_COLUMNS, VALID_STATUSES } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -45,6 +45,14 @@ Deno.serve(async (req) => {
     if (trimmedText.length > ITEM_TEXT_MAX_LENGTH) {
       return generateErrorResponse(`テキストは${ITEM_TEXT_MAX_LENGTH}文字以内で入力してください`, 400);
     }
+  }
+
+  if (column !== undefined && !VALID_COLUMNS.includes(column as (typeof VALID_COLUMNS)[number])) {
+    return generateErrorResponse('無効なカラムが指定されました', 400);
+  }
+
+  if (status !== undefined && !VALID_STATUSES.includes(status as (typeof VALID_STATUSES)[number])) {
+    return generateErrorResponse('無効なステータスが指定されました', 400);
   }
 
   // boardが存在するか確認

@@ -1,6 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
-import { ITEM_TEXT_MAX_LENGTH } from '../../../shared/constants.ts';
+import { ITEM_TEXT_MAX_LENGTH, VALID_COLUMNS } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -28,6 +28,10 @@ Deno.serve(async (req) => {
 
   if (!boardId || !column) {
     return generateErrorResponse('boardId, column は必須です', 400);
+  }
+
+  if (!VALID_COLUMNS.includes(column as (typeof VALID_COLUMNS)[number])) {
+    return generateErrorResponse('無効なカラムが指定されました', 400);
   }
 
   const trimmedText = text?.trim();

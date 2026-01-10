@@ -1,6 +1,8 @@
-export type KptColumnType = 'keep' | 'problem' | 'try';
+import { VALID_COLUMNS, VALID_TRY_STATUSES } from '@shared/constants';
 
-export type TryStatus = 'pending' | 'in_progress' | 'done' | 'wont_fix';
+export type KptColumnType = (typeof VALID_COLUMNS)[number];
+
+export type TryStatus = (typeof VALID_TRY_STATUSES)[number];
 
 export const PROBLEM_STATUS_LABELS: Record<TryStatus, string> = {
   pending: '未対応',
