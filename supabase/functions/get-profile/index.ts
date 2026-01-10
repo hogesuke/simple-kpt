@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
   const { data, error } = await client.from('profiles').select('id, nickname, created_at, updated_at').eq('id', user.id).maybeSingle();
 
   if (error) {
-    return generateErrorResponse(error.message, 500);
+    return generateErrorResponse('プロフィールの取得に失敗しました', 500);
   }
 
   // プロフィールが存在しない場合はnullを返す

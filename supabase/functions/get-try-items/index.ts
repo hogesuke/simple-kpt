@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
   const { data: memberships, error: memberError } = await client.from('board_members').select('board_id').eq('user_id', user.id);
 
   if (memberError) {
-    return generateErrorResponse(memberError.message, 500);
+    return generateErrorResponse('ボード情報の取得に失敗しました', 500);
   }
 
   // 所属するボードがない場合は空配列を返す
@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
   const { data, error } = await query;
 
   if (error) {
-    return generateErrorResponse(error.message, 500);
+    return generateErrorResponse('Tryアイテムの取得に失敗しました', 500);
   }
 
   const items = (data ?? []).map((item: any) => ({

@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
   const { data: memberData, error: memberError } = await client.from('board_members').select('board_id').eq('user_id', user.id);
 
   if (memberError) {
-    return generateErrorResponse(memberError.message, 500);
+    return generateErrorResponse('ボード情報の取得に失敗しました', 500);
   }
 
   const boardIds = (memberData ?? []).map((m: any) => m.board_id);
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    return generateErrorResponse(error.message, 500);
+    return generateErrorResponse('ボード情報の取得に失敗しました', 500);
   }
 
   return generateJsonResponse(data ?? []);

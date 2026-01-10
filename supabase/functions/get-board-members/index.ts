@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
   const { data: board, error: boardError } = await client.from('boards').select('id').eq('id', boardId).maybeSingle();
 
   if (boardError) {
-    return generateErrorResponse(boardError.message, 500);
+    return generateErrorResponse('ボード情報の取得に失敗しました', 500);
   }
 
   if (!board) {
@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
     .order('created_at', { ascending: true });
 
   if (membersError) {
-    return generateErrorResponse(membersError.message, 500);
+    return generateErrorResponse('メンバー情報の取得に失敗しました', 500);
   }
 
   // プロフィール情報を取得

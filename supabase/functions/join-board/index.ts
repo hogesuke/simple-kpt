@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
   const { data: board, error: boardError } = await client.from('boards').select('id').eq('id', boardId).maybeSingle();
 
   if (boardError) {
-    return generateErrorResponse(boardError.message, 500);
+    return generateErrorResponse('ボード情報の取得に失敗しました', 500);
   }
 
   if (!board) {
@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
   const { error: insertError } = await client.from('board_members').insert({ board_id: boardId, user_id: user.id, role: 'member' });
 
   if (insertError) {
-    return generateErrorResponse(insertError.message, 500);
+    return generateErrorResponse('ボードへの参加に失敗しました', 500);
   }
 
   return generateJsonResponse({ success: true, alreadyMember: false });

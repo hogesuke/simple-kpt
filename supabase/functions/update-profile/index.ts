@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (error || !data) {
-      return generateErrorResponse(error?.message ?? 'unknown error', 500);
+      return generateErrorResponse('プロフィールの更新に失敗しました', 500);
     }
 
     return generateJsonResponse(data);
@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
       .maybeSingle();
 
     if (error || !data) {
-      return generateErrorResponse(error?.message ?? 'unknown error', 500);
+      return generateErrorResponse('プロフィールの作成に失敗しました', 500);
     }
 
     return generateJsonResponse(data);
