@@ -3,7 +3,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase-client';
 
 import type { BoardRow, ItemRow, ProfileRow } from '@/types/db';
-import type { BoardMember, KptBoard, KptColumnType, KptItem, TryStatus, UserProfile } from '@/types/kpt';
+import type { BoardMember, KptBoard, KptColumnType, KptItem, TryItemWithBoard, TryStatus, UserProfile } from '@/types/kpt';
 
 /**
  * APIエラークラス
@@ -54,7 +54,7 @@ function mapRowToItem(row: ItemRowWithProfiles): KptItem {
 }
 
 /**
- * ボード一覧を取得する。
+ * ボードリストを取得する。
  */
 export async function fetchBoards(): Promise<KptBoard[]> {
   const { data, error } = await supabase.functions.invoke('get-boards', {
@@ -62,7 +62,7 @@ export async function fetchBoards(): Promise<KptBoard[]> {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'ボード一覧の取得に失敗しました');
+    throw convertToAPIError(error, 'ボードリストの取得に失敗しました');
   }
 
   if (!data) return [];
@@ -344,4 +344,54 @@ export async function updateBoard(boardId: string, name: string): Promise<KptBoa
     ownerId: row.owner_id ?? undefined,
     createdAt: row.created_at,
   };
+}
+
+export interface FetchTryItemsOptions {
+  status?: TryStatus[];
+}
+
+type TryItemRow = ItemRow & {
+  author_nickname?: string | null;
+  assignee_nickname?: string | null;
+  board_name?: string | null;
+};
+
+/**
+ * 全ボードのTryアイテム一覧を取得する。
+ */
+export async function fetchTryItems(options?: FetchTryItemsOptions): Promise<TryItemWithBoard[]> {
+  const params = new URLSearchParams();
+  if (options?.status && options.status.length > 0) {
+    params.set('status', options.status.join(','));
+  }
+
+  const queryString = params.toString();
+  const url = queryString ? `get-try-items?${queryString}` : 'get-try-items';
+
+  const { data, error } = await supabase.functions.invoke(url, {
+    method: 'GET',
+  });
+
+  if (error) {
+    throw convertToAPIError(error, 'Tryアイテム一覧の取得に失敗しました');
+  }
+
+  if (!data) return [];
+
+  return (data as TryItemRow[]).map((row) => ({
+    id: row.id,
+    boardId: row.board_id,
+    boardName: row.board_name ?? null,
+    column: row.column_name as KptColumnType,
+    text: row.text,
+    position: row.position,
+    authorId: row.author_id,
+    authorNickname: row.author_nickname,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    status: (row.status as TryStatus) ?? null,
+    assigneeId: row.assignee_id,
+    assigneeNickname: row.assignee_nickname ?? null,
+    dueDate: row.due_date,
+  }));
 }

@@ -236,7 +236,7 @@ export function KPTBoard(): ReactElement {
           <nav aria-label="パンくずリスト" className="mb-2">
             <Link to="/" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors">
               <ArrowLeft className="h-4 w-4" />
-              ボード一覧に戻る
+              ボードリストに戻る
             </Link>
           </nav>
           {isLoading ? <Skeleton className="h-8 w-48" /> : <h1 className="text-2xl font-semibold">{board ? board.name : 'KPT Board'}</h1>}

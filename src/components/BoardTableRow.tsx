@@ -20,7 +20,7 @@ interface BoardTableRowProps {
 }
 
 /**
- * ボード一覧テーブルの行
+ * ボードリストテーブルの行
  */
 export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete, onRename, onClick }: BoardTableRowProps): ReactElement {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

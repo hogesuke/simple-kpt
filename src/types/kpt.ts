@@ -44,6 +44,13 @@ export interface KptItem extends Partial<TryItemProperties> {
 
 export const isTryItem = (item: KptItem): item is KptItem & TryItemProperties => item.column === 'try';
 
+/**
+ * ボード名を含むTryアイテム（Tryリスト表示用）
+ */
+export interface TryItemWithBoard extends Omit<KptItem, keyof TryItemProperties>, TryItemProperties {
+  boardName: string | null;
+}
+
 export interface UserProfile {
   id: string;
   nickname: string;
