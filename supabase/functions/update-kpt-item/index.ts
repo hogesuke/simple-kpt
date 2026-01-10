@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     return generateErrorResponse('無効なカラムが指定されました', 400);
   }
 
-  if (status !== undefined && !VALID_TRY_STATUSES.includes(status as (typeof VALID_TRY_STATUSES)[number])) {
+  if (status && !VALID_TRY_STATUSES.includes(status as (typeof VALID_TRY_STATUSES)[number])) {
     return generateErrorResponse('無効なステータスが指定されました', 400);
   }
 
