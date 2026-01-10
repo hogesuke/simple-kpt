@@ -25,7 +25,7 @@ export function useErrorHandler() {
             navigate('/not-found', { replace: true });
             return;
           default:
-            toast.error(message || error.message || 'エラーが発生しました');
+            toast.error(error.message || message || 'エラーが発生しました');
             return;
         }
       }
