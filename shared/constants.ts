@@ -12,3 +12,9 @@ export const VALID_COLUMNS = ['keep', 'problem', 'try'] as const;
 
 /** 有効なTryのステータス */
 export const VALID_TRY_STATUSES = ['pending', 'in_progress', 'done', 'wont_fix'] as const;
+
+/** ユーザーあたりのボード作成上限数 */
+export const MAX_BOARDS_PER_USER = 100;
+
+/** ボードあたりのアイテム上限数 */
+export const MAX_ITEMS_PER_BOARD = 200;

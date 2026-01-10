@@ -1,6 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
-import { ITEM_TEXT_MAX_LENGTH, VALID_COLUMNS } from '../../../shared/constants.ts';
+import { ITEM_TEXT_MAX_LENGTH, MAX_ITEMS_PER_BOARD, VALID_COLUMNS } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -64,6 +64,17 @@ Deno.serve(async (req) => {
 
   if (!member) {
     return generateErrorResponse('このボードへのアクセス権限がありません', 403);
+  }
+
+  // ボード内のアイテム数をチェック
+  const { count, error: countError } = await client.from('items').select('*', { count: 'exact', head: true }).eq('board_id', boardId);
+
+  if (countError) {
+    return generateErrorResponse('アイテムの作成に失敗しました', 500);
+  }
+
+  if (count !== null && count >= MAX_ITEMS_PER_BOARD) {
+    return generateErrorResponse(`アイテム数上限を超えました。1ボードあたり最大${MAX_ITEMS_PER_BOARD}個まで作成できます`, 400);
   }
 
   // 同じカラム内の最大positionを取得して、その後ろに配置する

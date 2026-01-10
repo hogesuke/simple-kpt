@@ -24,10 +24,20 @@ export class APIError extends Error {
 /**
  * エラーをAPIErrorに変換する。
  */
-function convertToAPIError(error: unknown, fallbackMessage: string): APIError {
-  const status = error instanceof FunctionsHttpError ? error.context.status : undefined;
+async function convertToAPIError(error: unknown, fallbackMessage: string): Promise<APIError> {
+  if (error instanceof FunctionsHttpError) {
+    const status = error.context.status;
+    try {
+      const body = await error.context.json();
+      const message = body?.error ?? fallbackMessage;
+      return new APIError(message, status);
+    } catch {
+      // JSONパースに失敗した場合はフォールバック
+      return new APIError(fallbackMessage, status);
+    }
+  }
   const message = error instanceof Error ? error.message : fallbackMessage;
-  return new APIError(message, status);
+  return new APIError(message);
 }
 
 type ItemRowWithProfiles = ItemRow & {
@@ -62,7 +72,7 @@ export async function fetchBoards(): Promise<KptBoard[]> {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'ボードリストの取得に失敗しました');
+    throw await convertToAPIError(error, 'ボードリストの取得に失敗しました');
   }
 
   if (!data) return [];
@@ -84,7 +94,7 @@ export async function fetchBoard(boardId: string): Promise<KptBoard | null> {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'ボードの取得に失敗しました');
+    throw await convertToAPIError(error, 'ボードの取得に失敗しました');
   }
 
   if (!data) return null;
@@ -108,7 +118,7 @@ export async function createBoard(name: string): Promise<KptBoard> {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'ボードの作成に失敗しました');
+    throw await convertToAPIError(error, 'ボードの作成に失敗しました');
   }
 
   if (!data) {
@@ -133,7 +143,7 @@ export async function fetchKptItems(boardId: string): Promise<KptItem[]> {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'アイテム一覧の取得に失敗しました');
+    throw await convertToAPIError(error, 'アイテム一覧の取得に失敗しました');
   }
 
   if (!data) return [];
@@ -154,7 +164,7 @@ export async function createKptItem(input: { boardId: string; column: KptColumnT
   });
 
   if (error) {
-    throw convertToAPIError(error, 'アイテムの作成に失敗しました');
+    throw await convertToAPIError(error, 'アイテムの作成に失敗しました');
   }
 
   if (!data) {
@@ -192,7 +202,7 @@ export async function updateKptItem(input: {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'アイテムの更新に失敗しました');
+    throw await convertToAPIError(error, 'アイテムの更新に失敗しました');
   }
 
   if (!data) {
@@ -212,7 +222,7 @@ export async function deleteKptItem(id: string, boardId: string): Promise<void> 
   });
 
   if (error) {
-    throw convertToAPIError(error, 'アイテムの削除に失敗しました');
+    throw await convertToAPIError(error, 'アイテムの削除に失敗しました');
   }
 
   void data;
@@ -227,7 +237,7 @@ export async function fetchProfile(): Promise<UserProfile | null> {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'プロフィールの取得に失敗しました');
+    throw await convertToAPIError(error, 'プロフィールの取得に失敗しました');
   }
 
   if (!data) return null;
@@ -251,7 +261,7 @@ export async function updateProfile(nickname: string): Promise<UserProfile> {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'プロフィールの更新に失敗しました');
+    throw await convertToAPIError(error, 'プロフィールの更新に失敗しました');
   }
 
   if (!data) {
@@ -276,7 +286,7 @@ export async function fetchBoardMembers(boardId: string): Promise<BoardMember[]>
   });
 
   if (error) {
-    throw convertToAPIError(error, 'メンバー一覧の取得に失敗しました');
+    throw await convertToAPIError(error, 'メンバー一覧の取得に失敗しました');
   }
 
   if (!data) return [];
@@ -294,7 +304,7 @@ export async function joinBoard(boardId: string): Promise<{ success: boolean; al
   });
 
   if (error) {
-    throw convertToAPIError(error, 'ボードへの参加に失敗しました');
+    throw await convertToAPIError(error, 'ボードへの参加に失敗しました');
   }
 
   if (!data) {
@@ -314,7 +324,7 @@ export async function deleteBoard(boardId: string): Promise<void> {
   });
 
   if (error) {
-    throw convertToAPIError(error, 'ボードの削除に失敗しました');
+    throw await convertToAPIError(error, 'ボードの削除に失敗しました');
   }
 
   void data;
@@ -330,7 +340,7 @@ export async function updateBoard(boardId: string, name: string): Promise<KptBoa
   });
 
   if (error) {
-    throw convertToAPIError(error, 'ボード名の更新に失敗しました');
+    throw await convertToAPIError(error, 'ボード名の更新に失敗しました');
   }
 
   if (!data) {
@@ -373,7 +383,7 @@ export async function fetchTryItems(options?: FetchTryItemsOptions): Promise<Try
   });
 
   if (error) {
-    throw convertToAPIError(error, 'Tryアイテム一覧の取得に失敗しました');
+    throw await convertToAPIError(error, 'Tryアイテム一覧の取得に失敗しました');
   }
 
   if (!data) return [];
