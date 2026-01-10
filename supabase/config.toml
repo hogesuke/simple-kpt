@@ -471,16 +471,6 @@ entrypoint = "./functions/get-board-members/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/get-board-members/*.html" ]
 
-[functions.invite-board-member]
-enabled = true
-verify_jwt = true
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
-entrypoint = "./functions/invite-board-member/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/invite-board-member/*.html" ]
-
 [functions.get-try-items]
 enabled = true
 verify_jwt = true
