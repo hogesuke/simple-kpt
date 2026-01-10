@@ -1,6 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
-import { VALID_STATUSES } from '../../../shared/constants.ts';
+import { VALID_TRY_STATUSES } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
   let statuses: string[] = [];
 
   if (statusParam) {
-    statuses = statusParam.split(',').filter((s) => VALID_STATUSES.includes(s as (typeof VALID_STATUSES)[number]));
+    statuses = statusParam.split(',').filter((s) => VALID_TRY_STATUSES.includes(s as (typeof VALID_TRY_STATUSES)[number]));
     if (statuses.length === 0) {
       return generateErrorResponse('無効なステータスが指定されました', 400);
     }

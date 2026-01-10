@@ -197,7 +197,7 @@ export function Home(): ReactElement {
             </div>
           )}
 
-          <TryItemsTable items={tryItems} isLoading={isTryLoading} />
+          {!tryLoadError && <TryItemsTable items={tryItems} isLoading={isTryLoading} />}
         </TabsContent>
       </Tabs>
     </section>

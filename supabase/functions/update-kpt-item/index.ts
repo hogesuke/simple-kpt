@@ -1,6 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
-import { ITEM_TEXT_MAX_LENGTH, VALID_COLUMNS, VALID_STATUSES } from '../../../shared/constants.ts';
+import { ITEM_TEXT_MAX_LENGTH, VALID_COLUMNS, VALID_TRY_STATUSES } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
     return generateErrorResponse('無効なカラムが指定されました', 400);
   }
 
-  if (status !== undefined && !VALID_STATUSES.includes(status as (typeof VALID_STATUSES)[number])) {
+  if (status !== undefined && !VALID_TRY_STATUSES.includes(status as (typeof VALID_TRY_STATUSES)[number])) {
     return generateErrorResponse('無効なステータスが指定されました', 400);
   }
 
