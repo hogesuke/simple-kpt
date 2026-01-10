@@ -6,6 +6,7 @@ import {
   createServiceClient,
   generateErrorResponse,
   generateJsonResponse,
+  isValidUUID,
   parseRequestBody,
   requireMethod,
 } from '../_shared/helpers.ts';
@@ -28,6 +29,10 @@ Deno.serve(async (req) => {
 
   if (!boardId || !column) {
     return generateErrorResponse('boardId, column は必須です', 400);
+  }
+
+  if (!isValidUUID(boardId)) {
+    return generateErrorResponse('ボードが見つかりません', 404);
   }
 
   if (!VALID_COLUMNS.includes(column as (typeof VALID_COLUMNS)[number])) {

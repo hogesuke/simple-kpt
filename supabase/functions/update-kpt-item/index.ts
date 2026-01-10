@@ -6,6 +6,7 @@ import {
   createServiceClient,
   generateErrorResponse,
   generateJsonResponse,
+  isValidUUID,
   parseRequestBody,
   requireMethod,
 } from '../_shared/helpers.ts';
@@ -35,6 +36,10 @@ Deno.serve(async (req) => {
 
   if (!id || !boardId) {
     return generateErrorResponse('id, boardIdは必須です。', 400);
+  }
+
+  if (!isValidUUID(boardId) || !isValidUUID(id)) {
+    return generateErrorResponse('ボードが見つかりません', 404);
   }
 
   const trimmedText = text?.trim();

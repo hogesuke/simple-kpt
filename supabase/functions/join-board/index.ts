@@ -5,6 +5,7 @@ import {
   createServiceClient,
   generateErrorResponse,
   generateJsonResponse,
+  isValidUUID,
   parseRequestBody,
   requireMethod,
 } from '../_shared/helpers.ts';
@@ -23,6 +24,10 @@ Deno.serve(async (req) => {
 
   if (!boardId) {
     return generateErrorResponse('boardIdは必須です', 400);
+  }
+
+  if (!isValidUUID(boardId)) {
+    return generateErrorResponse('ボードが見つかりません', 404);
   }
 
   // ボードが存在するか確認
