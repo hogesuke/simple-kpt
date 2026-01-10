@@ -219,6 +219,9 @@ export function SortableKPTCard({
 }: SortableKPTCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
 
+  // role="button"は<li>要素では許可されていないため除外する
+  const { role: _role, ...restAttributes } = attributes;
+
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -233,7 +236,7 @@ export function SortableKPTCard({
         isDragging && 'opacity-30',
         className
       )}
-      {...attributes}
+      {...restAttributes}
       {...listeners}
       {...props}
     >
