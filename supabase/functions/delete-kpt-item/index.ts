@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
   const { data: board, error: boardError } = await client.from('boards').select('id').eq('id', boardId).maybeSingle();
 
   if (boardError) {
-    return generateErrorResponse(boardError.message, 500);
+    return generateErrorResponse('ボード情報の取得に失敗しました', 500);
   }
 
   if (!board) {
@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
   const { error } = await client.from('items').delete().eq('id', id).eq('board_id', boardId);
 
   if (error) {
-    return generateErrorResponse(error.message, 500);
+    return generateErrorResponse('アイテムの削除に失敗しました', 500);
   }
 
   return generateJsonResponse({ success: true });

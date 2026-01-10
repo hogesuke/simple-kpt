@@ -33,7 +33,7 @@ Deno.serve(async (req) => {
   const { data: board, error: boardError } = await client.from('boards').select('id, name, owner_id').eq('id', boardId).maybeSingle();
 
   if (boardError) {
-    return generateErrorResponse(boardError.message, 500);
+    return generateErrorResponse('ボード情報の取得に失敗しました', 500);
   }
 
   if (!board) {

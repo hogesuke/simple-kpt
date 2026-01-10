@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
   const { data: board, error: boardError } = await client.from('boards').select('id').eq('id', boardId).maybeSingle();
 
   if (boardError) {
-    return generateErrorResponse(boardError.message, 500);
+    return generateErrorResponse('ボード情報の取得に失敗しました', 500);
   }
 
   if (!board) {
@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   if (error || !data) {
-    return generateErrorResponse(error?.message ?? 'unknown error', 500);
+    return generateErrorResponse('アイテムの作成に失敗しました', 500);
   }
 
   return generateJsonResponse({
