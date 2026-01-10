@@ -28,6 +28,7 @@ interface BoardState {
   isLoading: boolean;
   isAdding: boolean;
   loadError: string | null;
+  joinError: string | null;
   isNotFound: boolean;
   realtimeChannel: RealtimeChannel | null;
   memberNicknameMap: Record<string, string>; // userId -> nickname へ変換するマップ
@@ -87,13 +88,14 @@ export const useBoardStore = create<BoardState>()(
       isLoading: false,
       isAdding: false,
       loadError: null,
+      joinError: null,
       isNotFound: false,
       realtimeChannel: null,
       memberNicknameMap: {},
       filter: initialFilterState,
 
       loadBoard: async (boardId: string) => {
-        set({ isLoading: true, loadError: null, isNotFound: false });
+        set({ isLoading: true, loadError: null, joinError: null, isNotFound: false });
         try {
           const buildNicknameMap = async (): Promise<Record<string, string>> => {
             try {
@@ -109,7 +111,13 @@ export const useBoardStore = create<BoardState>()(
 
           // メンバーでない場合のみジョインを実行
           if (board && !board.isMember) {
-            await get().joinBoard(boardId);
+            try {
+              await get().joinBoard(boardId);
+            } catch (joinError) {
+              const message = joinError instanceof Error ? joinError.message : 'ボードへの参加に失敗しました';
+              set({ isLoading: false, joinError: message });
+              throw joinError;
+            }
 
             const updatedBoard = await api.fetchBoard(boardId);
             const items = await api.fetchKptItems(boardId);
@@ -123,6 +131,10 @@ export const useBoardStore = create<BoardState>()(
             set({ currentBoard: board, items, memberNicknameMap: nicknameMap, isLoading: false });
           }
         } catch (error) {
+          // joinErrorが設定済みの場合は再設定しない
+          if (get().joinError) {
+            throw error;
+          }
           if (error instanceof APIError && error.status === 404) {
             set({ isLoading: false, isNotFound: true });
           } else {

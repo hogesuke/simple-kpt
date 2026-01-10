@@ -1,5 +1,6 @@
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
+import { MAX_MEMBERS_PER_BOARD } from '../../../shared/constants.ts';
 import {
   createAuthenticatedClient,
   createServiceClient,
@@ -51,6 +52,20 @@ Deno.serve(async (req) => {
 
   if (existingMember) {
     return generateJsonResponse({ success: true, alreadyMember: true });
+  }
+
+  // ボードのメンバー数をチェック
+  const { count, error: countError } = await client
+    .from('board_members')
+    .select('*', { count: 'exact', head: true })
+    .eq('board_id', boardId);
+
+  if (countError) {
+    return generateErrorResponse('ボードへの参加に失敗しました', 500);
+  }
+
+  if (count !== null && count >= MAX_MEMBERS_PER_BOARD) {
+    return generateErrorResponse(`ボードのメンバー数が上限(${MAX_MEMBERS_PER_BOARD}人)に達しているため、ボードに参加できませんでした`, 400);
   }
 
   // メンバーとして追加

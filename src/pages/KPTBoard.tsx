@@ -2,6 +2,7 @@ import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { ArrowLeft, Pencil, Settings, Trash2 } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
+import { toast } from 'sonner';
 
 import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
 import { BoardMembersDialog } from '@/components/BoardMembersDialog';
@@ -41,6 +42,7 @@ export function KPTBoard(): ReactElement {
   const isLoading = useBoardStore((state) => state.isLoading);
   const isAdding = useBoardStore((state) => state.isAdding);
   const loadError = useBoardStore((state) => state.loadError);
+  const joinError = useBoardStore((state) => state.joinError);
   const isNotFound = useBoardStore((state) => state.isNotFound);
   const filter = useBoardStore((state) => state.filter);
   const loadBoard = useBoardStore((state) => state.loadBoard);
@@ -90,6 +92,13 @@ export function KPTBoard(): ReactElement {
       navigate('/not-found', { replace: true });
     }
   }, [isNotFound, navigate]);
+
+  useEffect(() => {
+    if (joinError) {
+      toast.error(joinError);
+      navigate('/', { replace: true });
+    }
+  }, [joinError, navigate]);
 
   const handleItemsChange = useCallback((newItems: KptItem[]) => {
     useBoardStore.setState({ items: newItems });
