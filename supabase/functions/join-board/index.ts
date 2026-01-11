@@ -8,6 +8,7 @@ import {
   generateJsonResponse,
   isValidUUID,
   parseRequestBody,
+  PG_ERROR_CODE,
   requireMethod,
 } from '../_shared/helpers.ts';
 
@@ -43,12 +44,16 @@ Deno.serve(async (req) => {
   }
 
   // すでにメンバーかチェック
-  const { data: existingMember } = await client
+  const { data: existingMember, error: memberCheckError } = await client
     .from('board_members')
     .select('id')
     .eq('board_id', boardId)
     .eq('user_id', user.id)
     .maybeSingle();
+
+  if (memberCheckError) {
+    return generateErrorResponse('ボードへの参加に失敗しました', 500);
+  }
 
   if (existingMember) {
     return generateJsonResponse({ success: true, alreadyMember: true });
@@ -72,6 +77,10 @@ Deno.serve(async (req) => {
   const { error: insertError } = await client.from('board_members').insert({ board_id: boardId, user_id: user.id, role: 'member' });
 
   if (insertError) {
+    // 重複キーエラーの場合は既にメンバーとして扱う（レースコンディション対策）
+    if (insertError.code === PG_ERROR_CODE.UNIQUE_VIOLATION) {
+      return generateJsonResponse({ success: true, alreadyMember: true });
+    }
     return generateErrorResponse('ボードへの参加に失敗しました', 500);
   }
 

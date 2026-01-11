@@ -1,6 +1,14 @@
 import { createClient, type SupabaseClient, type User } from 'npm:@supabase/supabase-js';
 
 /**
+ * PostgreSQLエラーコード
+ * @see https://www.postgresql.org/docs/current/errcodes-appendix.html
+ */
+export const PG_ERROR_CODE = {
+  UNIQUE_VIOLATION: '23505',
+} as const;
+
+/**
  * Service Roleキーを使ったSupabaseクライアントを作成する。
  * 全テーブルへのアクセスはこのクライアントを使用する。
  *
