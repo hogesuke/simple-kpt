@@ -1,7 +1,7 @@
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/cn';
 
 import { buttonVariants } from './button';
 
@@ -15,11 +15,7 @@ const AlertDialogOverlay = forwardRef<
   ElementRef<typeof AlertDialogPrimitive.Overlay>,
   ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Overlay
-    className={cn('fixed inset-0 z-50 bg-black/60', className)}
-    {...props}
-    ref={ref}
-  />
+  <AlertDialogPrimitive.Overlay className={cn('fixed inset-0 z-50 bg-black/60', className)} {...props} ref={ref} />
 ));
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
 
