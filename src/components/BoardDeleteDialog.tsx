@@ -28,7 +28,7 @@ interface BoardDeleteDialogProps {
   /**
    * ダイアログの開閉状態
    */
-  open: boolean;
+  isOpen: boolean;
   /**
    * ダイアログの開閉状態を変更するコールバック
    */
@@ -38,9 +38,9 @@ interface BoardDeleteDialogProps {
 /**
  * ボード削除時の確認ダイアログ
  */
-export function BoardDeleteDialog({ boardName, isDeleting, onDelete, open, onOpenChange }: BoardDeleteDialogProps): ReactElement {
+export function BoardDeleteDialog({ boardName, isDeleting, onDelete, isOpen, onOpenChange }: BoardDeleteDialogProps): ReactElement {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>削除の確認</AlertDialogTitle>

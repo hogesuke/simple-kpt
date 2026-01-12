@@ -26,7 +26,7 @@ interface BoardRenameDialogProps {
   /**
    * ダイアログの開閉状態
    */
-  open: boolean;
+  isOpen: boolean;
   /**
    * ダイアログの開閉状態を変更するコールバック
    */
@@ -36,7 +36,7 @@ interface BoardRenameDialogProps {
 /**
  * ボード名変更ダイアログ
  */
-export function BoardRenameDialog({ boardName, isUpdating, onRename, open, onOpenChange }: BoardRenameDialogProps): ReactElement {
+export function BoardRenameDialog({ boardName, isUpdating, onRename, isOpen, onOpenChange }: BoardRenameDialogProps): ReactElement {
   const {
     register,
     handleSubmit,
@@ -53,10 +53,10 @@ export function BoardRenameDialog({ boardName, isUpdating, onRename, open, onOpe
 
   // ダイアログが開くときに現在のボード名をセットする
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       reset({ name: boardName });
     }
-  }, [open, boardName, reset]);
+  }, [isOpen, boardName, reset]);
 
   const handleOpenChange = (newOpen: boolean) => {
     if (!isUpdating) {
@@ -72,7 +72,7 @@ export function BoardRenameDialog({ boardName, isUpdating, onRename, open, onOpe
   const canSubmit = isValid && !isUnchanged && !isUpdating;
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>ボード名を変更</DialogTitle>

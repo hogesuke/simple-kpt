@@ -14,7 +14,7 @@ interface BoardMembersDialogProps {
 }
 
 export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDialogProps): ReactElement {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [members, setMembers] = useState<BoardMember[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -23,7 +23,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
   const shareUrl = `${window.location.origin}/board/${boardId}`;
 
   useEffect(() => {
-    if (!open) return;
+    if (!isOpen) return;
 
     const loadMembers = async () => {
       setIsLoading(true);
@@ -38,7 +38,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
     };
 
     void loadMembers();
-  }, [open, boardId, handleError]);
+  }, [isOpen, boardId, handleError]);
 
   const handleCopyUrl = async () => {
     try {
@@ -51,7 +51,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" disabled={disabled}>
           <Users className="h-4 w-4" />

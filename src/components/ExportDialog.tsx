@@ -13,7 +13,7 @@ type ExportFormat = 'markdown' | 'csv';
 interface ExportDialogProps {
   boardName: string;
   items: KptItem[];
-  open: boolean;
+  isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
@@ -34,7 +34,7 @@ function generateTimestamp(): string {
 /**
  * エクスポートダイアログ
  */
-export function ExportDialog({ boardName, items, open, onOpenChange }: ExportDialogProps): ReactElement {
+export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportDialogProps): ReactElement {
   const [format, setFormat] = useState<ExportFormat>('markdown');
 
   const generateContent = () => {
@@ -73,7 +73,7 @@ export function ExportDialog({ boardName, items, open, onOpenChange }: ExportDia
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>エクスポート</DialogTitle>

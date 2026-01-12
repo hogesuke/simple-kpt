@@ -85,7 +85,7 @@ export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete
         boardName={board.name}
         isDeleting={isDeleting}
         onDelete={onDelete}
-        open={deleteDialogOpen}
+        isOpen={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
       />
 
@@ -93,7 +93,7 @@ export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete
         boardName={board.name}
         isUpdating={isRenaming}
         onRename={handleRename}
-        open={renameDialogOpen}
+        isOpen={renameDialogOpen}
         onOpenChange={setRenameDialogOpen}
       />
     </>

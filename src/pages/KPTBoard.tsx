@@ -388,7 +388,7 @@ export function KPTBoard(): ReactElement {
           boardName={board.name}
           isDeleting={deletingBoardId !== null}
           onDelete={() => handleDeleteBoard(boardId)}
-          open={deleteDialogOpen}
+          isOpen={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
         />
       )}
@@ -399,13 +399,13 @@ export function KPTBoard(): ReactElement {
           boardName={board.name}
           isUpdating={isRenaming}
           onRename={handleRenameBoard}
-          open={renameDialogOpen}
+          isOpen={renameDialogOpen}
           onOpenChange={setRenameDialogOpen}
         />
       )}
 
       {/* エクスポートダイアログ */}
-      {board && <ExportDialog boardName={board.name} items={items} open={exportDialogOpen} onOpenChange={setExportDialogOpen} />}
+      {board && <ExportDialog boardName={board.name} items={items} isOpen={exportDialogOpen} onOpenChange={setExportDialogOpen} />}
     </DndContext>
   );
 }
