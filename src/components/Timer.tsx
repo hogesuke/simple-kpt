@@ -5,25 +5,21 @@ import { Button } from '@/components/ui/shadcn/button';
 import { Checkbox } from '@/components/ui/shadcn/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/shadcn/dialog';
 import { Input } from '@/components/ui/shadcn/input';
-import { useBoardStore } from '@/stores/useBoardStore';
-import { TIMER_PRESETS, TimerState } from '@/types/kpt';
+import { useBoardContext } from '@/contexts/BoardContext';
+import { TIMER_PRESETS } from '@/types/kpt';
 
 interface TimerProps {
-  boardId: string;
-  timerState: TimerState | null;
   disabled?: boolean;
 }
 
-export function Timer({ boardId, timerState, disabled }: TimerProps) {
+export function Timer({ disabled }: TimerProps) {
+  const { timerState, startTimer, stopTimer } = useBoardContext();
   const [isOpen, setIsOpen] = useState(false);
   const [minutes, setMinutes] = useState<string>('3');
   const [hideOthersCards, setHideOthersCards] = useState(true);
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
-
-  const startTimer = useBoardStore((state) => state.startTimer);
-  const stopTimer = useBoardStore((state) => state.stopTimer);
 
   // 残り時間の計算
   useEffect(() => {
@@ -42,7 +38,7 @@ export function Timer({ boardId, timerState, disabled }: TimerProps) {
 
       // タイマー終了時に自動停止
       if (remaining <= 0) {
-        void stopTimer(boardId);
+        void stopTimer();
       }
     };
 
@@ -50,7 +46,7 @@ export function Timer({ boardId, timerState, disabled }: TimerProps) {
     const interval = setInterval(calculateRemaining, 1000);
 
     return () => clearInterval(interval);
-  }, [timerState, boardId, stopTimer]);
+  }, [timerState, stopTimer]);
 
   const handleStart = useCallback(async () => {
     const mins = Number(minutes);
@@ -60,21 +56,21 @@ export function Timer({ boardId, timerState, disabled }: TimerProps) {
 
     setIsStarting(true);
     try {
-      await startTimer(boardId, durationSeconds, hideOthersCards);
+      await startTimer(durationSeconds, hideOthersCards);
       setIsOpen(false);
     } finally {
       setIsStarting(false);
     }
-  }, [boardId, minutes, hideOthersCards, startTimer]);
+  }, [minutes, hideOthersCards, startTimer]);
 
   const handleStop = useCallback(async () => {
     setIsStopping(true);
     try {
-      await stopTimer(boardId);
+      await stopTimer();
     } finally {
       setIsStopping(false);
     }
-  }, [boardId, stopTimer]);
+  }, [stopTimer]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

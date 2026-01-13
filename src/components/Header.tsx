@@ -39,23 +39,23 @@ export function Header(): ReactElement {
           KPT App
         </button>
 
-        {user && (
-          <div className="flex items-center gap-4">
-            {/* ページ固有のアクションを挿入するPortal */}
-            <div id={HEADER_ACTIONS_PORTAL_ID} className="flex items-center gap-2" />
+        <div className="flex items-center gap-4">
+          {/* ページ固有のアクションを挿入するPortal */}
+          <div id={HEADER_ACTIONS_PORTAL_ID} className="flex items-center gap-2" />
 
+          {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9 rounded-full border border-primary/30 bg-primary/10 hover:bg-primary/20"
+                  className="border-primary/30 bg-primary/10 hover:bg-primary/20 h-9 w-9 rounded-full border"
                   aria-label="ユーザーメニュー"
                 >
                   {profile ? (
-                    <span className="text-sm font-medium text-primary">{profile.nickname.charAt(0).toUpperCase()}</span>
+                    <span className="text-primary text-sm font-medium">{profile.nickname.charAt(0).toUpperCase()}</span>
                   ) : (
-                    <User className="h-5 w-5 text-primary" />
+                    <User className="text-primary h-5 w-5" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
@@ -82,8 +82,8 @@ export function Header(): ReactElement {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </header>
   );

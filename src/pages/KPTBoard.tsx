@@ -20,6 +20,7 @@ import { KPTCard } from '@/components/ui/KPTCard';
 import { Button } from '@/components/ui/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
 import { Skeleton } from '@/components/ui/shadcn/skeleton';
+import { BoardProvider } from '@/contexts/BoardProvider';
 import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
@@ -246,166 +247,172 @@ export function KPTBoard(): ReactElement {
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={collisionDetectionStrategy}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-    >
-      <HeaderActions>
-        <BoardMembersDialog boardId={boardId} disabled={isLoading} />
-        <Button variant="ghost" size="sm" onClick={() => setExportDialogOpen(true)} disabled={isLoading || !board}>
-          <Download className="h-4 w-4" />
-          エクスポート
-        </Button>
-        {user?.id && (!board || user.id === board.ownerId) && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label="ボード設定" disabled={isLoading || !board}>
-                <Settings className="text-muted-foreground h-4 w-4" />
-                ボード設定
-              </Button>
-            </DropdownMenuTrigger>
-            {!isLoading && board && (
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
-                  <Pencil className="h-4 w-4" />
-                  ボード名を変更
-                </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
-                  <Trash2 className="h-4 w-4" />
-                  削除
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            )}
-          </DropdownMenu>
-        )}
-      </HeaderActions>
-
-      <section className="mx-auto flex h-full w-full max-w-480 flex-col p-8">
-        <header className="flex-none">
-          <nav className="mb-2">
-            <Link
-              to="/"
-              className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors hover:underline"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              ボードリストに戻る
-            </Link>
-          </nav>
-          <div className="flex items-center justify-between gap-4">
-            {isLoading ? <Skeleton className="h-8 w-48" /> : <h1 className="text-2xl font-semibold">{board ? board.name : 'KPT Board'}</h1>}
-
-            {/* タイマー */}
-            {!isLoading && board && <Timer boardId={boardId} timerState={timerState} disabled={isLoading} />}
-          </div>
-        </header>
-
-        {loadError && (
-          <div className="py-4">
-            <ErrorAlert message="ボード情報の読み込みに失敗しました">
-              <ErrorAlertAction>
-                <Button size="sm" variant="destructive" onClick={() => window.location.reload()}>
-                  再読み込み
+    <BoardProvider boardId={boardId}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={collisionDetectionStrategy}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
+        <HeaderActions>
+          <BoardMembersDialog boardId={boardId} disabled={isLoading} />
+          <Button variant="ghost" size="sm" onClick={() => setExportDialogOpen(true)} disabled={isLoading || !board}>
+            <Download className="h-4 w-4" />
+            エクスポート
+          </Button>
+          {user?.id && (!board || user.id === board.ownerId) && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label="ボード設定" disabled={isLoading || !board}>
+                  <Settings className="text-muted-foreground h-4 w-4" />
+                  ボード設定
                 </Button>
-              </ErrorAlertAction>
-            </ErrorAlert>
+              </DropdownMenuTrigger>
+              {!isLoading && board && (
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
+                    <Pencil className="h-4 w-4" />
+                    ボード名を変更
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
+                    <Trash2 className="h-4 w-4" />
+                    削除
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              )}
+            </DropdownMenu>
+          )}
+        </HeaderActions>
+
+        <section className="mx-auto flex h-full w-full max-w-480 flex-col p-8">
+          <header className="flex-none">
+            <nav className="mb-2">
+              <Link
+                to="/"
+                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors hover:underline"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                ボードリストに戻る
+              </Link>
+            </nav>
+            <div className="flex items-center justify-between gap-4">
+              {isLoading ? (
+                <Skeleton className="h-8 w-48" />
+              ) : (
+                <h1 className="text-2xl font-semibold">{board ? board.name : 'KPT Board'}</h1>
+              )}
+
+              {/* タイマー */}
+              {!isLoading && board && <Timer disabled={isLoading} />}
+            </div>
+          </header>
+
+          {loadError && (
+            <div className="py-4">
+              <ErrorAlert message="ボード情報の読み込みに失敗しました">
+                <ErrorAlertAction>
+                  <Button size="sm" variant="destructive" onClick={() => window.location.reload()}>
+                    再読み込み
+                  </Button>
+                </ErrorAlertAction>
+              </ErrorAlert>
+            </div>
+          )}
+
+          {/* フィルターバー */}
+          <div className="flex-none pt-4">
+            <FilterBar
+              filterTag={filter.tag}
+              filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || '不明なメンバー' : null}
+              onRemoveTag={() => setFilterTag(null)}
+              onRemoveMember={() => setFilterMemberId(null)}
+            />
           </div>
+
+          <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
+            {isLoading ? (
+              <>
+                <KPTColumnSkeleton />
+                <KPTColumnSkeleton />
+                <KPTColumnSkeleton />
+              </>
+            ) : (
+              <>
+                <BoardColumn
+                  column="keep"
+                  items={itemsByColumn.keep}
+                  selectedItemId={selectedItem?.id}
+                  onDeleteItem={handleDeleteItem}
+                  onCardClick={handleCardClick}
+                  onTagClick={handleTagClick}
+                  onMemberClick={handleMemberClick}
+                />
+                <BoardColumn
+                  column="problem"
+                  items={itemsByColumn.problem}
+                  selectedItemId={selectedItem?.id}
+                  onDeleteItem={handleDeleteItem}
+                  onCardClick={handleCardClick}
+                  onTagClick={handleTagClick}
+                  onMemberClick={handleMemberClick}
+                />
+                <BoardColumn
+                  column="try"
+                  items={itemsByColumn.try}
+                  selectedItemId={selectedItem?.id}
+                  onDeleteItem={handleDeleteItem}
+                  onCardClick={handleCardClick}
+                  onTagClick={handleTagClick}
+                  onMemberClick={handleMemberClick}
+                />
+              </>
+            )}
+          </div>
+
+          <div className="flex-none pt-4">
+            <ItemAddForm
+              columns={columns}
+              selectedColumn={newItemColumn}
+              onColumnChange={setNewItemColumn}
+              onSubmit={handleAddCard}
+              disabled={isAdding || isLoading}
+            />
+          </div>
+        </section>
+
+        {/* ドラッグ中にポインタに追従するカード */}
+        <DragOverlay>{activeItem ? <KPTCard item={activeItem} /> : null}</DragOverlay>
+
+        {/* カード詳細パネル */}
+        <ItemDetailPanel item={selectedItem} onClose={handleClosePanel} />
+
+        {/* ボード削除確認ダイアログ */}
+        {board && (
+          <BoardDeleteDialog
+            boardName={board.name}
+            isDeleting={deletingBoardId !== null}
+            onDelete={() => handleDeleteBoard(boardId)}
+            isOpen={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+          />
         )}
 
-        {/* フィルターバー */}
-        <div className="flex-none pt-4">
-          <FilterBar
-            filterTag={filter.tag}
-            filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || '不明なメンバー' : null}
-            onRemoveTag={() => setFilterTag(null)}
-            onRemoveMember={() => setFilterMemberId(null)}
+        {/* ボード名変更ダイアログ */}
+        {board && (
+          <BoardRenameDialog
+            boardName={board.name}
+            isUpdating={isRenaming}
+            onRename={handleRenameBoard}
+            isOpen={renameDialogOpen}
+            onOpenChange={setRenameDialogOpen}
           />
-        </div>
+        )}
 
-        <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
-          {isLoading ? (
-            <>
-              <KPTColumnSkeleton />
-              <KPTColumnSkeleton />
-              <KPTColumnSkeleton />
-            </>
-          ) : (
-            <>
-              <BoardColumn
-                column="keep"
-                items={itemsByColumn.keep}
-                selectedItemId={selectedItem?.id}
-                onDeleteItem={handleDeleteItem}
-                onCardClick={handleCardClick}
-                onTagClick={handleTagClick}
-                onMemberClick={handleMemberClick}
-              />
-              <BoardColumn
-                column="problem"
-                items={itemsByColumn.problem}
-                selectedItemId={selectedItem?.id}
-                onDeleteItem={handleDeleteItem}
-                onCardClick={handleCardClick}
-                onTagClick={handleTagClick}
-                onMemberClick={handleMemberClick}
-              />
-              <BoardColumn
-                column="try"
-                items={itemsByColumn.try}
-                selectedItemId={selectedItem?.id}
-                onDeleteItem={handleDeleteItem}
-                onCardClick={handleCardClick}
-                onTagClick={handleTagClick}
-                onMemberClick={handleMemberClick}
-              />
-            </>
-          )}
-        </div>
-
-        <div className="flex-none pt-4">
-          <ItemAddForm
-            columns={columns}
-            selectedColumn={newItemColumn}
-            onColumnChange={setNewItemColumn}
-            onSubmit={handleAddCard}
-            disabled={isAdding || isLoading}
-          />
-        </div>
-      </section>
-
-      {/* ドラッグ中にポインタに追従するカード */}
-      <DragOverlay>{activeItem ? <KPTCard item={activeItem} /> : null}</DragOverlay>
-
-      {/* カード詳細パネル */}
-      <ItemDetailPanel item={selectedItem} onClose={handleClosePanel} />
-
-      {/* ボード削除確認ダイアログ */}
-      {board && (
-        <BoardDeleteDialog
-          boardName={board.name}
-          isDeleting={deletingBoardId !== null}
-          onDelete={() => handleDeleteBoard(boardId)}
-          isOpen={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
-        />
-      )}
-
-      {/* ボード名変更ダイアログ */}
-      {board && (
-        <BoardRenameDialog
-          boardName={board.name}
-          isUpdating={isRenaming}
-          onRename={handleRenameBoard}
-          isOpen={renameDialogOpen}
-          onOpenChange={setRenameDialogOpen}
-        />
-      )}
-
-      {/* エクスポートダイアログ */}
-      {board && <ExportDialog boardName={board.name} items={items} isOpen={exportDialogOpen} onOpenChange={setExportDialogOpen} />}
-    </DndContext>
+        {/* エクスポートダイアログ */}
+        {board && <ExportDialog boardName={board.name} items={items} isOpen={exportDialogOpen} onOpenChange={setExportDialogOpen} />}
+      </DndContext>
+    </BoardProvider>
   );
 }

@@ -3,10 +3,9 @@ import { ja } from 'date-fns/locale';
 import { CalendarIcon, Edit2, X } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
+import { useBoardContext } from '@/contexts/BoardContext';
 import { cn } from '@/lib/cn';
 import { columnDot, columnLabels } from '@/lib/column-styles';
-import { fetchBoardMembers } from '@/lib/kpt-api';
-import { useBoardStore } from '@/stores/useBoardStore';
 import { ITEM_TEXT_MAX_LENGTH } from '@shared/constants';
 
 import { CharacterCounter } from './CharacterCounter';
@@ -16,7 +15,7 @@ import { Calendar } from './shadcn/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './shadcn/select';
 
-import type { BoardMember, KptItem, TryStatus } from '@/types/kpt';
+import type { KptItem, TryStatus } from '@/types/kpt';
 
 const PROBLEM_STATUS_OPTIONS: { value: TryStatus; label: string }[] = [
   { value: 'wont_fix', label: '対応不要' },
@@ -44,21 +43,12 @@ function formatDate(dateString?: string): string {
 }
 
 export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactElement | null {
-  const updateItem = useBoardStore((state) => state.updateItem);
-  const setFilterTag = useBoardStore((state) => state.setFilterTag);
+  const { updateItem, setFilterTag, members } = useBoardContext();
   const [isEditing, setIsEditing] = useState(false);
   const [editingText, setEditingText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [members, setMembers] = useState<BoardMember[]>([]);
   const [dueDateOpen, setDueDateOpen] = useState(false);
-
-  // Tryアイテムの場合、メンバーリストを取得
-  useEffect(() => {
-    if (item?.column === 'try' && item.boardId) {
-      fetchBoardMembers(item.boardId).then(setMembers).catch(console.error);
-    }
-  }, [item?.boardId, item?.column]);
 
   // Detail表示が別itemに変更されたら編集モードを解除
   useEffect(() => {
