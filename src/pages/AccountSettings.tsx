@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router';
@@ -124,7 +124,7 @@ export function AccountSettings(): ReactElement {
           onClick={() => navigate(returnTo, { replace: true })}
           className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 text-sm transition-colors"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           戻る
         </button>
 
