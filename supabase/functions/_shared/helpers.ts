@@ -31,12 +31,21 @@ export function createServiceClient(): SupabaseClient {
 }
 
 /**
+ * CORSヘッダー
+ */
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+  'Access-Control-Allow-Headers': 'Authorization, Content-Type, apikey, x-client-info',
+};
+
+/**
  * JSONレスポンスを生成する。
  */
 export function generateJsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders },
   });
 }
 
@@ -54,11 +63,7 @@ export function handleCorsPreflightIfNeeded(req: Request): Response | null {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Authorization, Content-Type, apikey, x-client-info',
-      },
+      headers: corsHeaders,
     });
   }
   return null;
