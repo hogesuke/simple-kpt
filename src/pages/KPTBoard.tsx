@@ -28,6 +28,7 @@ import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
 import { updateBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBoardStore } from '@/stores/useBoardStore';
+import { useHomeStore } from '@/stores/useHomeStore';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
@@ -39,6 +40,8 @@ export function KPTBoard(): ReactElement {
   const [searchParams, setSearchParams] = useSearchParams();
   const { handleError } = useErrorHandler();
   const user = useAuthStore((state) => state.user);
+  const activeHomeTab = useHomeStore((state) => state.activeTab);
+  const fromTry = activeHomeTab === 'try';
 
   const board = useBoardStore((state) => state.currentBoard);
   const items = useBoardStore((state) => state.items);
@@ -294,7 +297,7 @@ export function KPTBoard(): ReactElement {
                 className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors hover:underline"
               >
                 <ArrowLeft className="h-4 w-4" />
-                ボードリストに戻る
+                {fromTry ? 'Tryリストに戻る' : 'ボードリストに戻る'}
               </Link>
             </nav>
             <div className="flex items-center justify-between gap-4">

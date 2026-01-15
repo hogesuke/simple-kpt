@@ -16,6 +16,7 @@ import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { fetchBoards, fetchTryItems, updateBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useHomeStore } from '@/stores/useHomeStore';
 
 import type { KptBoard, TryItemWithBoard, TryStatus } from '@/types/kpt';
 
@@ -26,6 +27,8 @@ export function Home(): ReactElement {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const { handleError } = useErrorHandler();
+  const activeTab = useHomeStore((state) => state.activeTab);
+  const setActiveTab = useHomeStore((state) => state.setActiveTab);
   const [boards, setBoards] = useState<KptBoard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -89,6 +92,9 @@ export function Home(): ReactElement {
 
   useEffect(() => {
     void loadBoards();
+    if (activeTab === 'try') {
+      void loadTryItems(selectedStatuses);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 初回レンダリング時のみ実行
   }, []);
 
@@ -131,7 +137,9 @@ export function Home(): ReactElement {
   };
 
   const handleTabChange = (value: string) => {
-    if (value === 'try' && tryItems.length === 0 && !isTryLoading) {
+    const tab = value as 'boards' | 'try';
+    setActiveTab(tab);
+    if (tab === 'try' && tryItems.length === 0 && !isTryLoading) {
       void loadTryItems(selectedStatuses);
     }
   };
@@ -160,7 +168,7 @@ export function Home(): ReactElement {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-8">
-      <Tabs defaultValue="boards" onValueChange={handleTabChange}>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
         <div className="mb-6 flex items-center justify-between">
           <TabsList>
             <TabsTrigger value="boards">ボードリスト</TabsTrigger>
