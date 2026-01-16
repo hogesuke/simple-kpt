@@ -1,3 +1,3 @@
-# kpt-app
+# Simple KPT
 
 KPTを簡単シンプルにするアプリケーション。

@@ -61,7 +61,7 @@ export function Login(): ReactElement {
       case 'forgotten_password':
         return 'パスワードをリセット';
       default:
-        return 'KPT Appにログイン';
+        return 'Simple KPTにログイン';
     }
   };
 

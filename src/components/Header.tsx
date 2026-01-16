@@ -40,8 +40,8 @@ export function Header(): ReactElement {
           onClick={() => navigate(user ? '/boards' : '/')}
           className="flex items-center gap-2 text-xl font-bold tracking-tight hover:opacity-80"
         >
-          <img src="/logo.svg" alt="KPT Appロゴ" className="h-5" />
-          KPT App
+          <img src="/logo.svg" alt="Simple KPTロゴ" className="h-5" />
+          Simple KPT
         </button>
 
         <div className="flex items-center gap-4">

@@ -54,7 +54,7 @@ export function Landing(): ReactElement {
               <div className="relative">
                 <img
                   src="/hero.webp"
-                  alt="KPT Appでチームが振り返りを行っている様子"
+                  alt="Simple KPTでチームが振り返りを行っている様子"
                   className="shadow-primary/10 w-full rounded-3xl shadow-xl"
                 />
               </div>
@@ -94,7 +94,7 @@ export function Landing(): ReactElement {
       <footer className="border-t py-8">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-muted-foreground text-sm">© KPT App</p>
+            <p className="text-muted-foreground text-sm">© Simple KPT</p>
             <nav className="flex gap-6">
               <a href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
                 利用規約
