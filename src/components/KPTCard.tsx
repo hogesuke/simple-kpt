@@ -1,10 +1,11 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cva } from 'class-variance-authority';
-import { X } from 'lucide-react';
+import { AlertTriangle, X } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/cn';
+import { isOverdue } from '@/lib/date-utils';
 
 import type { KptItem, TryStatus } from '@/types/kpt';
 
@@ -158,10 +159,17 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
         )}
         {/* Try専用フィールドの表示 */}
         {item.column === 'try' && (item.status || item.assigneeNickname || item.dueDate) && (
-          <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-gray-200 pt-3 text-xs">
-            {item.status && <span className={statusBadge({ status: item.status })}>{STATUS_LABELS[item.status]}</span>}
+          <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-gray-200 pt-3 text-sm">
+            {item.status && <span className={cn(statusBadge({ status: item.status }), 'text-xs')}>{STATUS_LABELS[item.status]}</span>}
             {item.assigneeNickname && <span className="text-muted-foreground">担当: {item.assigneeNickname}</span>}
-            {item.dueDate && <span className="text-muted-foreground">期日: {item.dueDate.replace(/-/g, '/')}</span>}
+            {item.dueDate && (
+              <span
+                className={isOverdue(item.dueDate, item.status) ? 'inline-flex items-center gap-1 text-red-600' : 'text-muted-foreground'}
+              >
+                {isOverdue(item.dueDate, item.status) && <AlertTriangle className="h-3.5 w-3.5" />}
+                期日: {item.dueDate.replace(/-/g, '/')}
+              </span>
+            )}
           </div>
         )}
       </div>

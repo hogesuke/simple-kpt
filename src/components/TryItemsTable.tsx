@@ -1,8 +1,10 @@
+import { AlertTriangle } from 'lucide-react';
 import { ReactElement } from 'react';
 import { Link } from 'react-router';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { TryTableRowSkeleton } from '@/components/TryTableRowSkeleton';
+import { isOverdue } from '@/lib/date-utils';
 import { PROBLEM_STATUS_LABELS, TryItemWithBoard, TryStatus } from '@/types/kpt';
 
 interface TryItemsTableProps {
@@ -37,6 +39,22 @@ function formatDueDate(dueDate: string | null): string {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}/${month}/${day}`;
+}
+
+function DueDateCell({ dueDate, status }: { dueDate: string | null; status: TryStatus | null }): ReactElement {
+  const overdue = isOverdue(dueDate, status);
+  const formattedDate = formatDueDate(dueDate);
+
+  if (overdue) {
+    return (
+      <span className="inline-flex items-center gap-1 text-red-600">
+        <AlertTriangle className="h-4 w-4" />
+        {formattedDate}
+      </span>
+    );
+  }
+
+  return <span>{formattedDate}</span>;
 }
 
 function truncateText(text: string, maxLength: number): string {
@@ -101,7 +119,9 @@ export function TryItemsTable({ items, isLoading }: TryItemsTableProps): ReactEl
             <TableCell className="py-0">
               <StatusBadge status={item.status} />
             </TableCell>
-            <TableCell className="py-0">{formatDueDate(item.dueDate)}</TableCell>
+            <TableCell className="py-0">
+              <DueDateCell dueDate={item.dueDate} status={item.status} />
+            </TableCell>
             <TableCell className="py-0">{item.assigneeNickname || '-'}</TableCell>
           </TableRow>
         ))}
