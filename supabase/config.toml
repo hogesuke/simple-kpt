@@ -185,6 +185,10 @@ otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
+[auth.email.template.confirmation]
+subject = "【Simple KPT】新規登録の確認"
+content_path = "./templates/confirm_signup.html"
+
 # Use a production-ready SMTP server
 # [auth.email.smtp]
 # enabled = true
