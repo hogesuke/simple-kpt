@@ -187,7 +187,7 @@ otp_expiry = 3600
 
 [auth.email.template.confirmation]
 subject = "【Simple KPT】新規登録の確認"
-content_path = "./templates/confirm_signup.html"
+content_path = "./supabase/templates/confirm_signup.html"
 
 # Use a production-ready SMTP server
 # [auth.email.smtp]
