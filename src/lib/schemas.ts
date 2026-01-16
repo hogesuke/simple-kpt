@@ -29,3 +29,50 @@ export const itemTextSchema = z.object({
 export type NicknameFormData = z.infer<typeof nicknameSchema>;
 export type BoardNameFormData = z.infer<typeof boardNameSchema>;
 export type ItemTextFormData = z.infer<typeof itemTextSchema>;
+
+// 認証用スキーマ
+const EMAIL_MAX_LENGTH = 254;
+const PASSWORD_MAX_LENGTH = 72;
+
+const emailSchema = z
+  .email('有効なメールアドレスを入力してください')
+  .min(1, 'メールアドレスを入力してください')
+  .max(EMAIL_MAX_LENGTH, `メールアドレスは${EMAIL_MAX_LENGTH}文字以内で入力してください`);
+
+export const signInSchema = z.object({
+  email: emailSchema,
+  password: z
+    .string()
+    .min(1, 'パスワードを入力してください')
+    .max(PASSWORD_MAX_LENGTH, `パスワードは${PASSWORD_MAX_LENGTH}文字以内で入力してください`),
+});
+
+export const signUpSchema = z.object({
+  email: emailSchema,
+  password: z
+    .string()
+    .min(8, 'パスワードは8文字以上で入力してください')
+    .max(PASSWORD_MAX_LENGTH, `パスワードは${PASSWORD_MAX_LENGTH}文字以内で入力してください`),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: emailSchema,
+});
+
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, 'パスワードは8文字以上で入力してください')
+      .max(PASSWORD_MAX_LENGTH, `パスワードは${PASSWORD_MAX_LENGTH}文字以内で入力してください`),
+    confirmPassword: z.string().min(1, '確認用パスワードを入力してください'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'パスワードが一致しません',
+    path: ['confirmPassword'],
+  });
+
+export type SignInFormData = z.infer<typeof signInSchema>;
+export type SignUpFormData = z.infer<typeof signUpSchema>;
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;

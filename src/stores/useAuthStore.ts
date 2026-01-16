@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase-client';
 import type { UserProfile } from '@/types/kpt';
 import type { Session, User } from '@supabase/supabase-js';
 
+
 interface AuthState {
   user: User | null;
   session: Session | null;
@@ -14,6 +15,7 @@ interface AuthState {
   loading: boolean;
   initialized: boolean;
   isLoadingProfile: boolean;
+  isPasswordRecovery: boolean;
 
   initialize: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -23,6 +25,7 @@ interface AuthState {
   setSession: (session: Session | null) => void;
   setProfile: (profile: UserProfile | null) => void;
   setLoading: (loading: boolean) => void;
+  setPasswordRecovery: (isRecovery: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -34,6 +37,7 @@ export const useAuthStore = create<AuthState>()(
       loading: true,
       initialized: false,
       isLoadingProfile: false,
+      isPasswordRecovery: false,
 
       initialize: async () => {
         // 既に初期化済みなら何もしない
@@ -104,6 +108,15 @@ export const useAuthStore = create<AuthState>()(
                 loading: false,
               });
             }
+
+            // パスワードリカバリーイベント
+            if (event === 'PASSWORD_RECOVERY') {
+              set({
+                session,
+                user: session?.user ?? null,
+                isPasswordRecovery: true,
+              });
+            }
           });
         } catch {
           set({ loading: false, initialized: true });
@@ -139,6 +152,7 @@ export const useAuthStore = create<AuthState>()(
       setSession: (session) => set({ session }),
       setProfile: (profile) => set({ profile }),
       setLoading: (loading) => set({ loading }),
+      setPasswordRecovery: (isRecovery) => set({ isPasswordRecovery: isRecovery }),
     }),
     { name: 'AuthStore' }
   )
