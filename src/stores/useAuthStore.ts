@@ -7,7 +7,6 @@ import { supabase } from '@/lib/supabase-client';
 import type { UserProfile } from '@/types/kpt';
 import type { Session, User } from '@supabase/supabase-js';
 
-
 interface AuthState {
   user: User | null;
   session: Session | null;
@@ -45,6 +44,15 @@ export const useAuthStore = create<AuthState>()(
         if (initialized) return;
 
         try {
+          // URLハッシュからパスワードリカバリーのフローか判定する
+          // NOTE: Supabaseはリカバリーリンクをクリックすると#access_token=...&type=recoveryを付与する
+          const hashParams = new URLSearchParams(window.location.hash.substring(1));
+          const isRecoveryFlow = hashParams.get('type') === 'recovery';
+
+          if (isRecoveryFlow) {
+            set({ isPasswordRecovery: true });
+          }
+
           // 初期セッションを取得
           const {
             data: { session },
@@ -56,7 +64,8 @@ export const useAuthStore = create<AuthState>()(
           });
 
           // ユーザーがログインしている場合、プロフィールを取得する
-          if (session?.user) {
+          // ただしリカバリーフロー中はスキップ（パスワード変更後にリダイレクトされるため）
+          if (session?.user && !isRecoveryFlow) {
             await useAuthStore.getState().loadProfile();
           }
 
