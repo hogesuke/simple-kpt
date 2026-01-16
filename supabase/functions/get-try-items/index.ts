@@ -35,6 +35,9 @@ Deno.serve(async (req) => {
     }
   }
 
+  // 担当者フィルター
+  const assigneeId = getQueryParam(req, 'assigneeId');
+
   // ユーザーが所属するボードのIDを取得
   const { data: memberships, error: memberError } = await client.from('board_members').select('board_id').eq('user_id', user.id);
 
@@ -82,6 +85,11 @@ Deno.serve(async (req) => {
   // ステータスフィルタが指定されている場合
   if (statuses.length > 0) {
     query = query.in('status', statuses);
+  }
+
+  // 担当者フィルタが指定されている場合
+  if (assigneeId) {
+    query = query.eq('assignee_id', assigneeId);
   }
 
   // 期日が近い順にソート（NULLは末尾）、同一日付はcreated_at順
