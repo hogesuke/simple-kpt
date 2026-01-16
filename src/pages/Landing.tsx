@@ -1,4 +1,4 @@
-/* eslint-disable jsx-a11y/anchor-is-valid -- FIXME: 利用規約等を作成してちゃんとリンクを張ったら削除する */
+/* eslint-disable jsx-a11y/anchor-is-valid -- FIXME: お問い合わせページを作成してリンクを張ったら削除する */
 import { ArrowRight, CheckCircle, Download, RefreshCw, Timer } from 'lucide-react';
 import { ReactElement, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -102,12 +102,12 @@ export function Landing(): ReactElement {
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
               <p className="text-muted-foreground text-sm">© Simple KPT</p>
               <nav className="flex gap-6">
-                <a href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+                <Link to="/terms" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
                   利用規約
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+                </Link>
+                <Link to="/privacy" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
                   プライバシーポリシー
-                </a>
+                </Link>
                 <a href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
                   お問い合わせ
                 </a>
