@@ -163,7 +163,7 @@ export const useAuthStore = create<AuthState>()(
       setLoading: (loading) => set({ loading }),
       setPasswordRecovery: (isRecovery) => set({ isPasswordRecovery: isRecovery }),
     }),
-    { name: 'AuthStore' }
+    { name: 'AuthStore', enabled: import.meta.env.DEV }
   )
 );
 
