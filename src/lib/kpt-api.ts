@@ -422,6 +422,7 @@ export async function updateBoard(boardId: string, name: string): Promise<KptBoa
 
 export interface FetchTryItemsOptions {
   status?: TryStatus[];
+  assigneeId?: string;
   limit?: number;
   offset?: number;
 }
@@ -439,6 +440,9 @@ export async function fetchTryItems(options?: FetchTryItemsOptions): Promise<Off
   const params = new URLSearchParams();
   if (options?.status && options.status.length > 0) {
     params.set('status', options.status.join(','));
+  }
+  if (options?.assigneeId) {
+    params.set('assigneeId', options.assigneeId);
   }
   if (options?.limit) {
     params.set('limit', options.limit.toString());

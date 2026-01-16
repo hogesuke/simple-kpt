@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, User } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -6,6 +6,7 @@ import { BoardCreateDialog } from '@/components/BoardCreateDialog';
 import { BoardTableRow } from '@/components/BoardTableRow';
 import { BoardTableRowSkeleton } from '@/components/BoardTableRowSkeleton';
 import { ErrorAlert, ErrorAlertAction } from '@/components/ErrorAlert';
+import { FilterChip } from '@/components/FilterChip';
 import { LoadMoreButton } from '@/components/LoadMoreButton';
 import { Button } from '@/components/shadcn/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
@@ -20,7 +21,6 @@ import { useHomeStore } from '@/stores/useHomeStore';
 
 import type { KptBoard, TryItemWithBoard, TryStatus } from '@/types/kpt';
 
-const DEFAULT_STATUSES: TryStatus[] = ['pending', 'in_progress'];
 const PAGE_SIZE = 20;
 
 export function Home(): ReactElement {
@@ -29,6 +29,10 @@ export function Home(): ReactElement {
   const { handleError } = useErrorHandler();
   const activeTab = useHomeStore((state) => state.activeTab);
   const setActiveTab = useHomeStore((state) => state.setActiveTab);
+  const filterStatuses = useHomeStore((state) => state.filterStatuses);
+  const setFilterStatuses = useHomeStore((state) => state.setFilterStatuses);
+  const filterAssignee = useHomeStore((state) => state.filterAssignee);
+  const setFilterAssignee = useHomeStore((state) => state.setFilterAssignee);
   const [boards, setBoards] = useState<KptBoard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -42,7 +46,6 @@ export function Home(): ReactElement {
   const [isTryLoading, setIsTryLoading] = useState(false);
   const [isTryLoadingMore, setIsTryLoadingMore] = useState(false);
   const [tryLoadError, setTryLoadError] = useState<string | null>(null);
-  const [selectedStatuses, setSelectedStatuses] = useState<TryStatus[]>(DEFAULT_STATUSES);
   const [tryOffset, setTryOffset] = useState(0);
   const [tryHasMore, setTryHasMore] = useState(false);
 
@@ -93,13 +96,13 @@ export function Home(): ReactElement {
   useEffect(() => {
     void loadBoards();
     if (activeTab === 'try') {
-      void loadTryItems(selectedStatuses);
+      void loadTryItems(filterStatuses, filterAssignee?.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- 初回レンダリング時のみ実行
   }, []);
 
   const loadTryItems = useCallback(
-    async (statuses: TryStatus[], reset = true) => {
+    async (statuses: TryStatus[], assigneeId?: string, reset = true) => {
       try {
         if (reset) {
           setIsTryLoading(true);
@@ -111,6 +114,7 @@ export function Home(): ReactElement {
         const offset = reset ? 0 : tryOffset;
         const response = await fetchTryItems({
           status: statuses.length > 0 ? statuses : undefined,
+          assigneeId,
           limit: PAGE_SIZE,
           offset,
         });
@@ -133,20 +137,30 @@ export function Home(): ReactElement {
 
   const loadMoreTryItems = () => {
     if (isTryLoadingMore || !tryHasMore) return;
-    void loadTryItems(selectedStatuses, false);
+    void loadTryItems(filterStatuses, filterAssignee?.id, false);
   };
 
   const handleTabChange = (value: string) => {
     const tab = value as 'boards' | 'try';
     setActiveTab(tab);
     if (tab === 'try' && tryItems.length === 0 && !isTryLoading) {
-      void loadTryItems(selectedStatuses);
+      void loadTryItems(filterStatuses, filterAssignee?.id);
     }
   };
 
   const handleStatusChange = (statuses: TryStatus[]) => {
-    setSelectedStatuses(statuses);
-    void loadTryItems(statuses);
+    setFilterStatuses(statuses);
+    void loadTryItems(statuses, filterAssignee?.id);
+  };
+
+  const handleAssigneeClick = (assigneeId: string, assigneeNickname: string) => {
+    setFilterAssignee({ id: assigneeId, nickname: assigneeNickname });
+    void loadTryItems(filterStatuses, assigneeId);
+  };
+
+  const handleClearAssigneeFilter = () => {
+    setFilterAssignee(null);
+    void loadTryItems(filterStatuses, undefined);
   };
 
   const handleBoardCreated = (board: KptBoard) => {
@@ -252,15 +266,22 @@ export function Home(): ReactElement {
           </TabsContent>
 
           <TabsContent value="try">
-            <div className="mb-4">
-              <StatusFilter selectedStatuses={selectedStatuses} onStatusChange={handleStatusChange} />
+            <div className="mb-4 flex flex-wrap items-center gap-4">
+              <StatusFilter selectedStatuses={filterStatuses} onStatusChange={handleStatusChange} />
+              {filterAssignee && (
+                <FilterChip
+                  icon={<User className="h-3 w-3" />}
+                  label={filterAssignee.nickname}
+                  onRemove={handleClearAssigneeFilter}
+                />
+              )}
             </div>
 
             {tryLoadError && (
               <div className="mb-6">
                 <ErrorAlert message={tryLoadError}>
                   <ErrorAlertAction>
-                    <Button size="sm" variant="destructive" onClick={() => loadTryItems(selectedStatuses)}>
+                    <Button size="sm" variant="destructive" onClick={() => loadTryItems(filterStatuses, filterAssignee?.id)}>
                       再読み込み
                     </Button>
                   </ErrorAlertAction>
@@ -270,7 +291,7 @@ export function Home(): ReactElement {
 
             {!tryLoadError && (
               <>
-                <TryItemsTable items={tryItems} isLoading={isTryLoading} />
+                <TryItemsTable items={tryItems} isLoading={isTryLoading} onAssigneeClick={handleAssigneeClick} />
                 {tryHasMore && !isTryLoading && <LoadMoreButton onClick={loadMoreTryItems} isLoading={isTryLoadingMore} />}
               </>
             )}

@@ -10,6 +10,7 @@ import { PROBLEM_STATUS_LABELS, TryItemWithBoard, TryStatus } from '@/types/kpt'
 interface TryItemsTableProps {
   items: TryItemWithBoard[];
   isLoading?: boolean;
+  onAssigneeClick?: (assigneeId: string, assigneeNickname: string) => void;
 }
 
 function StatusBadge({ status }: { status: TryStatus | null }): ReactElement {
@@ -62,7 +63,7 @@ function truncateText(text: string, maxLength: number): string {
   return text.slice(0, maxLength) + '...';
 }
 
-export function TryItemsTable({ items, isLoading }: TryItemsTableProps): ReactElement {
+export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTableProps): ReactElement {
   if (isLoading) {
     return (
       <Table>
@@ -122,7 +123,19 @@ export function TryItemsTable({ items, isLoading }: TryItemsTableProps): ReactEl
             <TableCell className="py-0">
               <DueDateCell dueDate={item.dueDate} status={item.status} />
             </TableCell>
-            <TableCell className="py-0">{item.assigneeNickname || '-'}</TableCell>
+            <TableCell className="p-0">
+              {item.assigneeId && item.assigneeNickname ? (
+                <button
+                  type="button"
+                  onClick={() => onAssigneeClick?.(item.assigneeId!, item.assigneeNickname!)}
+                  className="flex h-full w-full items-center p-2 hover:underline"
+                >
+                  {item.assigneeNickname}
+                </button>
+              ) : (
+                <span className="flex h-full items-center p-2">-</span>
+              )}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
