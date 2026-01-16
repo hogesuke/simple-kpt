@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+import { fetchProfile } from '@/lib/kpt-api';
+import { supabase } from '@/lib/supabase-client';
+
 import type { UserProfile } from '@/types/kpt';
 import type { Session, User } from '@supabase/supabase-js';
 
-import { fetchProfile } from '@/lib/kpt-api';
-import { supabase } from '@/lib/supabase-client';
 
 interface AuthState {
   user: User | null;

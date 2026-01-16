@@ -1,5 +1,6 @@
-import { BOARD_NAME_MAX_LENGTH, ITEM_TEXT_MAX_LENGTH, NICKNAME_MAX_LENGTH } from '@shared/constants';
 import { z } from 'zod';
+
+import { BOARD_NAME_MAX_LENGTH, ITEM_TEXT_MAX_LENGTH, NICKNAME_MAX_LENGTH } from '@shared/constants';
 
 export const nicknameSchema = z.object({
   nickname: z

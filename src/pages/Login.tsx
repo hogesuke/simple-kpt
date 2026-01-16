@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
@@ -25,12 +25,8 @@ export function Login(): ReactElement {
   const returnTo = state?.from || '/boards';
   const [authView, setAuthView] = useState<AuthView>('sign_in');
 
-  // パスワードリカバリーモードの場合はパスワード変更画面を表示
-  useEffect(() => {
-    if (isPasswordRecovery) {
-      setAuthView('reset_password');
-    }
-  }, [isPasswordRecovery]);
+  // isPasswordRecoveryがtrueの場合はreset_passwordを優先する
+  const currentView = useMemo<AuthView>(() => (isPasswordRecovery ? 'reset_password' : authView), [isPasswordRecovery, authView]);
 
   useEffect(() => {
     // パスワードリカバリーモードの場合はリダイレクトしない
@@ -44,7 +40,7 @@ export function Login(): ReactElement {
   }, [initialized, user, navigate, returnTo, isPasswordRecovery]);
 
   const getHeadingText = () => {
-    switch (authView) {
+    switch (currentView) {
       case 'sign_up':
         return 'アカウント作成';
       case 'forgot_password':
@@ -61,7 +57,7 @@ export function Login(): ReactElement {
   };
 
   const renderContent = () => {
-    switch (authView) {
+    switch (currentView) {
       case 'sign_up':
         return <SignUpForm onSignIn={() => setAuthView('sign_in')} onSuccess={() => setAuthView('check_email')} />;
       case 'forgot_password':
