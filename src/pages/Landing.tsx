@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid -- FIXME: お問い合わせページを作成してリンクを張ったら削除する */
 import { ArrowRight, CheckCircle, Download, RefreshCw, Timer } from 'lucide-react';
 import { ReactElement, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
@@ -108,7 +107,12 @@ export function Landing(): ReactElement {
                 <Link to="/privacy" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
                   プライバシーポリシー
                 </Link>
-                <a href="#" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+                <a
+                  href="https://forms.gle/Fo9pQw125S5mcQx79"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                >
                   お問い合わせ
                 </a>
               </nav>
