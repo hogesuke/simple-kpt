@@ -14,6 +14,6 @@ export const useHomeStore = create<HomeState>()(
       activeTab: 'boards',
       setActiveTab: (tab) => set({ activeTab: tab }),
     }),
-    { name: 'HomeStore' }
+    { name: 'HomeStore', enabled: import.meta.env.DEV }
   )
 );

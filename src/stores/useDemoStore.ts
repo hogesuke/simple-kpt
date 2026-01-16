@@ -201,6 +201,6 @@ export const useDemoStore = create<DemoState>()(
         });
       },
     })),
-    { name: 'DemoStore' }
+    { name: 'DemoStore', enabled: import.meta.env.DEV }
   )
 );
