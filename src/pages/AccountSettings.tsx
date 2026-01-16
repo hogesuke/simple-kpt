@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
 import { AccountDeleteDialog } from '@/components/AccountDeleteDialog';
+import { ChangePasswordForm } from '@/components/ChangePasswordForm';
 import { CharacterCounter } from '@/components/CharacterCounter';
 import { Button } from '@/components/shadcn/button';
 import { updateProfile } from '@/lib/kpt-api';
@@ -169,6 +170,14 @@ export function AccountSettings(): ReactElement {
                 </Button>
               </div>
             </form>
+          </div>
+        </section>
+
+        {/* パスワード変更 */}
+        <section className="mb-8">
+          <h2 className="mb-4 text-lg font-medium text-gray-900">パスワードの変更</h2>
+          <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <ChangePasswordForm onSuccess={() => toast.success('パスワードを変更しました')} />
           </div>
         </section>
 

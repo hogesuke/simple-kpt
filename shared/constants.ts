@@ -7,6 +7,15 @@ export const BOARD_NAME_MAX_LENGTH = 50;
 /** ニックネームの最大文字数 */
 export const NICKNAME_MAX_LENGTH = 15;
 
+/** メールアドレスの最大文字数 */
+export const EMAIL_MAX_LENGTH = 254;
+
+/** パスワードの最小文字数 */
+export const PASSWORD_MIN_LENGTH = 8;
+
+/** パスワードの最大文字数 */
+export const PASSWORD_MAX_LENGTH = 72;
+
 /** 有効なカラム名 */
 export const VALID_COLUMNS = ['keep', 'problem', 'try'] as const;
 
