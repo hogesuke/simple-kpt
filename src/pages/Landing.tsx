@@ -3,7 +3,7 @@ import { ArrowRight, CheckCircle, Download, RefreshCw, Timer } from 'lucide-reac
 import { ReactElement, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-import { Button } from '@/components/ui/shadcn/button';
+import { Button } from '@/components/shadcn/button';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export function Landing(): ReactElement {

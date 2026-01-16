@@ -4,46 +4,41 @@ import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { PasswordInput } from '@/components/PasswordInput';
-import { Button } from '@/components/ui/shadcn/button';
-import { Input } from '@/components/ui/shadcn/input';
-import { signUpSchema, SignUpFormData } from '@/lib/schemas';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
+import { signInSchema, SignInFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
 
-interface SignUpFormProps {
-  onSignIn: () => void;
-  onSuccess: () => void;
+interface SignInFormProps {
+  onForgotPassword: () => void;
+  onSignUp: () => void;
 }
 
-export function SignUpForm({ onSignIn, onSuccess }: SignUpFormProps): ReactElement {
+export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
-  } = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
     defaultValues: { email: '', password: '' },
   });
 
-  const onSubmit = async (data: SignUpFormData) => {
+  const onSubmit = async (data: SignInFormData) => {
     setError(null);
-    const { error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
     });
 
     if (error) {
-      if (error.message === 'User already registered') {
-        setError('このメールアドレスは既に登録されています');
+      if (error.message === 'Invalid login credentials') {
+        setError('メールアドレスまたはパスワードが正しくありません');
       } else {
         setError(error.message);
       }
-    } else {
-      onSuccess();
     }
   };
 
@@ -63,18 +58,24 @@ export function SignUpForm({ onSignIn, onSuccess }: SignUpFormProps): ReactEleme
         <label htmlFor="password" className="block text-sm font-medium">
           パスワード
         </label>
-        <PasswordInput id="password" placeholder="8文字以上で入力" error={errors.password?.message} {...register('password')} />
+        <PasswordInput id="password" placeholder="パスワードを入力" error={errors.password?.message} {...register('password')} />
       </div>
 
       <Button type="submit" className="h-10 w-full" disabled={isSubmitting}>
         {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-        アカウントを作成
+        ログイン
       </Button>
 
-      <div className="text-center text-sm">
-        <button type="button" onClick={onSignIn} className="text-gray-500 underline hover:text-gray-700">
-          すでにアカウントをお持ちですか？ログイン
+      <div className="-mt-2 text-center text-sm">
+        <button type="button" onClick={onForgotPassword} className="text-gray-500 underline hover:text-gray-700">
+          パスワードをお忘れですか？
         </button>
+      </div>
+
+      <div className="pt-2">
+        <Button type="button" variant="outline" className="h-10 w-full" onClick={onSignUp}>
+          新規登録
+        </Button>
       </div>
     </form>
   );

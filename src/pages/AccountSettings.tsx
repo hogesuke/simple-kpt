@@ -6,8 +6,8 @@ import { useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
 import { AccountDeleteDialog } from '@/components/AccountDeleteDialog';
-import { CharacterCounter } from '@/components/ui/CharacterCounter';
-import { Button } from '@/components/ui/shadcn/button';
+import { CharacterCounter } from '@/components/CharacterCounter';
+import { Button } from '@/components/shadcn/button';
 import { updateProfile } from '@/lib/kpt-api';
 import { nicknameSchema, NicknameFormData } from '@/lib/schemas';
 import { useAuthStore } from '@/stores/useAuthStore';

@@ -1,8 +1,8 @@
 import { ReactElement } from 'react';
 import { Link } from 'react-router';
 
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { TryTableRowSkeleton } from '@/components/TryTableRowSkeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/shadcn/table';
 import { PROBLEM_STATUS_LABELS, TryItemWithBoard, TryStatus } from '@/types/kpt';
 
 interface TryItemsTableProps {

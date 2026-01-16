@@ -1,7 +1,7 @@
 import { ChevronDown, Loader2 } from 'lucide-react';
 import { ReactElement } from 'react';
 
-import { Button } from '@/components/ui/shadcn/button';
+import { Button } from '@/components/shadcn/button';
 
 interface LoadMoreButtonProps {
   onClick: () => void;

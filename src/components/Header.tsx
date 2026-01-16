@@ -3,7 +3,7 @@ import { ReactElement } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
 import { HEADER_ACTIONS_PORTAL_ID } from '@/components/HeaderActions';
-import { Button } from '@/components/ui/shadcn/button';
+import { Button } from '@/components/shadcn/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/shadcn/dropdown-menu';
+} from '@/components/shadcn/dropdown-menu';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useAuthStore } from '@/stores/useAuthStore';
 

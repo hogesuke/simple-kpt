@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/shadcn/alert';
+import { Alert, AlertDescription } from '@/components/shadcn/alert';
 
 interface ErrorAlertProps {
   message: string;

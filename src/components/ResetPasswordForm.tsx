@@ -4,7 +4,7 @@ import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { PasswordInput } from '@/components/PasswordInput';
-import { Button } from '@/components/ui/shadcn/button';
+import { Button } from '@/components/shadcn/button';
 import { resetPasswordSchema, ResetPasswordFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
 

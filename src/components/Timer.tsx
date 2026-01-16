@@ -1,10 +1,10 @@
 import { Pause, Play, Timer as TimerIcon } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/shadcn/button';
-import { Checkbox } from '@/components/ui/shadcn/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/shadcn/dialog';
-import { Input } from '@/components/ui/shadcn/input';
+import { Button } from '@/components/shadcn/button';
+import { Checkbox } from '@/components/shadcn/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { Input } from '@/components/shadcn/input';
 import { useBoardContext } from '@/contexts/BoardContext';
 import { TIMER_PRESETS } from '@/types/kpt';
 

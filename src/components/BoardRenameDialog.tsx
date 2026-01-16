@@ -3,10 +3,10 @@ import { Loader2 } from 'lucide-react';
 import { ReactElement, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { CharacterCounter } from '@/components/ui/CharacterCounter';
-import { Button } from '@/components/ui/shadcn/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/shadcn/dialog';
-import { Input } from '@/components/ui/shadcn/input';
+import { CharacterCounter } from '@/components/CharacterCounter';
+import { Button } from '@/components/shadcn/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { Input } from '@/components/shadcn/input';
 import { boardNameSchema, BoardNameFormData } from '@/lib/schemas';
 import { BOARD_NAME_MAX_LENGTH } from '@shared/constants';
 

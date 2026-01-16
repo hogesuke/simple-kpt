@@ -3,10 +3,10 @@ import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/shadcn/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/shadcn/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/shadcn/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/shadcn/table';
+import { Button } from '@/components/shadcn/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { deleteAccount, fetchOwnedBoards, OwnedBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';

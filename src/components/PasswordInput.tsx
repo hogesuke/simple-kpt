@@ -1,7 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react';
 import { forwardRef, useState } from 'react';
 
-import { Input } from '@/components/ui/shadcn/input';
+import { Input } from '@/components/shadcn/input';
 
 interface PasswordInputProps extends Omit<React.ComponentProps<'input'>, 'type'> {
   error?: string;

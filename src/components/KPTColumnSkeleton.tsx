@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import { Skeleton } from '@/components/ui/shadcn/skeleton';
+import { Skeleton } from '@/components/shadcn/skeleton';
 
 /**
  * KPTカードのスケルトンローダー

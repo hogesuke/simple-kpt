@@ -1,7 +1,7 @@
 import { Check } from 'lucide-react';
 import { ReactElement } from 'react';
 
-import { Button } from '@/components/ui/shadcn/button';
+import { Button } from '@/components/shadcn/button';
 import { PROBLEM_STATUS_LABELS, TryStatus } from '@/types/kpt';
 
 interface StatusFilterProps {

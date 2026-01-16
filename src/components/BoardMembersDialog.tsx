@@ -1,8 +1,8 @@
 import { Check, Copy, Users } from 'lucide-react';
 import { ReactElement, useEffect, useState } from 'react';
 
-import { Button } from '@/components/ui/shadcn/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/shadcn/dialog';
+import { Button } from '@/components/shadcn/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { fetchBoardMembers } from '@/lib/kpt-api';
 

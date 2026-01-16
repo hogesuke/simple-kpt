@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
-import { Skeleton } from '@/components/ui/shadcn/skeleton';
-import { TableCell, TableRow } from '@/components/ui/shadcn/table';
+import { Skeleton } from '@/components/shadcn/skeleton';
+import { TableCell, TableRow } from '@/components/shadcn/table';
 
 /**
  * ボードテーブル行のスケルトンローダー

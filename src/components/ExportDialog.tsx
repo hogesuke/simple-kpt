@@ -2,8 +2,8 @@ import { Clipboard, ClipboardCheck, Download } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/shadcn/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/shadcn/dialog';
+import { Button } from '@/components/shadcn/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
 import { copyToClipboard, downloadFile, generateCSV, generateMarkdown } from '@/lib/export-helpers';
 
 import type { KptItem } from '@/types/kpt';

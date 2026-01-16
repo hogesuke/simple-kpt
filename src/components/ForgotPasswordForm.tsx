@@ -3,8 +3,8 @@ import { Loader2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { Button } from '@/components/ui/shadcn/button';
-import { Input } from '@/components/ui/shadcn/input';
+import { Button } from '@/components/shadcn/button';
+import { Input } from '@/components/shadcn/input';
 import { forgotPasswordSchema, ForgotPasswordFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
 

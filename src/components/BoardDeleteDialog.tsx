@@ -10,7 +10,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/shadcn/alert-dialog';
+} from '@/components/shadcn/alert-dialog';
 
 interface BoardDeleteDialogProps {
   /**

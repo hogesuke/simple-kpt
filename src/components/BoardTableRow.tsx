@@ -4,9 +4,9 @@ import { Link } from 'react-router';
 
 import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
 import { BoardRenameDialog } from '@/components/BoardRenameDialog';
-import { Button } from '@/components/ui/shadcn/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/shadcn/dropdown-menu';
-import { TableCell, TableRow } from '@/components/ui/shadcn/table';
+import { Button } from '@/components/shadcn/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu';
+import { TableCell, TableRow } from '@/components/shadcn/table';
 
 import type { KptBoard } from '@/types/kpt';
 

@@ -1,11 +1,11 @@
 import { ReactElement, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
-import { ResetPasswordForm } from '@/components/auth/ResetPasswordForm';
-import { SignInForm } from '@/components/auth/SignInForm';
-import { SignUpForm } from '@/components/auth/SignUpForm';
-import { Button } from '@/components/ui/shadcn/button';
+import { ForgotPasswordForm } from '@/components/ForgotPasswordForm';
+import { ResetPasswordForm } from '@/components/ResetPasswordForm';
+import { Button } from '@/components/shadcn/button';
+import { SignInForm } from '@/components/SignInForm';
+import { SignUpForm } from '@/components/SignUpForm';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 interface LocationState {

@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
-import { ColumnSelector } from '@/components/ui/ColumnSelector';
-import { ItemInput } from '@/components/ui/ItemInput';
+import { ColumnSelector } from '@/components/ColumnSelector';
+import { ItemInput } from '@/components/ItemInput';
 
 import type { KptColumnType } from '@/types/kpt';
 
