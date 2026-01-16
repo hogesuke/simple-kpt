@@ -294,7 +294,7 @@ export function KPTBoard(): ReactElement {
                   </Button>
                 </DropdownMenuTrigger>
                 {!isLoading && board && (
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="w-44">
                     <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
                       <Pencil className="h-4 w-4" />
                       ボード名を変更
