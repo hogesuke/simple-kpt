@@ -38,10 +38,11 @@ function TableRow({ className, ref, ...props }: React.HTMLAttributes<HTMLTableRo
   );
 }
 
-function TableHead({ className, ref, ...props }: React.ThHTMLAttributes<HTMLTableCellElement> & { ref?: React.Ref<HTMLTableCellElement> }) {
+function TableHead({ className, ref, scope = 'col', ...props }: React.ThHTMLAttributes<HTMLTableCellElement> & { ref?: React.Ref<HTMLTableCellElement> }) {
   return (
     <th
       ref={ref}
+      scope={scope}
       className={cn(
         'text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5',
         className
