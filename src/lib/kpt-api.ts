@@ -607,3 +607,64 @@ export async function toggleVote(itemId: string): Promise<ToggleVoteResponse> {
 
   return data as ToggleVoteResponse;
 }
+
+// NOTE: ここに手を入れる場合、supabase/functions/get-stats/index.tsのPeriod型と同期すること
+export type StatsPeriod = '1m' | '3m' | '6m' | '12m';
+
+export interface WeeklyKeepData {
+  week: string;
+  cumulativeCount: number;
+}
+
+export interface WeeklyProblemData {
+  week: string;
+  cumulativeCount: number;
+}
+
+export interface WeeklyTryData {
+  week: string;
+  cumulativeCount: number;
+  cumulativeCompletedCount: number;
+}
+
+export interface StatsResponse {
+  hasData: boolean;
+  keepStats: {
+    totalCount: number;
+    weeklyData: WeeklyKeepData[];
+  };
+  problemStats: {
+    totalCount: number;
+    weeklyData: WeeklyProblemData[];
+  };
+  tryStats: {
+    completedCount: number;
+    totalCount: number;
+    achievementRate: number;
+    weeklyData: WeeklyTryData[];
+  };
+}
+
+/**
+ * 統計データを取得する。
+ */
+export async function fetchStats(period: StatsPeriod = '3m'): Promise<StatsResponse> {
+  const { data, error } = await supabase.functions.invoke(`get-stats?period=${period}`, {
+    method: 'GET',
+  });
+
+  if (error) {
+    throw await convertToAPIError(error, '統計データの取得に失敗しました');
+  }
+
+  if (!data) {
+    return {
+      hasData: false,
+      keepStats: { totalCount: 0, weeklyData: [] },
+      problemStats: { totalCount: 0, weeklyData: [] },
+      tryStats: { completedCount: 0, totalCount: 0, achievementRate: 0, weeklyData: [] },
+    };
+  }
+
+  return data as StatsResponse;
+}

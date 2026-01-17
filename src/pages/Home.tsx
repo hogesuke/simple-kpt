@@ -11,6 +11,7 @@ import { LoadMoreButton } from '@/components/LoadMoreButton';
 import { Button } from '@/components/shadcn/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
+import { StatsSummary } from '@/components/StatsSummary';
 import { StatusFilter } from '@/components/StatusFilter';
 import { TryItemsTable } from '@/components/TryItemsTable';
 import { useDeleteBoard } from '@/hooks/useDeleteBoard';
@@ -184,6 +185,7 @@ export function Home(): ReactElement {
     <>
       <title>ボード一覧 - Simple KPT</title>
       <section className="mx-auto max-w-7xl px-4 py-8">
+        <StatsSummary />
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="mb-6 flex items-center justify-between">
             <TabsList>

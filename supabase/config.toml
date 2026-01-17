@@ -508,3 +508,8 @@ entrypoint = "./functions/delete-account/index.ts"
 enabled = true
 verify_jwt = true
 entrypoint = "./functions/toggle-vote/index.ts"
+
+[functions.get-stats]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/get-stats/index.ts"

@@ -511,8 +511,38 @@ SELECT
   now()
 FROM generate_series(1, 100) AS n;
 
--- 最初のボードに100件のTryアイテムを作成
-INSERT INTO public.items (id, board_id, column_name, text, position, author_id, status, due_date, created_at)
+-- ============================================================
+-- 統計グラフテスト用データ（最初のボードに追加）
+-- ============================================================
+
+-- Keepアイテム: 12週間にわたって20件（週によって件数が異なる）
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, created_at, updated_at)
+SELECT
+  ('20000000-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
+  '00000000-0000-0000-0000-000000000001'::uuid,
+  'keep',
+  'Keepアイテム ' || n,
+  n * 1000,
+  'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
+  now() - ((n * 4) || ' days')::interval,
+  now() - ((n * 4) || ' days')::interval
+FROM generate_series(1, 20) AS n;
+
+-- Problemアイテム: 12週間にわたって15件
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, created_at, updated_at)
+SELECT
+  ('30000000-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
+  '00000000-0000-0000-0000-000000000001'::uuid,
+  'problem',
+  'Problemアイテム ' || n,
+  n * 1000,
+  'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
+  now() - ((n * 5) || ' days')::interval,
+  now() - ((n * 5) || ' days')::interval
+FROM generate_series(1, 15) AS n;
+
+-- Tryアイテム: 12週間にわたって30件（約半分が完了済み）
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, status, due_date, created_at, updated_at)
 SELECT
   ('10000000-0000-0000-0000-' || lpad(n::text, 12, '0'))::uuid,
   '00000000-0000-0000-0000-000000000001'::uuid,
@@ -521,14 +551,19 @@ SELECT
   n * 1000,
   'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid,
   CASE
-    WHEN n % 4 = 0 THEN 'done'
-    WHEN n % 4 = 1 THEN 'pending'
-    WHEN n % 4 = 2 THEN 'in_progress'
-    ELSE 'wont_fix'
+    WHEN n % 3 = 0 THEN 'done'
+    WHEN n % 3 = 1 THEN 'pending'
+    ELSE 'in_progress'
   END,
   CASE
-    WHEN n % 3 = 0 THEN NULL
+    WHEN n % 4 = 0 THEN NULL
     ELSE (now() + (n || ' days')::interval)::date
   END,
-  now() - (n || ' minutes')::interval
-FROM generate_series(1, 100) AS n;
+  -- created_at: 週ごとに分散（古い順）
+  now() - ((n * 3) || ' days')::interval,
+  -- updated_at: doneの場合は作成から数日後に完了、それ以外は作成日と同じ
+  CASE
+    WHEN n % 3 = 0 THEN now() - ((n * 3 - 2) || ' days')::interval
+    ELSE now() - ((n * 3) || ' days')::interval
+  END
+FROM generate_series(1, 30) AS n;
