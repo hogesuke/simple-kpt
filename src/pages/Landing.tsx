@@ -56,6 +56,8 @@ export function Landing(): ReactElement {
                   <img
                     src="/hero.webp"
                     alt="Simple KPTでチームが振り返りを行っている様子"
+                    width={1536}
+                    height={1024}
                     className="shadow-primary/10 w-full rounded-3xl shadow-xl"
                   />
                 </div>
