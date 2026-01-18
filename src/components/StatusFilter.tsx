@@ -21,7 +21,7 @@ export function StatusFilter({ selectedStatuses, onStatusChange }: StatusFilterP
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2" role="group" aria-label="ステータスフィルター">
       <span className="text-muted-foreground text-sm">フィルター:</span>
       {ALL_STATUSES.map((status) => {
         const isSelected = selectedStatuses.includes(status);
@@ -31,9 +31,10 @@ export function StatusFilter({ selectedStatuses, onStatusChange }: StatusFilterP
             variant={isSelected ? 'default' : 'outline'}
             size="sm"
             onClick={() => toggleStatus(status)}
+            aria-pressed={isSelected}
             className="gap-1"
           >
-            {isSelected && <Check className="h-3 w-3" />}
+            {isSelected && <Check className="h-3 w-3" aria-hidden="true" />}
             {PROBLEM_STATUS_LABELS[status]}
           </Button>
         );

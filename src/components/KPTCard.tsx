@@ -157,6 +157,7 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
                   onMemberClick(item.authorId!, item.authorNickname!);
                 }}
                 className="text-muted-foreground hover:text-foreground rounded hover:underline"
+                aria-label={`${item.authorNickname}でフィルター`}
               >
                 {item.authorNickname}
               </button>

@@ -40,14 +40,29 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{error}</div>}
+      {error && (
+        <div role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-600">
+          {error}
+        </div>
+      )}
 
       <div className="space-y-1">
         <label htmlFor="email" className="block text-sm font-medium">
           メールアドレス
         </label>
-        <Input id="email" type="email" placeholder="your@email.com" {...register('email')} />
-        {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+        <Input
+          id="email"
+          type="email"
+          placeholder="your@email.com"
+          aria-invalid={!!errors.email}
+          aria-describedby={errors.email ? 'email-error' : undefined}
+          {...register('email')}
+        />
+        {errors.email && (
+          <p id="email-error" role="alert" className="text-sm text-red-600">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       <Button type="submit" className="h-10 w-full" disabled={isSubmitting}>

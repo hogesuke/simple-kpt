@@ -1,3 +1,4 @@
+import * as FocusScope from '@radix-ui/react-focus-scope';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 import { CalendarIcon, Edit2, ThumbsUp, X } from 'lucide-react';
@@ -158,18 +159,19 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
       <div className="animate-in fade-in fixed inset-0 z-30 bg-black/50 duration-300" onClick={onClose} aria-hidden="true" />
 
       {/* 右パネル */}
-      <div
-        id={`detail-panel-${item.id}`}
-        role="dialog"
-        aria-label="カード詳細"
-        aria-modal="true"
-        className={cn(
-          'fixed top-0 right-0 z-40 h-screen w-full border-l bg-white shadow-2xl',
-          'sm:w-md',
-          'flex flex-col',
-          'animate-in slide-in-from-right duration-300'
-        )}
-      >
+      <FocusScope.Root trapped loop asChild>
+        <div
+          id={`detail-panel-${item.id}`}
+          role="dialog"
+          aria-label="カード詳細"
+          aria-modal="true"
+          className={cn(
+            'fixed top-0 right-0 z-40 h-screen w-full border-l bg-white shadow-2xl',
+            'sm:w-md',
+            'flex flex-col',
+            'animate-in slide-in-from-right duration-300'
+          )}
+        >
         {/* ヘッダー */}
         <div className="flex items-center justify-between px-6 py-4">
           <span className="inline-flex items-center gap-2 text-lg font-semibold">
@@ -377,7 +379,8 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
             </dl>
           </section>
         </div>
-      </div>
+        </div>
+      </FocusScope.Root>
     </>
   );
 }

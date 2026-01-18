@@ -12,10 +12,16 @@ interface ColumnSelectorProps {
 
 export function ColumnSelector({ columns, selectedColumn, onColumnChange }: ColumnSelectorProps): ReactElement {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2" role="group" aria-label="カラム選択">
       {columns.map((col) => (
-        <button key={col} type="button" onClick={() => onColumnChange(col)} className={columnButton({ selected: selectedColumn === col })}>
-          <span className={columnDot({ column: col })} />
+        <button
+          key={col}
+          type="button"
+          onClick={() => onColumnChange(col)}
+          aria-pressed={selectedColumn === col}
+          className={columnButton({ selected: selectedColumn === col })}
+        >
+          <span className={columnDot({ column: col })} aria-hidden="true" />
           {columnLabels[col]}
         </button>
       ))}
