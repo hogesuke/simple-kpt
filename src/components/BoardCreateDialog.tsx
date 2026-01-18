@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { CharacterCounter } from '@/components/CharacterCounter';
+import { LoadingButton } from '@/components/LoadingButton';
 import { Button } from '@/components/shadcn/button';
 import {
   Dialog,
@@ -105,10 +106,9 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
               キャンセル
             </Button>
-            <Button type="submit" disabled={!name.trim() || name.length > BOARD_NAME_MAX_LENGTH || isSubmitting}>
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            <LoadingButton type="submit" disabled={!name.trim() || name.length > BOARD_NAME_MAX_LENGTH} loading={isSubmitting}>
               作成
-            </Button>
+            </LoadingButton>
           </DialogFooter>
         </form>
       </DialogContent>

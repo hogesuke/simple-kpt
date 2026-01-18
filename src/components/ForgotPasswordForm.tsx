@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { FieldError } from '@/components/FieldError';
 import { FormErrorAlert } from '@/components/FormErrorAlert';
-import { Button } from '@/components/shadcn/button';
+import { LoadingButton } from '@/components/LoadingButton';
 import { Input } from '@/components/shadcn/input';
 import { forgotPasswordSchema, ForgotPasswordFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
@@ -59,10 +58,9 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
         <FieldError id="email-error" message={errors.email?.message} />
       </div>
 
-      <Button type="submit" className="h-10 w-full" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+      <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
         パスワードリセット用のメールを送信
-      </Button>
+      </LoadingButton>
 
       <div className="text-center text-sm">
         <button type="button" onClick={onSignIn} className="rounded text-gray-500 underline hover:text-gray-700">

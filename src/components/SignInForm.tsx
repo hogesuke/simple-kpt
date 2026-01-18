@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { FieldError } from '@/components/FieldError';
 import { FormErrorAlert } from '@/components/FormErrorAlert';
+import { LoadingButton } from '@/components/LoadingButton';
 import { PasswordInput } from '@/components/PasswordInput';
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
@@ -70,10 +70,9 @@ export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps): Rea
         <PasswordInput id="password" placeholder="パスワードを入力" error={errors.password?.message} {...register('password')} />
       </div>
 
-      <Button type="submit" className="h-10 w-full" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+      <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
         ログイン
-      </Button>
+      </LoadingButton>
 
       <div className="-mt-2 text-center text-sm">
         <button type="button" onClick={onForgotPassword} className="rounded text-gray-500 underline hover:text-gray-700">

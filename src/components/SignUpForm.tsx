@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { FieldError } from '@/components/FieldError';
 import { FormErrorAlert } from '@/components/FormErrorAlert';
+import { LoadingButton } from '@/components/LoadingButton';
 import { PasswordInput } from '@/components/PasswordInput';
-import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
 import { signUpSchema, SignUpFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
@@ -75,10 +74,9 @@ export function SignUpForm({ onSignIn, onSuccess }: SignUpFormProps): ReactEleme
         <PasswordInput id="password" placeholder="8文字以上で入力" error={errors.password?.message} {...register('password')} />
       </div>
 
-      <Button type="submit" className="h-10 w-full" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+      <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
         アカウントを作成
-      </Button>
+      </LoadingButton>
 
       <div className="text-center text-sm">
         <button type="button" onClick={onSignIn} className="rounded text-gray-500 underline hover:text-gray-700">

@@ -10,6 +10,7 @@ import { ChangePasswordForm } from '@/components/ChangePasswordForm';
 import { CharacterCounter } from '@/components/CharacterCounter';
 import { FieldError } from '@/components/FieldError';
 import { FormErrorAlert } from '@/components/FormErrorAlert';
+import { LoadingButton } from '@/components/LoadingButton';
 import { Button } from '@/components/shadcn/button';
 import { updateProfile } from '@/lib/kpt-api';
 import { nicknameSchema, NicknameFormData } from '@/lib/schemas';
@@ -104,9 +105,9 @@ export function AccountSettings(): ReactElement {
                   <FieldError id="nickname-error" message={errors.nickname?.message} />
                 </div>
 
-                <Button type="submit" disabled={isSubmitting} className="w-full">
+                <LoadingButton type="submit" loading={isSubmitting} className="w-full">
                   設定
-                </Button>
+                </LoadingButton>
               </form>
             </div>
           </div>
@@ -164,9 +165,9 @@ export function AccountSettings(): ReactElement {
                 </div>
 
                 <div className="flex justify-end">
-                  <Button type="submit" disabled={isSubmitting}>
+                  <LoadingButton type="submit" loading={isSubmitting}>
                     更新
-                  </Button>
+                  </LoadingButton>
                 </div>
               </form>
             </div>

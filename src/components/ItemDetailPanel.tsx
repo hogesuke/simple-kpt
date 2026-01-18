@@ -1,7 +1,7 @@
 import * as FocusScope from '@radix-ui/react-focus-scope';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { CalendarIcon, Edit2, ThumbsUp, X } from 'lucide-react';
+import { CalendarIcon, Edit2, Loader2, ThumbsUp, X } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useBoardContext } from '@/contexts/BoardContext';
@@ -251,12 +251,13 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                     onClick={handleSaveEdit}
                     disabled={isSaving || !editingText.trim() || editingText.length > ITEM_TEXT_MAX_LENGTH}
                     className={cn(
-                      'px-3 py-1.5 text-sm font-medium',
+                      'inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium',
                       'bg-primary text-primary-foreground rounded-md',
                       'hover:bg-primary/90 transition-colors',
                       'disabled:cursor-not-allowed disabled:opacity-50'
                     )}
                   >
+                    {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
                     保存
                   </button>
                 </div>

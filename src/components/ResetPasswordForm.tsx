@@ -1,11 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { FormErrorAlert } from '@/components/FormErrorAlert';
+import { LoadingButton } from '@/components/LoadingButton';
 import { PasswordInput } from '@/components/PasswordInput';
-import { Button } from '@/components/shadcn/button';
 import { resetPasswordSchema, ResetPasswordFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
 
@@ -61,10 +60,9 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps): ReactE
         />
       </div>
 
-      <Button type="submit" className="h-10 w-full" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+      <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
         パスワードを変更
-      </Button>
+      </LoadingButton>
     </form>
   );
 }

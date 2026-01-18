@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
 import { ReactElement, useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { CharacterCounter } from '@/components/CharacterCounter';
+import { LoadingButton } from '@/components/LoadingButton';
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
 import { Input } from '@/components/shadcn/input';
@@ -102,10 +102,9 @@ export function BoardRenameDialog({ boardName, isUpdating, onRename, isOpen, onO
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isUpdating}>
               キャンセル
             </Button>
-            <Button type="submit" disabled={!canSubmit}>
-              {isUpdating && <Loader2 className="h-4 w-4 animate-spin" />}
+            <LoadingButton type="submit" disabled={!isValid || isUnchanged} loading={isUpdating}>
               変更
-            </Button>
+            </LoadingButton>
           </DialogFooter>
         </form>
       </DialogContent>
