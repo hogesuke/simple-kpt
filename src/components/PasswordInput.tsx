@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
+import { FieldError } from '@/components/FieldError';
 import { Input } from '@/components/shadcn/input';
 
 interface PasswordInputProps extends Omit<React.ComponentProps<'input'>, 'type'> {
@@ -32,11 +33,7 @@ export function PasswordInput({ error, ref, id, ...props }: PasswordInputProps) 
           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </button>
       </div>
-      {error && (
-        <p id={errorId} role="alert" className="text-sm text-red-600">
-          {error}
-        </p>
-      )}
+      <FieldError id={errorId} message={error} />
     </>
   );
 }

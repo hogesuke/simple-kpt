@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { FieldError } from '@/components/FieldError';
 import { FormErrorAlert } from '@/components/FormErrorAlert';
 import { Button } from '@/components/shadcn/button';
 import { Input } from '@/components/shadcn/input';
@@ -55,11 +56,7 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
           aria-describedby={errors.email ? 'email-error' : undefined}
           {...register('email')}
         />
-        {errors.email && (
-          <p id="email-error" role="alert" className="text-sm text-red-600">
-            {errors.email.message}
-          </p>
-        )}
+        <FieldError id="email-error" message={errors.email?.message} />
       </div>
 
       <Button type="submit" className="h-10 w-full" disabled={isSubmitting}>

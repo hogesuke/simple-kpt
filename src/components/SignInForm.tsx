@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { FieldError } from '@/components/FieldError';
 import { FormErrorAlert } from '@/components/FormErrorAlert';
 import { PasswordInput } from '@/components/PasswordInput';
 import { Button } from '@/components/shadcn/button';
@@ -59,11 +60,7 @@ export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps): Rea
           aria-describedby={errors.email ? 'email-error' : undefined}
           {...register('email')}
         />
-        {errors.email && (
-          <p id="email-error" role="alert" className="text-sm text-red-600">
-            {errors.email.message}
-          </p>
-        )}
+        <FieldError id="email-error" message={errors.email?.message} />
       </div>
 
       <div className="space-y-1">
