@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react';
 import { ReactElement, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router';
 
@@ -27,7 +28,7 @@ export function ProtectedRoute({ children, requireProfile = true }: ProtectedRou
   if (loading || isLoadingProfile) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <p className="text-muted-foreground">読み込み中...</p>
+        <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
       </div>
     );
   }

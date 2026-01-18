@@ -1,4 +1,4 @@
-import { Check, Copy, Users } from 'lucide-react';
+import { Check, Copy, Loader2, Users } from 'lucide-react';
 import { ReactElement, useEffect, useState } from 'react';
 
 import { Button } from '@/components/shadcn/button';
@@ -87,7 +87,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
         <div className="space-y-2">
           <p className="text-sm font-medium">メンバー ({members.length})</p>
           {isLoading ? (
-            <p className="text-muted-foreground text-sm">読み込み中...</p>
+            <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
           ) : (
             <div className="max-h-60 space-y-2 overflow-y-auto">
               {members.map((member) => (
