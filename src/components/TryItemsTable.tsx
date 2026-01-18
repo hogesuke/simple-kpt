@@ -129,6 +129,7 @@ export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTab
                   type="button"
                   onClick={() => onAssigneeClick?.(item.assigneeId!, item.assigneeNickname!)}
                   className="flex h-full w-full items-center rounded p-2 hover:underline"
+                  aria-label={`${item.assigneeNickname}でフィルター`}
                 >
                   {item.assigneeNickname}
                 </button>
