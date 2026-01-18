@@ -10,7 +10,7 @@ export function Terms(): ReactElement {
         <nav className="mb-8">
           <Link
             to="/"
-            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors hover:underline"
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded text-sm transition-colors hover:underline"
           >
             <ArrowLeft className="h-4 w-4" />
             トップページに戻る

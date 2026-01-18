@@ -69,7 +69,7 @@ export function Login(): ReactElement {
             <p className="text-muted-foreground">
               確認メールを送信しました。メール内のリンクをクリックして、アカウントを有効化してください。
             </p>
-            <button type="button" onClick={() => setAuthView('sign_in')} className="text-primary hover:underline">
+            <button type="button" onClick={() => setAuthView('sign_in')} className="text-primary rounded hover:underline">
               ログインに戻る
             </button>
           </div>

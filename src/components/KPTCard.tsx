@@ -27,8 +27,7 @@ const STATUS_LABELS: Record<TryStatus, string> = {
   wont_fix: '対応不要',
 };
 
-const cardStyles =
-  'rounded-md border border-gray-200 bg-white shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
+const cardStyles = 'rounded-md border border-gray-200 bg-white shadow-sm';
 
 // ハッシュタグを検出する正規表現（日本語、英数字、アンダースコアを許容している）
 const HASHTAG_PATTERN = '#[\\w\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF]+';
@@ -97,7 +96,7 @@ export function TextWithHashtags({ text, onTagClick }: TextWithHashtagsProps) {
                 e.stopPropagation();
                 onTagClick?.(part.text);
               }}
-              className="text-primary/90 hover:text-primary text-[0.96em] hover:underline"
+              className="text-primary/90 hover:text-primary rounded text-[0.96em] hover:underline"
             >
               {part.text}
             </button>
@@ -157,7 +156,7 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
                   e.stopPropagation();
                   onMemberClick(item.authorId!, item.authorNickname!);
                 }}
-                className="text-muted-foreground hover:text-foreground hover:underline"
+                className="text-muted-foreground hover:text-foreground rounded hover:underline"
               >
                 {item.authorNickname}
               </button>
@@ -188,10 +187,8 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
           type="button"
           onClick={handleVoteClick}
           className={cn(
-            'absolute right-2 bottom-3 inline-flex items-center gap-1.5 rounded-full py-1 pl-2 pr-[5px] text-xs transition-colors',
-            hasVoted
-              ? 'bg-primary/10 text-primary hover:bg-primary/20'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+            'absolute right-2 bottom-3 inline-flex items-center gap-1.5 rounded-full py-1 pr-1.25 pl-2 text-xs transition-colors',
+            hasVoted ? 'bg-primary/10 text-primary hover:bg-primary/20' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
           )}
           aria-label={hasVoted ? `「${item.text}」の投票を取り消す` : `「${item.text}」に投票する`}
           aria-pressed={hasVoted}
@@ -204,7 +201,7 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
         <button
           type="button"
           onClick={handleCardClick}
-          className="text-muted-foreground sr-only rounded bg-white px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2 focus-visible:ring-2"
+          className="text-muted-foreground sr-only rounded bg-white px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2"
           aria-expanded={isSelected}
         >
           詳細を開く
@@ -214,7 +211,7 @@ export function KPTCard({ item, isSelected = false, className, onDelete, onClick
         <button
           type="button"
           onClick={handleDeleteClick}
-          className="text-muted-foreground hover:bg-muted absolute top-2 right-2 inline-flex h-6 w-6 items-center justify-center rounded-full focus:outline-none focus-visible:ring-2"
+          className="text-muted-foreground hover:bg-muted absolute top-2 right-2 inline-flex h-6 w-6 items-center justify-center rounded-full"
           aria-label={`「${item.text}」カードを削除`}
         >
           <X className="h-4 w-4" aria-hidden="true" />

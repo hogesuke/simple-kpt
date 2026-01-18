@@ -15,7 +15,7 @@ function TabsTrigger({ className, ref, ...props }: React.ComponentProps<typeof T
     <TabsPrimitive.Trigger
       ref={ref}
       className={cn(
-        'text-muted-foreground hover:text-foreground focus-visible:ring-ring data-[state=active]:border-primary data-[state=active]:text-primary relative -mb-[2px] inline-flex items-center justify-center border-b-2 border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:font-bold',
+        'text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary relative -mb-0.5 inline-flex items-center justify-center border-b-2 border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-50 data-[state=active]:font-bold',
         className
       )}
       {...props}
@@ -24,16 +24,7 @@ function TabsTrigger({ className, ref, ...props }: React.ComponentProps<typeof T
 }
 
 function TabsContent({ className, ref, ...props }: React.ComponentProps<typeof TabsPrimitive.Content>) {
-  return (
-    <TabsPrimitive.Content
-      ref={ref}
-      className={cn(
-        'ring-offset-background focus-visible:ring-ring mt-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
-        className
-      )}
-      {...props}
-    />
-  );
+  return <TabsPrimitive.Content ref={ref} className={cn('mt-2', className)} {...props} />;
 }
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };

@@ -38,7 +38,7 @@ export function Header(): ReactElement {
         <button
           type="button"
           onClick={() => navigate(user ? '/boards' : '/')}
-          className="flex items-center gap-2 text-xl font-bold tracking-tight hover:opacity-80"
+          className="flex items-center gap-2 rounded text-xl font-bold tracking-tight hover:opacity-80"
         >
           <img src="/logo.svg" alt="Simple KPTロゴ" className="h-5" />
           Simple KPT

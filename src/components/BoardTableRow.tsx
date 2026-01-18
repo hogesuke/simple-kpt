@@ -41,7 +41,7 @@ export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete
     <>
       <TableRow className="h-12">
         <TableCell className="p-0">
-          <Link to={`/boards/${board.id}`} className="flex h-full items-center p-2 font-medium hover:underline">
+          <Link to={`/boards/${board.id}`} className="flex h-full items-center rounded p-2 font-medium hover:underline">
             {board.name}
           </Link>
         </TableCell>

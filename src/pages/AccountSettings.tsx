@@ -92,7 +92,7 @@ export function AccountSettings(): ReactElement {
                       type="text"
                       autoComplete="nickname"
                       {...register('nickname')}
-                      className="focus:border-primary focus:ring-primary block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:outline-none sm:text-sm"
+                      className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm sm:text-sm"
                       placeholder="e.g. Taro"
                       disabled={isSubmitting}
                     />
@@ -128,7 +128,7 @@ export function AccountSettings(): ReactElement {
           <button
             type="button"
             onClick={() => navigate(returnTo, { replace: true })}
-            className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 text-sm transition-colors"
+            className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 rounded text-sm transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             戻る
@@ -156,7 +156,7 @@ export function AccountSettings(): ReactElement {
                     type="text"
                     autoComplete="nickname"
                     {...register('nickname')}
-                    className="focus:border-primary focus:ring-primary mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 shadow-sm focus:outline-none"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 shadow-sm"
                     placeholder="e.g. Taro"
                     disabled={isSubmitting}
                   />

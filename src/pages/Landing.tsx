@@ -103,17 +103,17 @@ export function Landing(): ReactElement {
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
               <p className="text-muted-foreground text-sm">© Simple KPT</p>
               <nav className="flex gap-6">
-                <Link to="/terms" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+                <Link to="/terms" className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors">
                   利用規約
                 </Link>
-                <Link to="/privacy" className="text-muted-foreground hover:text-foreground text-sm transition-colors">
+                <Link to="/privacy" className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors">
                   プライバシーポリシー
                 </Link>
                 <a
                   href="https://forms.gle/Fo9pQw125S5mcQx79"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                  className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors"
                 >
                   お問い合わせ
                 </a>
@@ -121,7 +121,7 @@ export function Landing(): ReactElement {
                   href="/licenses.txt"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                  className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors"
                 >
                   ライセンス
                 </a>

@@ -223,7 +223,6 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                     className={cn(
                       'border-input bg-background w-full rounded-md border px-3 py-2',
                       'resize-none text-base leading-relaxed',
-                      'focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-none',
                       'disabled:cursor-not-allowed disabled:opacity-50'
                     )}
                     rows={6}
