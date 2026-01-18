@@ -5,11 +5,11 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { fetchStats, type StatsResponse, type StatsPeriod } from '@/lib/kpt-api';
 
-const PERIOD_OPTIONS: { value: StatsPeriod; label: string }[] = [
-  { value: '1m', label: '1m' },
-  { value: '3m', label: '3m' },
-  { value: '6m', label: '6m' },
-  { value: '12m', label: '1y' },
+const PERIOD_OPTIONS: { value: StatsPeriod; label: string; ariaLabel: string }[] = [
+  { value: '1m', label: '1m', ariaLabel: '過去1ヶ月' },
+  { value: '3m', label: '3m', ariaLabel: '過去3ヶ月' },
+  { value: '6m', label: '6m', ariaLabel: '過去6ヶ月' },
+  { value: '12m', label: '1y', ariaLabel: '過去1年' },
 ];
 
 const CHART_COLOR = 'hsl(217, 62%, 54%)';
@@ -171,11 +171,13 @@ export function StatsSummary(): ReactElement | null {
   return (
     <div className="mb-10">
       <div className="mb-2 flex items-center justify-end">
-        <div className="inline-flex rounded-lg bg-slate-50 p-0.5 dark:bg-slate-900">
+        <div className="inline-flex rounded-lg bg-slate-50 p-0.5 dark:bg-slate-900" role="group" aria-label="グラフ表示の期間範囲">
           {PERIOD_OPTIONS.map((option) => (
             <button
               key={option.value}
               onClick={() => handlePeriodChange(option.value)}
+              aria-pressed={period === option.value}
+              aria-label={option.ariaLabel}
               className={`rounded-md px-2.5 py-1 text-sm font-medium transition-colors ${
                 period === option.value
                   ? 'bg-white text-blue-600 shadow-sm dark:bg-neutral-700 dark:text-blue-400'
