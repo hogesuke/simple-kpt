@@ -12,6 +12,34 @@ const PERIOD_OPTIONS: { value: StatsPeriod; label: string; ariaLabel: string }[]
   { value: '12m', label: '1y', ariaLabel: '過去1年' },
 ];
 
+// 期間に応じた週数
+const PERIOD_WEEKS: Record<StatsPeriod, number> = {
+  '1m': 5,
+  '3m': 13,
+  '6m': 26,
+  '12m': 52,
+};
+
+function generateEmptyWeeklyData(period: StatsPeriod): { week: string; cumulativeCount: number }[] {
+  const weeks = PERIOD_WEEKS[period];
+  const today = new Date();
+  return Array.from({ length: weeks }, (_, i) => {
+    const date = new Date(today);
+    date.setDate(date.getDate() - (weeks - 1 - i) * 7);
+    return {
+      week: date.toISOString().slice(0, 10),
+      cumulativeCount: 0,
+    };
+  });
+}
+
+function generateEmptyTryWeeklyData(period: StatsPeriod): { week: string; cumulativeCount: number; cumulativeCompletedCount: number }[] {
+  return generateEmptyWeeklyData(period).map((data) => ({
+    ...data,
+    cumulativeCompletedCount: 0,
+  }));
+}
+
 const CHART_COLOR = 'hsl(217, 62%, 54%)';
 const CHART_COLOR_LIGHT = 'hsl(217, 62%, 70%)';
 
@@ -157,15 +185,20 @@ export function StatsSummary(): ReactElement | null {
     );
   }
 
-  // データがない場合は表示しない
-  if (!stats || !stats.hasData) {
+  // statsがnullの場合（エラー時）は表示しない
+  if (!stats) {
     return null;
   }
 
+  // データがない場合はダミーデータを使用する
+  const keepWeeklyData = stats.keepStats.weeklyData.length > 0 ? stats.keepStats.weeklyData : generateEmptyWeeklyData(period);
+  const problemWeeklyData = stats.problemStats.weeklyData.length > 0 ? stats.problemStats.weeklyData : generateEmptyWeeklyData(period);
+  const tryWeeklyData = stats.tryStats.weeklyData.length > 0 ? stats.tryStats.weeklyData : generateEmptyTryWeeklyData(period);
+
   // 全グラフのY軸スケールを統一するために最大値を計算
-  const keepMax = Math.max(...stats.keepStats.weeklyData.map((d) => d.cumulativeCount), 0);
-  const problemMax = Math.max(...stats.problemStats.weeklyData.map((d) => d.cumulativeCount), 0);
-  const tryMax = Math.max(...stats.tryStats.weeklyData.map((d) => Math.max(d.cumulativeCount, d.cumulativeCompletedCount)), 0);
+  const keepMax = Math.max(...keepWeeklyData.map((d) => d.cumulativeCount), 0);
+  const problemMax = Math.max(...problemWeeklyData.map((d) => d.cumulativeCount), 0);
+  const tryMax = Math.max(...tryWeeklyData.map((d) => Math.max(d.cumulativeCount, d.cumulativeCompletedCount)), 0);
   const yAxisMax = Math.max(keepMax, problemMax, tryMax, 1); // 最低1とする
 
   return (
@@ -195,7 +228,7 @@ export function StatsSummary(): ReactElement | null {
           label="累計Keep"
           dotColorClass="bg-lime-500"
           totalCount={stats.keepStats.totalCount}
-          weeklyData={stats.keepStats.weeklyData}
+          weeklyData={keepWeeklyData}
           gradientId="keepGradient"
           chartConfig={keepChartConfig}
           yAxisMax={yAxisMax}
@@ -204,7 +237,7 @@ export function StatsSummary(): ReactElement | null {
           label="累計Problem"
           dotColorClass="bg-red-400"
           totalCount={stats.problemStats.totalCount}
-          weeklyData={stats.problemStats.weeklyData}
+          weeklyData={problemWeeklyData}
           gradientId="problemGradient"
           chartConfig={problemChartConfig}
           yAxisMax={yAxisMax}
@@ -216,7 +249,7 @@ export function StatsSummary(): ReactElement | null {
           subtitle={`完了 ${stats.tryStats.completedCount} (${stats.tryStats.achievementRate}%)`}
         >
           <ChartContainer config={tryChartConfig} className="h-full w-full">
-            <AreaChart data={stats.tryStats.weeklyData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
+            <AreaChart data={tryWeeklyData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
               <defs>
                 <linearGradient id="tryCompletedGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={CHART_COLOR} stopOpacity={0.2} />
@@ -232,7 +265,7 @@ export function StatsSummary(): ReactElement | null {
                 stroke="var(--color-cumulativeCount)"
                 strokeWidth={1.5}
                 fill="none"
-                dot={(props) => <LastPointDot {...props} dataLength={stats.tryStats.weeklyData.length} color={CHART_COLOR_LIGHT} />}
+                dot={(props) => <LastPointDot {...props} dataLength={tryWeeklyData.length} color={CHART_COLOR_LIGHT} />}
                 activeDot={{ r: 4 }}
                 animationDuration={1000}
               />
@@ -242,7 +275,7 @@ export function StatsSummary(): ReactElement | null {
                 stroke="var(--color-cumulativeCompletedCount)"
                 strokeWidth={1.5}
                 fill="url(#tryCompletedGradient)"
-                dot={(props) => <LastPointDot {...props} dataLength={stats.tryStats.weeklyData.length} color={CHART_COLOR} />}
+                dot={(props) => <LastPointDot {...props} dataLength={tryWeeklyData.length} color={CHART_COLOR} />}
                 activeDot={{ r: 3 }}
                 animationDuration={1000}
               />
