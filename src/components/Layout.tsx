@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { Outlet, useLocation } from 'react-router';
+import { Outlet, ScrollRestoration, useLocation } from 'react-router';
 
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Header } from '@/components/Header';
@@ -16,6 +16,8 @@ export function Layout(): ReactElement {
           <Outlet />
         </ErrorBoundary>
       </main>
+
+      <ScrollRestoration />
     </div>
   );
 }
