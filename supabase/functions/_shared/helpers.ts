@@ -31,13 +31,21 @@ export function createServiceClient(): SupabaseClient {
 }
 
 /**
- * CORSヘッダー
+ * 実行環境に基づいてCORSヘッダーを生成する
+ * ローカル環境: http://localhost:5173
+ * 本番環境: https://simple-kpt.com
  */
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Authorization, Content-Type, apikey, x-client-info',
-};
+function getCorsHeaders(): Record<string, string> {
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+  const isLocal = supabaseUrl.includes('localhost') || supabaseUrl.includes('127.0.0.1');
+  const origin = isLocal ? 'http://localhost:5173' : 'https://simple-kpt.com';
+
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type, apikey, x-client-info',
+  };
+}
 
 /**
  * JSONレスポンスを生成する。
@@ -45,7 +53,7 @@ const corsHeaders = {
 export function generateJsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    headers: { 'Content-Type': 'application/json', ...getCorsHeaders() },
   });
 }
 
@@ -63,7 +71,7 @@ export function handleCorsPreflightIfNeeded(req: Request): Response | null {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders,
+      headers: getCorsHeaders(),
     });
   }
   return null;
