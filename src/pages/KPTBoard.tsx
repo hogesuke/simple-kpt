@@ -1,53 +1,35 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { ArrowLeft, Download, Pencil, Settings, Trash2 } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 
-import { BoardColumn } from '@/components/BoardColumn';
-import { BoardDeleteDialog } from '@/components/BoardDeleteDialog';
-import { BoardMembersDialog } from '@/components/BoardMembersDialog';
-import { BoardRenameDialog } from '@/components/BoardRenameDialog';
-import { BoardShareDialog } from '@/components/BoardShareDialog';
 import { ErrorAlert, ErrorAlertAction } from '@/components/ErrorAlert';
-import { ExportDialog } from '@/components/ExportDialog';
 import { FilterBar } from '@/components/FilterBar';
-import { HeaderActions } from '@/components/HeaderActions';
 import { ItemAddForm } from '@/components/ItemAddForm';
 import { ItemDetailPanel } from '@/components/ItemDetailPanel';
+import { KPTBoardActions } from '@/components/KPTBoardActions';
+import { KPTBoardColumns } from '@/components/KPTBoardColumns';
+import { KPTBoardHeader } from '@/components/KPTBoardHeader';
 import { KPTCard } from '@/components/KPTCard';
-import { KPTColumnSkeleton } from '@/components/KPTColumnSkeleton';
 import { Button } from '@/components/shadcn/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu';
-import { Skeleton } from '@/components/shadcn/skeleton';
-import { Timer } from '@/components/Timer';
 import { BoardProvider } from '@/contexts/BoardProvider';
-import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { useItemActions } from '@/hooks/useItemActions';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
-import { updateBoard } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBoardStore } from '@/stores/useBoardStore';
-import { useHomeStore } from '@/stores/useHomeStore';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
 const columns: KptColumnType[] = ['keep', 'problem', 'try'];
 
-interface LocationState {
-  justCreated?: boolean;
-}
-
 export function KPTBoard(): ReactElement {
   const navigate = useNavigate();
-  const location = useLocation();
   const { boardId } = useParams<{ boardId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const { handleError } = useErrorHandler();
   const user = useAuthStore((state) => state.user);
-  const activeHomeTab = useHomeStore((state) => state.activeTab);
-  const fromTry = activeHomeTab === 'try';
 
   const board = useBoardStore((state) => state.currentBoard);
   const items = useBoardStore((state) => state.items);
@@ -60,8 +42,6 @@ export function KPTBoard(): ReactElement {
   const filter = useBoardStore((state) => state.filter);
   const loadBoard = useBoardStore((state) => state.loadBoard);
   const addItem = useBoardStore((state) => state.addItem);
-  const deleteItem = useBoardStore((state) => state.deleteItem);
-  const updateItem = useBoardStore((state) => state.updateItem);
   const subscribeToItemEvents = useBoardStore((state) => state.subscribeToItemEvents);
   const setSelectedItem = useBoardStore((state) => state.setSelectedItem);
   const setFilterTag = useBoardStore((state) => state.setFilterTag);
@@ -69,33 +49,27 @@ export function KPTBoard(): ReactElement {
   const memberNicknameMap = useBoardStore((state) => state.memberNicknameMap);
   const timerState = useBoardStore((state) => state.timerState);
   const subscribeToTimerEvents = useBoardStore((state) => state.subscribeToTimerEvents);
-  const toggleVote = useBoardStore((state) => state.toggleVote);
   const reset = useBoardStore((state) => state.reset);
 
-  const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
-  const [exportDialogOpen, setExportDialogOpen] = useState(false);
-  const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [localHideOthersCards, setLocalHideOthersCards] = useState(false);
+  const { handleItemDrop } = useItemActions(boardId);
 
-  // 新規作成後の共有ダイアログ表示
-  useEffect(() => {
-    const state = location.state as LocationState | null;
-    if (state?.justCreated && board) {
-      setShareDialogOpen(true);
-
-      // stateをクリアしてリロード時に再表示されないようにする
-      navigate(location.pathname + location.search, { replace: true, state: {} });
-    }
-  }, [board, location, navigate]);
-
-  const { handleDeleteBoard, deletingBoardId } = useDeleteBoard({
-    onSuccess: () => {
-      navigate('/boards', { replace: true });
+  const handleCardClick = useCallback(
+    (item: KptItem) => {
+      setSelectedItem(item);
+      searchParams.set('itemId', item.id);
+      setSearchParams(searchParams, { replace: true });
     },
-  });
+    [setSelectedItem, searchParams, setSearchParams]
+  );
+
+  const handleClosePanel = useCallback(() => {
+    setSelectedItem(null);
+    searchParams.delete('itemId');
+    setSearchParams(searchParams, { replace: true });
+  }, [setSelectedItem, searchParams, setSearchParams]);
+
+  const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
+  const [localHideOthersCards, setLocalHideOthersCards] = useState(false);
 
   useEffect(() => {
     if (!boardId) return;
@@ -158,17 +132,6 @@ export function KPTBoard(): ReactElement {
     useBoardStore.setState({ items: newItems });
   }, []);
 
-  const handleItemDrop = useCallback(
-    async (item: KptItem) => {
-      try {
-        await updateItem(item);
-      } catch (error) {
-        handleError(error, 'カード位置の更新に失敗しました');
-      }
-    },
-    [updateItem, handleError]
-  );
-
   const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy, displayItems } =
     useKPTCardDnD({
       columns,
@@ -208,69 +171,6 @@ export function KPTBoard(): ReactElement {
     }
   };
 
-  const handleDeleteItem = async (id: string) => {
-    if (!boardId) return;
-    try {
-      await deleteItem(id, boardId);
-    } catch (error) {
-      handleError(error, 'カードの削除に失敗しました');
-    }
-  };
-
-  const handleCardClick = useCallback(
-    (item: KptItem) => {
-      setSelectedItem(item);
-      searchParams.set('itemId', item.id);
-      setSearchParams(searchParams, { replace: true });
-    },
-    [setSelectedItem, searchParams, setSearchParams]
-  );
-
-  const handleClosePanel = useCallback(() => {
-    setSelectedItem(null);
-    searchParams.delete('itemId');
-    setSearchParams(searchParams, { replace: true });
-  }, [setSelectedItem, searchParams, setSearchParams]);
-
-  const handleTagClick = useCallback(
-    (tag: string) => {
-      setFilterTag(tag);
-    },
-    [setFilterTag]
-  );
-
-  const handleMemberClick = useCallback(
-    (memberId: string) => {
-      setFilterMemberId(memberId);
-    },
-    [setFilterMemberId]
-  );
-
-  const handleVote = useCallback(
-    async (itemId: string) => {
-      try {
-        await toggleVote(itemId);
-      } catch (error) {
-        handleError(error, '投票に失敗しました');
-      }
-    },
-    [toggleVote, handleError]
-  );
-
-  const handleRenameBoard = async (newName: string) => {
-    if (!boardId) return;
-    try {
-      setIsRenaming(true);
-      const updatedBoard = await updateBoard(boardId, newName);
-      useBoardStore.setState({ currentBoard: updatedBoard });
-      setRenameDialogOpen(false);
-    } catch (error) {
-      handleError(error, 'ボード名の変更に失敗しました');
-    } finally {
-      setIsRenaming(false);
-    }
-  };
-
   if (!boardId) {
     return (
       <section className="mx-auto flex h-screen max-w-240 items-center justify-center px-4">
@@ -291,58 +191,10 @@ export function KPTBoard(): ReactElement {
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
         >
-          <HeaderActions>
-            <BoardMembersDialog boardId={boardId} disabled={isLoading} />
-            <Button variant="ghost" size="sm" onClick={() => setExportDialogOpen(true)} disabled={isLoading || !board}>
-              <Download className="h-4 w-4" />
-              エクスポート
-            </Button>
-            {user?.id && (!board || user.id === board.ownerId) && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label="ボード設定" disabled={isLoading || !board}>
-                    <Settings className="text-muted-foreground h-4 w-4" />
-                    ボード設定
-                  </Button>
-                </DropdownMenuTrigger>
-                {!isLoading && board && (
-                  <DropdownMenuContent align="end" className="w-44">
-                    <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
-                      <Pencil className="h-4 w-4" />
-                      ボード名を変更
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
-                      <Trash2 className="h-4 w-4" />
-                      削除
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                )}
-              </DropdownMenu>
-            )}
-          </HeaderActions>
+          <KPTBoardActions />
 
           <section className="mx-auto flex h-full w-full max-w-480 flex-col p-8">
-            <header className="flex-none">
-              <nav className="mb-2">
-                <Link
-                  to="/boards"
-                  className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded text-sm transition-colors hover:underline"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  {fromTry ? 'Tryリストに戻る' : 'ボードリストに戻る'}
-                </Link>
-              </nav>
-              <div className="flex items-center justify-between gap-4">
-                {isLoading ? (
-                  <Skeleton className="h-8 w-48" />
-                ) : (
-                  <h1 className="text-2xl font-semibold">{board ? board.name : 'KPT Board'}</h1>
-                )}
-
-                {/* タイマー */}
-                {!isLoading && board && <Timer disabled={isLoading} />}
-              </div>
-            </header>
+            <KPTBoardHeader />
 
             {loadError && (
               <div className="py-4">
@@ -356,7 +208,6 @@ export function KPTBoard(): ReactElement {
               </div>
             )}
 
-            {/* フィルターバー */}
             <div className="flex-none pt-4">
               <FilterBar
                 filterTag={filter.tag}
@@ -367,46 +218,7 @@ export function KPTBoard(): ReactElement {
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
-              {isLoading ? (
-                <>
-                  <KPTColumnSkeleton />
-                  <KPTColumnSkeleton />
-                  <KPTColumnSkeleton />
-                </>
-              ) : (
-                <>
-                  <BoardColumn
-                    column="keep"
-                    items={itemsByColumn.keep}
-                    selectedItemId={selectedItem?.id}
-                    onDeleteItem={handleDeleteItem}
-                    onCardClick={handleCardClick}
-                    onTagClick={handleTagClick}
-                    onMemberClick={handleMemberClick}
-                    onVote={handleVote}
-                  />
-                  <BoardColumn
-                    column="problem"
-                    items={itemsByColumn.problem}
-                    selectedItemId={selectedItem?.id}
-                    onDeleteItem={handleDeleteItem}
-                    onCardClick={handleCardClick}
-                    onTagClick={handleTagClick}
-                    onMemberClick={handleMemberClick}
-                    onVote={handleVote}
-                  />
-                  <BoardColumn
-                    column="try"
-                    items={itemsByColumn.try}
-                    selectedItemId={selectedItem?.id}
-                    onDeleteItem={handleDeleteItem}
-                    onCardClick={handleCardClick}
-                    onTagClick={handleTagClick}
-                    onMemberClick={handleMemberClick}
-                    onVote={handleVote}
-                  />
-                </>
-              )}
+              <KPTBoardColumns itemsByColumn={itemsByColumn} onCardClick={handleCardClick} />
             </div>
 
             <div className="flex-none pt-4">
@@ -423,36 +235,7 @@ export function KPTBoard(): ReactElement {
           {/* ドラッグ中にポインタに追従するカード */}
           <DragOverlay>{activeItem ? <KPTCard item={activeItem} /> : null}</DragOverlay>
 
-          {/* カード詳細パネル */}
           <ItemDetailPanel item={selectedItem} onClose={handleClosePanel} />
-
-          {/* ボード削除確認ダイアログ */}
-          {board && (
-            <BoardDeleteDialog
-              boardName={board.name}
-              isDeleting={deletingBoardId !== null}
-              onDelete={() => handleDeleteBoard(boardId)}
-              isOpen={deleteDialogOpen}
-              onOpenChange={setDeleteDialogOpen}
-            />
-          )}
-
-          {/* ボード名変更ダイアログ */}
-          {board && (
-            <BoardRenameDialog
-              boardName={board.name}
-              isUpdating={isRenaming}
-              onRename={handleRenameBoard}
-              isOpen={renameDialogOpen}
-              onOpenChange={setRenameDialogOpen}
-            />
-          )}
-
-          {/* エクスポートダイアログ */}
-          {board && <ExportDialog boardName={board.name} items={items} isOpen={exportDialogOpen} onOpenChange={setExportDialogOpen} />}
-
-          {/* 共有ダイアログ */}
-          {board && <BoardShareDialog boardId={board.id} isOpen={shareDialogOpen} onOpenChange={setShareDialogOpen} />}
         </DndContext>
       </BoardProvider>
     </>
