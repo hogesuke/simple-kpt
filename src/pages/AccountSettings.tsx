@@ -98,7 +98,7 @@ export function AccountSettings(): ReactElement {
                       autoComplete="off"
                       {...register('nickname')}
                       className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm sm:text-sm"
-                      placeholder="e.g. Taro"
+                      placeholder="ふりかえり太郎"
                       disabled={isSubmitting}
                     />
                   </div>
@@ -158,7 +158,7 @@ export function AccountSettings(): ReactElement {
                     autoComplete="off"
                     {...register('nickname')}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 shadow-sm"
-                    placeholder="e.g. Taro"
+                    placeholder="ふりかえり太郎"
                     disabled={isSubmitting}
                   />
                   <FieldError id="nickname-error" message={errors.nickname?.message} />

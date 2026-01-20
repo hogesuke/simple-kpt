@@ -98,7 +98,7 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               {...register('name')}
-              placeholder="e.g. 2025/01 チーム振り返り"
+              placeholder="アルファチーム振り返り"
             />
           </div>
 
