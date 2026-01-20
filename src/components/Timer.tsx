@@ -1,5 +1,6 @@
 import { Pause, Play, Timer as TimerIcon } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
 import { Checkbox } from '@/components/shadcn/checkbox';
@@ -39,6 +40,7 @@ export function Timer({ disabled }: TimerProps) {
       // タイマー終了時に自動停止
       if (remaining <= 0) {
         void stopTimer();
+        toast.success('タイマーが終了しました');
       }
     };
 
@@ -67,6 +69,7 @@ export function Timer({ disabled }: TimerProps) {
     setIsStopping(true);
     try {
       await stopTimer();
+      toast.info('タイマーが停止されました');
     } finally {
       setIsStopping(false);
     }
@@ -152,7 +155,9 @@ export function Timer({ disabled }: TimerProps) {
                 disabled={isProcessing}
                 aria-label="タイマー時間（分）"
               />
-              <span className="text-sm" aria-hidden="true">分</span>
+              <span className="text-sm" aria-hidden="true">
+                分
+              </span>
             </div>
           </div>
 
