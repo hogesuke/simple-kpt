@@ -140,7 +140,7 @@ export function AccountSettings(): ReactElement {
 
           {/* ニックネーム */}
           <section className="mb-8">
-            <h2 className="mb-4 text-lg font-medium text-gray-900">ニックネーム</h2>
+            <h2 className="mb-4 text-lg font-medium text-gray-900">ニックネームの変更</h2>
             <div className="rounded-lg border border-gray-200 bg-white p-6">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {errors.root && <FormErrorAlert>{errors.root.message}</FormErrorAlert>}
@@ -148,7 +148,7 @@ export function AccountSettings(): ReactElement {
                 <div>
                   <div className="flex items-center justify-between">
                     <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">
-                      表示名
+                      ニックネーム
                     </label>
                     <CharacterCounter current={nickname.length} max={NICKNAME_MAX_LENGTH} />
                   </div>
@@ -166,7 +166,7 @@ export function AccountSettings(): ReactElement {
 
                 <div className="flex justify-end">
                   <LoadingButton type="submit" loading={isSubmitting}>
-                    更新
+                    変更
                   </LoadingButton>
                 </div>
               </form>
