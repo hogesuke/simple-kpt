@@ -1,5 +1,5 @@
-import { Pause, Play, Timer as TimerIcon } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { Pause, Play, Timer as TimerIcon, Volume2, VolumeX } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
@@ -21,6 +21,59 @@ export function Timer({ disabled }: TimerProps) {
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
+  // 通知音のオン/オフ状態
+  // - state: サウンドアイコンの表示切り替えのため（refでは再レンダリングされないためstateを利用）
+  // - ref: stateの利用により、タイマーのインターバルがリセットされないようにするため
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const isSoundEnabledRef = useRef(true);
+
+  // refをstateと同期させる
+  useEffect(() => {
+    isSoundEnabledRef.current = isSoundEnabled;
+  }, [isSoundEnabled]);
+
+  // 通知音を鳴らす
+  const playNotificationSound = useCallback(() => {
+    if (!isSoundEnabledRef.current) return;
+
+    try {
+      const audioContext = new AudioContext();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+
+      // 2回目の音（少し高い音）
+      setTimeout(() => {
+        const oscillator2 = audioContext.createOscillator();
+        const gainNode2 = audioContext.createGain();
+
+        oscillator2.connect(gainNode2);
+        gainNode2.connect(audioContext.destination);
+
+        oscillator2.frequency.value = 1000;
+        oscillator2.type = 'sine';
+
+        gainNode2.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+        oscillator2.start(audioContext.currentTime);
+        oscillator2.stop(audioContext.currentTime + 0.5);
+      }, 200);
+    } catch {
+      // Web Audio APIがサポートされていない場合は音は鳴らさない
+    }
+  }, []);
 
   // 残り時間の計算
   useEffect(() => {
@@ -40,6 +93,7 @@ export function Timer({ disabled }: TimerProps) {
       // タイマー終了時に自動停止
       if (remaining <= 0) {
         void stopTimer();
+        playNotificationSound();
         toast.success('タイマーが終了しました');
       }
     };
@@ -48,7 +102,7 @@ export function Timer({ disabled }: TimerProps) {
     const interval = setInterval(calculateRemaining, 1000);
 
     return () => clearInterval(interval);
-  }, [timerState, stopTimer]);
+  }, [timerState, stopTimer, playNotificationSound]);
 
   const handleStart = useCallback(async () => {
     const mins = Number(minutes);
@@ -87,8 +141,15 @@ export function Timer({ disabled }: TimerProps) {
   // タイマー起動中
   if (isRunning) {
     return (
-      <div className="border-primary flex h-9 items-center gap-2 rounded-full border pr-1 pl-3">
-        <TimerIcon className="text-primary h-4 w-4" />
+      <div className="border-primary flex h-9 items-center gap-2 rounded-full border pr-1 pl-1">
+        <button
+          type="button"
+          onClick={() => setIsSoundEnabled(!isSoundEnabled)}
+          className="hover:bg-muted-foreground/10 flex h-7 w-7 items-center justify-center rounded-full transition-colors"
+          aria-label={isSoundEnabled ? '通知音をオフにする' : '通知音をオンにする'}
+        >
+          {isSoundEnabled ? <Volume2 className="text-primary h-4 w-4" /> : <VolumeX className="text-muted-foreground h-4 w-4" />}
+        </button>
         <span className="font-mono text-lg font-semibold tabular-nums">{formatTime(remainingSeconds)}</span>
         <button
           type="button"
