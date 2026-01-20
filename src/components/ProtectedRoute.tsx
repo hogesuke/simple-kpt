@@ -1,7 +1,7 @@
-import { Loader2 } from 'lucide-react';
 import { ReactElement, useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router';
 
+import { PageLoader } from '@/components/PageLoader';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 interface ProtectedRouteProps {
@@ -28,7 +28,7 @@ export function ProtectedRoute({ children, requireProfile = true }: ProtectedRou
   if (loading || isLoadingProfile) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
+        <PageLoader />
       </div>
     );
   }
