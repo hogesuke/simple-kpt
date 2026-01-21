@@ -374,7 +374,8 @@ INSERT INTO public.profiles (id, nickname, created_at, updated_at) VALUES
 
 INSERT INTO public.boards (id, name, owner_id, created_at) VALUES
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '開発テストボード', '11111111-1111-1111-1111-111111111111'::uuid, now()),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '10人メンバーボード', '11111111-1111-1111-1111-111111111111'::uuid, now());
+  ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '10人メンバーボード', '11111111-1111-1111-1111-111111111111'::uuid, now()),
+  ('e2e00000-0000-0000-0000-000000000000'::uuid, 'E2Eテスト専用ボード', '11111111-1111-1111-1111-111111111111'::uuid, now());
 
 -- ============================================================
 -- ボードメンバーシップの作成
@@ -383,6 +384,10 @@ INSERT INTO public.boards (id, name, owner_id, created_at) VALUES
 INSERT INTO public.board_members (board_id, user_id, role, created_at) VALUES
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, 'owner', now()),
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, '22222222-2222-2222-2222-222222222222'::uuid, 'member', now());
+
+-- E2Eテスト専用ボード
+INSERT INTO public.board_members (board_id, user_id, role, created_at) VALUES
+  ('e2e00000-0000-0000-0000-000000000000'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, 'owner', now());
 
 INSERT INTO public.board_members (board_id, user_id, role, created_at) VALUES
   ('bbbbbbbb-bbbb-bbbb-bbbb-aaaaaaaaaaaa'::uuid, '11111111-1111-1111-1111-111111111111'::uuid, 'owner', now()),
@@ -404,6 +409,20 @@ INSERT INTO public.items (id, board_id, column_name, text, position, author_id, 
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'keep', 'チームワークが良い', 1000, '11111111-1111-1111-1111-111111111111'::uuid, now()),
   ('cccccccc-cccc-cccc-cccc-cccccccccccc'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'problem', 'コミュニケーション不足', 1000, '22222222-2222-2222-2222-222222222222'::uuid, now()),
   ('dddddddd-dddd-dddd-dddd-dddddddddddd'::uuid, 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid, 'try', '定期的なミーティングを開催する', 1000, '11111111-1111-1111-1111-111111111111'::uuid, now());
+
+-- E2Eテスト専用ボードのアイテム（Keep/Problem）
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, created_at) VALUES
+  ('e2e00000-0000-0000-0002-000000000001'::uuid, 'e2e00000-0000-0000-0000-000000000000'::uuid, 'keep', 'E2E編集テスト用Keep', 1000, '11111111-1111-1111-1111-111111111111'::uuid, now()),
+  ('e2e00000-0000-0000-0002-000000000002'::uuid, 'e2e00000-0000-0000-0000-000000000000'::uuid, 'problem', 'E2E編集テスト用Problem', 1000, '11111111-1111-1111-1111-111111111111'::uuid, now());
+
+-- E2Eテスト専用ボードのTryアイテム（各テスト用に独立したアイテム）
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, status, created_at) VALUES
+  ('e2e00000-0000-0000-0001-000000000001'::uuid, 'e2e00000-0000-0000-0000-000000000000'::uuid, 'try', 'E2E未対応のTry', 1000, '11111111-1111-1111-1111-111111111111'::uuid, 'pending', now()),
+  ('e2e00000-0000-0000-0001-000000000002'::uuid, 'e2e00000-0000-0000-0000-000000000000'::uuid, 'try', 'E2E対応中のTry', 2000, '11111111-1111-1111-1111-111111111111'::uuid, 'in_progress', now()),
+  ('e2e00000-0000-0000-0001-000000000003'::uuid, 'e2e00000-0000-0000-0000-000000000000'::uuid, 'try', 'E2E完了のTry', 3000, '11111111-1111-1111-1111-111111111111'::uuid, 'done', now()),
+  ('e2e00000-0000-0000-0001-000000000004'::uuid, 'e2e00000-0000-0000-0000-000000000000'::uuid, 'try', 'E2Eステータス変更用Try', 4000, '11111111-1111-1111-1111-111111111111'::uuid, 'pending', now()),
+  ('e2e00000-0000-0000-0001-000000000005'::uuid, 'e2e00000-0000-0000-0000-000000000000'::uuid, 'try', 'E2E担当者変更用Try', 5000, '11111111-1111-1111-1111-111111111111'::uuid, 'pending', now()),
+  ('e2e00000-0000-0000-0001-000000000006'::uuid, 'e2e00000-0000-0000-0000-000000000000'::uuid, 'try', 'E2E対応不要テスト用Try', 6000, '11111111-1111-1111-1111-111111111111'::uuid, 'pending', now());
 
 -- ============================================================
 -- ページネーションテスト用ユーザー（100ボード、100 Tryアイテム）
