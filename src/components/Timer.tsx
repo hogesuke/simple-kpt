@@ -28,6 +28,8 @@ export function Timer({ disabled }: TimerProps) {
   const isSoundEnabledRef = useRef(true);
   // タイマー終了通知済みフラグ（stopTimerが非同期のため、インターバルが再発火して2重通知されるのを防ぐ）
   const hasNotifiedRef = useRef(false);
+  // 前回のtimerState（タイマー停止検出用）
+  const prevTimerStateRef = useRef(timerState);
 
   // refをstateと同期させる
   useEffect(() => {
@@ -97,8 +99,6 @@ export function Timer({ disabled }: TimerProps) {
       if (remaining <= 0 && !hasNotifiedRef.current) {
         hasNotifiedRef.current = true;
         void stopTimer();
-        playNotificationSound();
-        toast.success('タイマーが終了しました');
       }
     };
 
@@ -106,7 +106,17 @@ export function Timer({ disabled }: TimerProps) {
     const interval = setInterval(calculateRemaining, 1000);
 
     return () => clearInterval(interval);
-  }, [timerState, stopTimer, playNotificationSound]);
+  }, [timerState, stopTimer]);
+
+  // タイマー停止時の通知（Realtime経由で全メンバーに通知）
+  useEffect(() => {
+    // timerStateが有効な状態からnullに変わった時に通知
+    if (prevTimerStateRef.current && !timerState) {
+      playNotificationSound();
+      toast.success('タイマーが終了しました');
+    }
+    prevTimerStateRef.current = timerState;
+  }, [timerState, playNotificationSound]);
 
   const handleStart = useCallback(async () => {
     const mins = Number(minutes);
@@ -127,7 +137,6 @@ export function Timer({ disabled }: TimerProps) {
     setIsStopping(true);
     try {
       await stopTimer();
-      toast.info('タイマーが停止されました');
     } finally {
       setIsStopping(false);
     }
