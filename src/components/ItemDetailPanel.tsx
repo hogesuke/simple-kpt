@@ -1,7 +1,7 @@
 import * as FocusScope from '@radix-ui/react-focus-scope';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { CalendarIcon, Edit2, Loader2, ThumbsUp, X } from 'lucide-react';
+import { CalendarIcon, Edit2, Loader2, X } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useBoardContext } from '@/contexts/BoardContext';
@@ -16,7 +16,7 @@ import { Button } from './shadcn/button';
 import { Calendar } from './shadcn/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './shadcn/select';
-import { Tooltip, TooltipContent, TooltipTrigger } from './shadcn/tooltip';
+import { VoteButton } from './VoteButton';
 
 import type { KptItem, TryStatus } from '@/types/kpt';
 
@@ -267,7 +267,6 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                 </div>
               ) : (
                 <>
-                  {/* 投票数 */}
                   <div>
                     <div className="prose prose-sm max-w-none">
                       <p className="text-base leading-relaxed wrap-break-word whitespace-pre-wrap">
@@ -275,30 +274,13 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       </p>
                     </div>
                     <div className="mt-3 flex justify-end pr-3">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            type="button"
-                            onClick={() => toggleVote(item.id)}
-                            className={cn(
-                              'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-sm transition-colors',
-                              item.hasVoted
-                                ? 'bg-primary/10 text-primary hover:bg-primary/20'
-                                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                            )}
-                            aria-label={item.hasVoted ? '投票を取り消す' : '投票する'}
-                            aria-pressed={item.hasVoted}
-                          >
-                            <ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" />
-                            {(item.voteCount ?? 0) > 0 && <span>{item.voteCount}</span>}
-                          </button>
-                        </TooltipTrigger>
-                        {(item.voters?.length ?? 0) > 0 && (
-                          <TooltipContent side="bottom" className="max-w-48">
-                            {item.voters?.map((voter) => voter.nickname ?? '名前未設定').join(', ')}
-                          </TooltipContent>
-                        )}
-                      </Tooltip>
+                      <VoteButton
+                        voteCount={item.voteCount ?? 0}
+                        hasVoted={item.hasVoted ?? false}
+                        voters={item.voters ?? []}
+                        onVote={() => toggleVote(item.id)}
+                        size="md"
+                      />
                     </div>
                   </div>
                 </>
