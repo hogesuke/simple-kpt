@@ -198,14 +198,16 @@ export function DemoBoard(): ReactElement {
               </header>
 
               {/* フィルターバー */}
-              <div className="flex-none pt-4">
-                <FilterBar
-                  filterTag={filter.tag}
-                  filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || '不明なメンバー' : null}
-                  onRemoveTag={() => setFilterTag(null)}
-                  onRemoveMember={() => setFilterMemberId(null)}
-                />
-              </div>
+              {(filter.tag || filter.memberId) && (
+                <div className="flex-none pt-4">
+                  <FilterBar
+                    filterTag={filter.tag}
+                    filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || '不明なメンバー' : null}
+                    onRemoveTag={() => setFilterTag(null)}
+                    onRemoveMember={() => setFilterMemberId(null)}
+                  />
+                </div>
+              )}
 
               <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
                 <BoardColumn
