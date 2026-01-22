@@ -29,13 +29,16 @@ export class BoardPage {
    */
   async selectColumn(column: 'keep' | 'problem' | 'try') {
     const columnLabel = column === 'keep' ? 'Keep' : column === 'problem' ? 'Problem' : 'Try';
-    await this.page.getByRole('button', { name: columnLabel }).click();
+    await this.page.getByRole('group', { name: 'カラム選択' }).getByRole('button', { name: columnLabel }).click();
   }
 
   /**
    * アイテムを追加
    */
   async addItem(text: string, column?: 'keep' | 'problem' | 'try') {
+    // ページの読み込み完了を待つ
+    await this.addItemInput.waitFor({ state: 'visible' });
+
     if (column) {
       await this.selectColumn(column);
     }
