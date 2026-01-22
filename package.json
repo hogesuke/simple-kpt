@@ -72,6 +72,7 @@
     "globals": "^17.0.0",
     "husky": "^9.1.7",
     "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.4.49",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.7.1",
@@ -89,5 +90,8 @@
     "url": "git@github.com:hogesuke/simple-kpt.git"
   },
   "author": "hogesuke",
-  "license": "ISC"
+  "license": "ISC",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": "prettier --write"
+  }
 }

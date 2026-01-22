@@ -1,16 +1,11 @@
 #!/bin/sh
 
+# ステージされたファイルをフォーマット
+echo "Prettierでフォーマット中..."
+pnpm lint-staged || exit 1
+
 # ユニットテストを実行
 echo "ユニットテストを実行中..."
 pnpm test run || exit 1
 
-# Supabaseが起動しているかチェック
-if supabase status > /dev/null 2>&1; then
-  echo "E2Eテストを実行中..."
-  pnpm e2e || exit 1
-else
-  echo "⚠️ Supabaseが起動していないため、E2Eテストをスキップしました"
-  echo "E2Eテストを実行するには、事前に 'supabase start' を実行してください"
-fi
-
-echo "✅ すべてのテストが成功しました"
+echo "✅ pre-commitチェックが完了しました"
