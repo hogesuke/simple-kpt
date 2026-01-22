@@ -1,12 +1,13 @@
 import * as FocusScope from '@radix-ui/react-focus-scope';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { CalendarIcon, Edit2, Loader2, ThumbsUp, X } from 'lucide-react';
+import { CalendarIcon, Edit2, Loader2, X } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 
 import { useBoardContext } from '@/contexts/BoardContext';
 import { cn } from '@/lib/cn';
 import { columnDot, columnLabels } from '@/lib/column-styles';
+import { useBoardStore } from '@/stores/useBoardStore';
 import { ITEM_TEXT_MAX_LENGTH } from '@shared/constants';
 
 import { CharacterCounter } from './CharacterCounter';
@@ -15,6 +16,7 @@ import { Button } from './shadcn/button';
 import { Calendar } from './shadcn/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from './shadcn/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './shadcn/select';
+import { VoteButton } from './VoteButton';
 
 import type { KptItem, TryStatus } from '@/types/kpt';
 
@@ -45,6 +47,7 @@ function formatDate(dateString?: string): string {
 
 export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactElement | null {
   const { updateItem, setFilterTag, members } = useBoardContext();
+  const toggleVote = useBoardStore((state) => state.toggleVote);
   const [isEditing, setIsEditing] = useState(false);
   const [editingText, setEditingText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -172,214 +175,220 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
             'animate-in slide-in-from-right duration-300'
           )}
         >
-        {/* ヘッダー */}
-        <div className="flex items-center justify-between px-6 py-4">
-          <span className="inline-flex items-center gap-2 text-lg font-semibold">
-            <span className={columnDot({ column: item.column })} aria-hidden="true" />
-            {columnLabels[item.column]}
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-muted-foreground hover:bg-muted inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors"
-            aria-label="閉じる"
-          >
-            <X className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </div>
+          {/* ヘッダー */}
+          <div className="flex items-center justify-between px-6 py-4">
+            <span className="inline-flex items-center gap-2 text-lg font-semibold">
+              <span className={columnDot({ column: item.column })} aria-hidden="true" />
+              {columnLabels[item.column]}
+            </span>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-muted-foreground hover:bg-muted inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+              aria-label="閉じる"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </button>
+          </div>
 
-        {/* コンテンツ */}
-        <div className="flex-1 overflow-y-auto">
-          {/* カード内容 */}
-          <section className="px-6 py-4">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h3 className="text-muted-foreground text-sm font-medium">内容</h3>
-              {!isEditing && (
-                <button
-                  type="button"
-                  onClick={handleStartEdit}
-                  className="text-muted-foreground hover:bg-muted inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
-                >
-                  <Edit2 className="h-3.5 w-3.5" aria-hidden="true" />
-                  編集
-                </button>
-              )}
-            </div>
-            {isEditing ? (
-              <div className="space-y-4">
-                <div className="relative">
-                  <CharacterCounter current={editingText.length} max={ITEM_TEXT_MAX_LENGTH} className="absolute -top-7 right-0" />
-                  <textarea
-                    ref={textareaRef}
-                    value={editingText}
-                    onChange={(e) => setEditingText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                        e.preventDefault();
-                        const isOverLimit = editingText.length > ITEM_TEXT_MAX_LENGTH;
-                        if (!isSaving && editingText.trim() && !isOverLimit && editingText !== item?.text) {
-                          handleSaveEdit();
+          {/* コンテンツ */}
+          <div className="flex-1 overflow-y-auto">
+            {/* カード内容 */}
+            <section className="px-6 py-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h3 className="text-muted-foreground text-sm font-medium">内容</h3>
+                {!isEditing && (
+                  <button
+                    type="button"
+                    onClick={handleStartEdit}
+                    className="text-muted-foreground hover:bg-muted inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                  >
+                    <Edit2 className="h-3.5 w-3.5" aria-hidden="true" />
+                    編集
+                  </button>
+                )}
+              </div>
+              {isEditing ? (
+                <div className="space-y-4">
+                  <div className="relative">
+                    <CharacterCounter current={editingText.length} max={ITEM_TEXT_MAX_LENGTH} className="absolute -top-7 right-0" />
+                    <textarea
+                      ref={textareaRef}
+                      value={editingText}
+                      onChange={(e) => setEditingText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                          e.preventDefault();
+                          const isOverLimit = editingText.length > ITEM_TEXT_MAX_LENGTH;
+                          if (!isSaving && editingText.trim() && !isOverLimit && editingText !== item?.text) {
+                            handleSaveEdit();
+                          }
                         }
-                      }
-                    }}
-                    className={cn(
-                      'border-input bg-background w-full rounded-md border px-3 py-2',
-                      'resize-none text-base leading-relaxed',
-                      'disabled:cursor-not-allowed disabled:opacity-50'
-                    )}
-                    rows={6}
-                    disabled={isSaving}
-                    placeholder="テキストを入力してください"
-                  />
-                </div>
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={handleCancelEdit}
-                    disabled={isSaving}
-                    className={cn(
-                      'px-3 py-1.5 text-sm font-medium',
-                      'bg-secondary text-secondary-foreground rounded-md',
-                      'hover:bg-secondary/80 transition-colors',
-                      'disabled:cursor-not-allowed disabled:opacity-50'
-                    )}
-                  >
-                    キャンセル
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSaveEdit}
-                    disabled={isSaving || !editingText.trim() || editingText.length > ITEM_TEXT_MAX_LENGTH}
-                    className={cn(
-                      'inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium',
-                      'bg-primary text-primary-foreground rounded-md',
-                      'hover:bg-primary/90 transition-colors',
-                      'disabled:cursor-not-allowed disabled:opacity-50'
-                    )}
-                  >
-                    {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-                    保存
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* 投票数 */}
-                <div>
-                  <div className="prose prose-sm max-w-none">
-                    <p className="text-base leading-relaxed wrap-break-word whitespace-pre-wrap">
-                      <TextWithHashtags text={item.text} onTagClick={handleTagClick} />
-                    </p>
-                  </div>
-                  <div className="mt-3 flex justify-end pr-3">
-                    <span className="text-muted-foreground inline-flex items-center gap-1 text-sm">
-                      <ThumbsUp className="h-3.5 w-3.5" aria-hidden="true" />
-                      {item.voteCount ?? 0}
-                    </span>
-                  </div>
-                </div>
-              </>
-            )}
-          </section>
-
-          {/* Try専用フィールド */}
-          {item.column === 'try' && (
-            <section className="border-border/50 space-y-4 border-t px-6 py-6">
-              <h3 className="text-muted-foreground text-sm font-medium">対応状況</h3>
-
-              {/* ステータス */}
-              <div className="flex items-center gap-3">
-                <span className="text-muted-foreground w-16 shrink-0 text-xs">ステータス</span>
-                <Select value={item.status ?? 'pending'} onValueChange={(v) => handleStatusChange(v as TryStatus)}>
-                  <SelectTrigger className="h-8 flex-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PROBLEM_STATUS_OPTIONS.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* 担当者 */}
-              <div className="flex items-center gap-3">
-                <span className="text-muted-foreground w-16 shrink-0 text-xs">担当者</span>
-                <Select value={item.assigneeId ?? 'unassigned'} onValueChange={handleAssigneeChange} disabled={item.status === 'wont_fix'}>
-                  <SelectTrigger className="h-8 flex-1">
-                    <SelectValue placeholder="未設定" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="unassigned">
-                      <span className="text-muted-foreground">未設定</span>
-                    </SelectItem>
-                    {members.map((member) => (
-                      <SelectItem key={member.userId} value={member.userId}>
-                        {member.nickname ?? '匿名ユーザー'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* 期日 */}
-              <div className="flex items-center gap-3">
-                <span className="text-muted-foreground w-16 shrink-0 text-xs">期日</span>
-                <Popover open={dueDateOpen} onOpenChange={setDueDateOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn('h-8 flex-1 justify-start text-left font-normal', !item.dueDate && 'text-muted-foreground')}
-                      disabled={item.status === 'wont_fix'}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {item.dueDate ? format(new Date(item.dueDate), 'yyyy/MM/dd') : '未設定'}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={item.dueDate ? new Date(item.dueDate) : undefined}
-                      onSelect={handleDueDateChange}
-                      locale={ja}
-                      initialFocus
+                      }}
+                      className={cn(
+                        'border-input bg-background w-full rounded-md border px-3 py-2',
+                        'resize-none text-base leading-relaxed',
+                        'disabled:cursor-not-allowed disabled:opacity-50'
+                      )}
+                      rows={6}
+                      disabled={isSaving}
+                      placeholder="テキストを入力してください"
                     />
-                    {item.dueDate && (
-                      <div className="border-t p-2">
-                        <Button variant="ghost" size="sm" className="w-full" onClick={() => handleDueDateChange(undefined)}>
-                          期日をクリア
-                        </Button>
-                      </div>
-                    )}
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </section>
-          )}
-
-          {/* メタ情報 */}
-          <section className="border-border/50 border-t px-6 py-6">
-            <dl className="grid grid-cols-[5rem_1fr] items-center gap-x-3 gap-y-3">
-              {/* 作成者情報 */}
-              <dt className="text-muted-foreground text-xs font-medium">作成者</dt>
-              <dd className="text-sm">{item.authorNickname || '匿名ユーザー'}</dd>
-
-              {/* 作成日時 */}
-              <dt className="text-muted-foreground text-xs font-medium">作成日時</dt>
-              <dd className="text-sm">{formatDate(item.createdAt)}</dd>
-
-              {/* 更新日時 */}
-              {item.updatedAt && item.updatedAt !== item.createdAt && (
+                  </div>
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={handleCancelEdit}
+                      disabled={isSaving}
+                      className={cn(
+                        'px-3 py-1.5 text-sm font-medium',
+                        'bg-secondary text-secondary-foreground rounded-md',
+                        'hover:bg-secondary/80 transition-colors',
+                        'disabled:cursor-not-allowed disabled:opacity-50'
+                      )}
+                    >
+                      キャンセル
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveEdit}
+                      disabled={isSaving || !editingText.trim() || editingText.length > ITEM_TEXT_MAX_LENGTH}
+                      className={cn(
+                        'inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium',
+                        'bg-primary text-primary-foreground rounded-md',
+                        'hover:bg-primary/90 transition-colors',
+                        'disabled:cursor-not-allowed disabled:opacity-50'
+                      )}
+                    >
+                      {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                      保存
+                    </button>
+                  </div>
+                </div>
+              ) : (
                 <>
-                  <dt className="text-muted-foreground text-xs font-medium">更新日時</dt>
-                  <dd className="text-sm">{formatDate(item.updatedAt)}</dd>
+                  <div>
+                    <div className="prose prose-sm max-w-none">
+                      <p className="text-base leading-relaxed wrap-break-word whitespace-pre-wrap">
+                        <TextWithHashtags text={item.text} onTagClick={handleTagClick} />
+                      </p>
+                    </div>
+                    <div className="mt-3 flex justify-end pr-3">
+                      <VoteButton
+                        voteCount={item.voteCount ?? 0}
+                        hasVoted={item.hasVoted ?? false}
+                        voters={item.voters ?? []}
+                        onVote={() => toggleVote(item.id)}
+                        size="md"
+                      />
+                    </div>
+                  </div>
                 </>
               )}
-            </dl>
-          </section>
-        </div>
+            </section>
+
+            {/* Try専用フィールド */}
+            {item.column === 'try' && (
+              <section className="border-border/50 space-y-4 border-t px-6 py-6">
+                <h3 className="text-muted-foreground text-sm font-medium">対応状況</h3>
+
+                {/* ステータス */}
+                <div className="flex items-center gap-3">
+                  <span className="text-muted-foreground w-16 shrink-0 text-xs">ステータス</span>
+                  <Select value={item.status ?? 'pending'} onValueChange={(v) => handleStatusChange(v as TryStatus)}>
+                    <SelectTrigger className="h-8 flex-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROBLEM_STATUS_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* 担当者 */}
+                <div className="flex items-center gap-3">
+                  <span className="text-muted-foreground w-16 shrink-0 text-xs">担当者</span>
+                  <Select
+                    value={item.assigneeId ?? 'unassigned'}
+                    onValueChange={handleAssigneeChange}
+                    disabled={item.status === 'wont_fix'}
+                  >
+                    <SelectTrigger className="h-8 flex-1">
+                      <SelectValue placeholder="未設定" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unassigned">
+                        <span className="text-muted-foreground">未設定</span>
+                      </SelectItem>
+                      {members.map((member) => (
+                        <SelectItem key={member.userId} value={member.userId}>
+                          {member.nickname ?? '匿名ユーザー'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* 期日 */}
+                <div className="flex items-center gap-3">
+                  <span className="text-muted-foreground w-16 shrink-0 text-xs">期日</span>
+                  <Popover open={dueDateOpen} onOpenChange={setDueDateOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn('h-8 flex-1 justify-start text-left font-normal', !item.dueDate && 'text-muted-foreground')}
+                        disabled={item.status === 'wont_fix'}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {item.dueDate ? format(new Date(item.dueDate), 'yyyy/MM/dd') : '未設定'}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={item.dueDate ? new Date(item.dueDate) : undefined}
+                        onSelect={handleDueDateChange}
+                        locale={ja}
+                        initialFocus
+                      />
+                      {item.dueDate && (
+                        <div className="border-t p-2">
+                          <Button variant="ghost" size="sm" className="w-full" onClick={() => handleDueDateChange(undefined)}>
+                            期日をクリア
+                          </Button>
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </section>
+            )}
+
+            {/* メタ情報 */}
+            <section className="border-border/50 border-t px-6 py-6">
+              <dl className="grid grid-cols-[5rem_1fr] items-center gap-x-3 gap-y-3">
+                {/* 作成者情報 */}
+                <dt className="text-muted-foreground text-xs font-medium">作成者</dt>
+                <dd className="text-sm">{item.authorNickname || '匿名ユーザー'}</dd>
+
+                {/* 作成日時 */}
+                <dt className="text-muted-foreground text-xs font-medium">作成日時</dt>
+                <dd className="text-sm">{formatDate(item.createdAt)}</dd>
+
+                {/* 更新日時 */}
+                {item.updatedAt && item.updatedAt !== item.createdAt && (
+                  <>
+                    <dt className="text-muted-foreground text-xs font-medium">更新日時</dt>
+                    <dd className="text-sm">{formatDate(item.updatedAt)}</dd>
+                  </>
+                )}
+              </dl>
+            </section>
+          </div>
         </div>
       </FocusScope.Root>
     </>

@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router';
 
 import { Toaster } from '@/components/shadcn/sonner';
+import { TooltipProvider } from '@/components/shadcn/tooltip';
 import { router } from '@/router';
 import { initializeAuth } from '@/stores/useAuthStore';
 import './index.css';
@@ -13,10 +14,10 @@ function App() {
   }, []);
 
   return (
-    <>
+    <TooltipProvider>
       <RouterProvider router={router} />
       <Toaster />
-    </>
+    </TooltipProvider>
   );
 }
 

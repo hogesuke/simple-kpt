@@ -82,6 +82,27 @@ Deno.serve(async (req) => {
     return generateErrorResponse('アイテムの取得に失敗しました', 500);
   }
 
+  // 投票者のuser_idを収集
+  const voterUserIds = new Set<string>();
+  for (const item of data ?? []) {
+    for (const vote of item.item_votes ?? []) {
+      voterUserIds.add(vote.user_id);
+    }
+  }
+
+  // 投票者のプロフィールを取得
+  const voterProfiles: Record<string, string | null> = {};
+  if (voterUserIds.size > 0) {
+    const { data: profiles } = await client
+      .from('profiles')
+      .select('id, nickname')
+      .in('id', Array.from(voterUserIds));
+
+    for (const profile of profiles ?? []) {
+      voterProfiles[profile.id] = profile.nickname;
+    }
+  }
+
   // ニックネーム情報をフラットな構造に変換, 投票情報を追加
   const items = (data ?? []).map((item: any) => {
     const votes = item.item_votes ?? [];
@@ -101,6 +122,10 @@ Deno.serve(async (req) => {
       due_date: item.due_date,
       vote_count: votes.length,
       has_voted: votes.some((v: { user_id: string }) => v.user_id === user.id),
+      voters: votes.map((v: { user_id: string }) => ({
+        id: v.user_id,
+        nickname: voterProfiles[v.user_id] ?? null,
+      })),
     };
   });
 

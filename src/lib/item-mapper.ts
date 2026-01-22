@@ -1,5 +1,5 @@
 import type { ItemRow } from '@/types/db';
-import type { KptColumnType, KptItem, TryStatus } from '@/types/kpt';
+import type { KptColumnType, KptItem, TryStatus, Voter } from '@/types/kpt';
 
 /**
  * プロフィール情報を含む拡張ItemRow型
@@ -9,6 +9,7 @@ export type ItemRowWithProfiles = ItemRow & {
   assignee_nickname?: string | null;
   vote_count?: number;
   has_voted?: boolean;
+  voters?: Voter[];
 };
 
 /**
@@ -37,5 +38,6 @@ export function mapRowToItem(row: ItemRowWithProfiles): KptItem {
     dueDate: row.due_date,
     voteCount: row.vote_count ?? 0,
     hasVoted: row.has_voted ?? false,
+    voters: row.voters ?? [],
   };
 }

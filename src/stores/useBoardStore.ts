@@ -297,21 +297,30 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
     const item = get().items.find((i) => i.id === itemId);
     if (!item) return;
 
+    const { user, profile } = useAuthStore.getState();
+    if (!user) return;
+
     // 楽観的UI更新
     const oldVoteCount = item.voteCount ?? 0;
     const oldHasVoted = item.hasVoted ?? false;
+    const oldVoters = item.voters ?? [];
     const newHasVoted = !oldHasVoted;
     const newVoteCount = newHasVoted ? oldVoteCount + 1 : Math.max(0, oldVoteCount - 1);
+    const newVoters = newHasVoted
+      ? [...oldVoters, { id: user.id, nickname: profile?.nickname ?? null }]
+      : oldVoters.filter((v) => v.id !== user.id);
 
     set((state) => {
       const index = state.items.findIndex((i: KptItem) => i.id === itemId);
       if (index !== -1) {
         state.items[index].voteCount = newVoteCount;
         state.items[index].hasVoted = newHasVoted;
+        state.items[index].voters = newVoters;
       }
       if (state.selectedItem?.id === itemId) {
         state.selectedItem.voteCount = newVoteCount;
         state.selectedItem.hasVoted = newHasVoted;
+        state.selectedItem.voters = newVoters;
       }
     });
 
@@ -340,6 +349,11 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
           payload: {
             itemId: result.itemId,
             voteCount: result.voteCount,
+            voter: {
+              id: user.id,
+              nickname: profile?.nickname ?? null,
+              hasVoted: result.hasVoted,
+            },
           },
         });
       }
@@ -350,10 +364,12 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
         if (index !== -1) {
           state.items[index].voteCount = oldVoteCount;
           state.items[index].hasVoted = oldHasVoted;
+          state.items[index].voters = oldVoters;
         }
         if (state.selectedItem?.id === itemId) {
           state.selectedItem.voteCount = oldVoteCount;
           state.selectedItem.hasVoted = oldHasVoted;
+          state.selectedItem.voters = oldVoters;
         }
       });
       throw error;

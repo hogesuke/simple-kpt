@@ -26,7 +26,7 @@ export interface RealtimeSlice {
   handleRealtimeInsert: (item: KptItem) => Promise<void>;
   handleRealtimeUpdate: (item: KptItem) => void;
   handleRealtimeDelete: (id: string) => void;
-  handleRealtimeVoteChanged: (itemId: string, voteCount: number) => void;
+  handleRealtimeVoteChanged: (itemId: string, voteCount: number, voter?: { id: string; nickname: string | null; hasVoted: boolean }) => void;
 }
 
 /**
@@ -108,8 +108,9 @@ export const createRealtimeSlice: StateCreator<BoardState, [['zustand/devtools',
         const votePayload = payload.payload as {
           itemId: string;
           voteCount: number;
+          voter?: { id: string; nickname: string | null; hasVoted: boolean };
         };
-        get().handleRealtimeVoteChanged(votePayload.itemId, votePayload.voteCount);
+        get().handleRealtimeVoteChanged(votePayload.itemId, votePayload.voteCount, votePayload.voter);
       })
       .subscribe((status, err) => {
         if (err) {
@@ -262,14 +263,30 @@ export const createRealtimeSlice: StateCreator<BoardState, [['zustand/devtools',
     });
   },
 
-  handleRealtimeVoteChanged: (itemId: string, voteCount: number) => {
+  handleRealtimeVoteChanged: (itemId: string, voteCount: number, voter?: { id: string; nickname: string | null; hasVoted: boolean }) => {
     set((state) => {
+      const updateVoters = (item: KptItem) => {
+        if (!voter) return;
+        const currentVoters = item.voters ?? [];
+        if (voter.hasVoted) {
+          // 投票追加: まだいなければ追加
+          if (!currentVoters.some((v) => v.id === voter.id)) {
+            item.voters = [...currentVoters, { id: voter.id, nickname: voter.nickname }];
+          }
+        } else {
+          // 投票取り消し: 削除
+          item.voters = currentVoters.filter((v) => v.id !== voter.id);
+        }
+      };
+
       const index = state.items.findIndex((i: KptItem) => i.id === itemId);
       if (index !== -1) {
         state.items[index].voteCount = voteCount;
+        updateVoters(state.items[index]);
       }
       if (state.selectedItem?.id === itemId) {
         state.selectedItem.voteCount = voteCount;
+        updateVoters(state.selectedItem);
       }
     });
   },

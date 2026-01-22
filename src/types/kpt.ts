@@ -51,6 +51,14 @@ export interface TryItemProperties {
 }
 
 /**
+ * 投票者情報
+ */
+export interface Voter {
+  id: string;
+  nickname: string | null;
+}
+
+/**
  * KPTアイテムの共通プロパティ
  */
 export interface KptItem extends Partial<TryItemProperties> {
@@ -65,6 +73,7 @@ export interface KptItem extends Partial<TryItemProperties> {
   updatedAt?: string;
   voteCount?: number;
   hasVoted?: boolean;
+  voters?: Voter[];
 }
 
 export const isTryItem = (item: KptItem): item is KptItem & TryItemProperties => item.column === 'try';
