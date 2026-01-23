@@ -1,18 +1,18 @@
 import { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useHeaderPortal } from '@/contexts/HeaderPortalContext';
+
 interface HeaderActionsProps {
   children: ReactNode;
 }
 
-export const HEADER_ACTIONS_PORTAL_ID = 'header-actions-portal';
-
 export function HeaderActions({ children }: HeaderActionsProps) {
-  const container = document.getElementById(HEADER_ACTIONS_PORTAL_ID);
+  const { portalElement } = useHeaderPortal();
 
-  if (!container) {
+  if (!portalElement) {
     return null;
   }
 
-  return createPortal(children, container);
+  return createPortal(children, portalElement);
 }

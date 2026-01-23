@@ -2,7 +2,6 @@ import { LogIn, LogOut, Settings, User } from 'lucide-react';
 import { ReactElement } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-import { HEADER_ACTIONS_PORTAL_ID } from '@/components/HeaderActions';
 import { Button } from '@/components/shadcn/button';
 import {
   DropdownMenu,
@@ -12,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu';
+import { useHeaderPortal } from '@/contexts/HeaderPortalContext';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -22,6 +22,7 @@ export function Header(): ReactElement {
   const profile = useAuthStore((state) => state.profile);
   const signOut = useAuthStore((state) => state.signOut);
   const { handleError } = useErrorHandler();
+  const { setPortalRef } = useHeaderPortal();
 
   const handleSignOut = async () => {
     try {
@@ -46,7 +47,7 @@ export function Header(): ReactElement {
 
         <div className="flex items-center gap-4">
           {/* ページ固有のアクションを挿入するPortal */}
-          <div id={HEADER_ACTIONS_PORTAL_ID} className="flex items-center gap-2" />
+          <div ref={setPortalRef} className="flex items-center gap-2" />
 
           {!user && (
             <Button variant="default" size="sm" onClick={() => navigate('/login')}>
