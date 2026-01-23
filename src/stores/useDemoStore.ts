@@ -57,6 +57,12 @@ const createInitialItems = (): KptItem[] => [
     authorId: 'demo-user-3',
     authorNickname: 'デモ太郎',
     createdAt: new Date().toISOString(),
+    voteCount: 2,
+    hasVoted: false,
+    voters: [
+      { id: 'demo-user-2', nickname: 'デモ子さん' },
+      { id: 'demo-user-3', nickname: 'デモ太郎' },
+    ],
   },
   {
     id: 'demo-try-1',
@@ -82,6 +88,13 @@ const createInitialItems = (): KptItem[] => [
     assigneeNickname: 'デモ太郎',
     dueDate: '2026-02-28',
     createdAt: new Date().toISOString(),
+    voteCount: 3,
+    hasVoted: true,
+    voters: [
+      { id: 'demo-user-1', nickname: 'デモユーザーくん' },
+      { id: 'demo-user-2', nickname: 'デモ子さん' },
+      { id: 'demo-user-3', nickname: 'デモ太郎' },
+    ],
   },
 ];
 
@@ -200,15 +213,22 @@ export const useDemoStore = create<DemoState>()(
             const item = state.items[index];
             const oldVoteCount = item.voteCount ?? 0;
             const oldHasVoted = item.hasVoted ?? false;
+            const oldVoters = item.voters ?? [];
             const newHasVoted = !oldHasVoted;
             const newVoteCount = newHasVoted ? oldVoteCount + 1 : Math.max(0, oldVoteCount - 1);
 
+            // デモユーザーの投票者情報
+            const demoVoter = { id: 'demo-user-1', nickname: 'デモユーザーくん' };
+            const newVoters = newHasVoted ? [...oldVoters, demoVoter] : oldVoters.filter((v) => v.id !== demoVoter.id);
+
             state.items[index].voteCount = newVoteCount;
             state.items[index].hasVoted = newHasVoted;
+            state.items[index].voters = newVoters;
 
             if (state.selectedItem?.id === itemId) {
               state.selectedItem.voteCount = newVoteCount;
               state.selectedItem.hasVoted = newHasVoted;
+              state.selectedItem.voters = newVoters;
             }
           }
         });
