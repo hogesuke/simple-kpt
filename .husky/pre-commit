@@ -1,10 +1,11 @@
 #!/bin/sh
 
-# ステージされたファイルをフォーマット
 echo "Prettierでフォーマット中..."
 pnpm lint-staged || exit 1
 
-# ユニットテストを実行
+echo "型チェックを実行中..."
+pnpm tsc || exit 1
+
 echo "ユニットテストを実行中..."
 pnpm test run || exit 1
 
