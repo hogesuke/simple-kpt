@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
-import { APIError } from '@/lib/kpt-api';
+import { APIError } from '@/lib/api-error';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 /**
