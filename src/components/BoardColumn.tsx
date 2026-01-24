@@ -75,7 +75,7 @@ export function BoardColumn({
 
   return (
     <section ref={setNodeRef} className={cn(columnStyles, 'relative flex flex-col overflow-hidden', className)} {...props}>
-      <h2 className="flex flex-none items-center gap-2 p-2 text-lg font-semibold">
+      <h2 className="flex flex-none items-center gap-2 p-2 text-lg font-semibold tracking-wider">
         <span className={columnDot({ column })} aria-hidden="true" />
         {columnLabels[column]}
       </h2>
