@@ -263,7 +263,8 @@ export function SortableKPTCard({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLLIElement>) => {
-    if (e.key === 'Enter' && onCardClick) {
+    // <li>要素自体にフォーカスがある場合のみDetailPanelを開く（子要素のボタン等は除外）
+    if (e.key === 'Enter' && onCardClick && e.target === e.currentTarget) {
       e.preventDefault();
       onCardClick(item);
     }
