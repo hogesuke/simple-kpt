@@ -63,26 +63,21 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
       {error && <FormErrorAlert>{error}</FormErrorAlert>}
 
       <div className="space-y-1">
-        <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="currentPassword" className="block text-sm font-medium">
           現在のパスワード
         </label>
         <PasswordInput id="currentPassword" error={errors.currentPassword?.message} {...register('currentPassword')} />
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="newPassword" className="block text-sm font-medium">
           新しいパスワード
         </label>
-        <PasswordInput
-          id="newPassword"
-          placeholder="8文字以上で入力"
-          error={errors.newPassword?.message}
-          {...register('newPassword')}
-        />
+        <PasswordInput id="newPassword" placeholder="8文字以上で入力" error={errors.newPassword?.message} {...register('newPassword')} />
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="confirmPassword" className="block text-sm font-medium">
           新しいパスワード（確認）
         </label>
         <PasswordInput

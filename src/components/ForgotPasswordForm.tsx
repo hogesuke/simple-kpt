@@ -63,7 +63,7 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
       </LoadingButton>
 
       <div className="text-center text-sm">
-        <button type="button" onClick={onSignIn} className="rounded text-gray-500 underline hover:text-gray-700">
+        <button type="button" onClick={onSignIn} className="text-muted-foreground hover:text-foreground rounded underline">
           ログインに戻る
         </button>
       </div>

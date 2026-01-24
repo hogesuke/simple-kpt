@@ -19,7 +19,7 @@ export function ColumnSelector({ columns, selectedColumn, onColumnChange }: Colu
           type="button"
           onClick={() => onColumnChange(col)}
           aria-pressed={selectedColumn === col}
-          className={columnButton({ selected: selectedColumn === col })}
+          className={columnButton({ selected: selectedColumn === col, column: col })}
         >
           <span className={columnDot({ column: col })} aria-hidden="true" />
           {columnLabels[col]}

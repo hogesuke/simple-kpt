@@ -63,9 +63,9 @@ export function VoteButton({
             'inline-flex items-center gap-1.5 rounded-full transition-colors',
             size === 'sm' ? 'py-1 pr-1.25 pl-2 text-xs' : 'px-2.5 py-1 text-sm',
             isAllVoted
-              ? 'bg-red-500/10 text-red-600 hover:bg-red-500/20'
+              ? 'border border-red-500/30 bg-red-500/10 text-red-600 hover:bg-red-500/20'
               : hasVoted
-                ? 'bg-primary/10 text-primary hover:bg-primary/20'
+                ? 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/40 dark:bg-primary/30 dark:hover:bg-primary/40 border'
                 : 'text-muted-foreground hover:bg-muted hover:text-foreground',
             className
           )}

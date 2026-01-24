@@ -26,7 +26,7 @@ export function Landing(): ReactElement {
     <>
       <title>Simple KPT</title>
       <div className="flex h-full flex-col">
-        <main className="bg-primary/5 flex-1">
+        <main className="bg-primary/5 flex-1 dark:bg-neutral-900">
           {/* ヒーロー */}
           <section className="from-primary/5 bg-linear-to-b to-transparent">
             <div className="mx-auto max-w-7xl px-4 py-20 sm:py-28">
@@ -142,7 +142,7 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <div className="rounded-2xl border bg-white p-6 text-center shadow-sm transition-shadow hover:shadow-md">
+    <div className="border-border bg-card rounded-2xl border p-6 text-center shadow-sm transition-shadow hover:shadow-md dark:bg-neutral-800">
       <div className="bg-primary/10 text-primary mb-4 inline-flex rounded-full p-3">{icon}</div>
       <h3 className="mb-2 font-semibold">{title}</h3>
       <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
