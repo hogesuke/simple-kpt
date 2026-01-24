@@ -11,7 +11,9 @@ const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
 
 function AlertDialogOverlay({ className, ref, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Overlay>) {
-  return <AlertDialogPrimitive.Overlay className={cn('fixed inset-0 z-50 bg-black/60', className)} {...props} ref={ref} />;
+  return (
+    <AlertDialogPrimitive.Overlay className={cn('fixed inset-0 z-50 bg-black/60 backdrop-blur-[1px]', className)} {...props} ref={ref} />
+  );
 }
 
 function AlertDialogContent({ className, ref, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {

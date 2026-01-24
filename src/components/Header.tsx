@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/shadcn/dropdown-menu';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useHeaderPortal } from '@/contexts/HeaderPortalContext';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -34,20 +35,22 @@ export function Header(): ReactElement {
   };
 
   return (
-    <header className="border-b bg-white">
+    <header className="border-border bg-background border-b">
       <div className="mx-auto flex h-16 max-w-480 items-center justify-between px-8">
         <button
           type="button"
           onClick={() => navigate(user ? '/boards' : '/')}
-          className="flex items-center gap-2 rounded text-xl font-bold tracking-tight hover:opacity-80"
+          className="flex items-center gap-3 rounded text-xl font-bold tracking-tight hover:opacity-80"
         >
           <img src="/logo.svg" alt="Simple KPTロゴ" className="h-5" />
-          Simple KPT
+          <img src="/logotype.svg" alt="Simple KPT" className="h-6 dark:invert" />
         </button>
 
         <div className="flex items-center gap-4">
           {/* ページ固有のアクションを挿入するPortal */}
           <div ref={setPortalRef} className="flex items-center gap-2" />
+
+          <ThemeToggle />
 
           {!user && (
             <Button variant="default" size="sm" onClick={() => navigate('/login')}>

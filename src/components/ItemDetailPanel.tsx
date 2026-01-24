@@ -161,7 +161,11 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
   return (
     <>
       {/* オーバーレイ */}
-      <div className="animate-in fade-in fixed inset-0 z-30 bg-black/50 duration-300" onClick={onClose} aria-hidden="true" />
+      <div
+        className="animate-in fade-in fixed inset-0 z-30 bg-black/50 backdrop-blur-[1px] duration-300"
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
       {/* 右パネル */}
       <FocusScope.Root trapped loop asChild>
@@ -171,7 +175,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
           aria-label="カード詳細"
           aria-modal="true"
           className={cn(
-            'fixed top-0 right-0 z-40 h-screen w-full border-l bg-white shadow-2xl',
+            'border-border bg-background fixed top-0 right-0 z-40 h-screen w-full border-l shadow-2xl',
             'sm:w-md',
             'flex flex-col',
             'animate-in slide-in-from-right duration-300'

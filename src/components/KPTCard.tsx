@@ -29,7 +29,7 @@ const STATUS_LABELS: Record<TryStatus, string> = {
   wont_fix: '対応不要',
 };
 
-const cardStyles = 'rounded-md border border-gray-200 bg-white shadow-sm';
+const cardStyles = 'rounded-md border border-border bg-card shadow-sm';
 
 // ハッシュタグを検出する正規表現（日本語、英数字、アンダースコアを許容している）
 const HASHTAG_PATTERN = '#[\\w\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF]+';
@@ -98,7 +98,7 @@ export function TextWithHashtags({ text, onTagClick }: TextWithHashtagsProps) {
                 e.stopPropagation();
                 onTagClick?.(part.text);
               }}
-              className="text-primary/90 hover:text-primary rounded text-[0.96em] hover:underline"
+              className="text-primary/90 hover:text-primary rounded text-[0.96em] hover:underline dark:text-blue-400 dark:hover:text-blue-300"
             >
               {part.text}
             </button>
@@ -177,7 +177,7 @@ export function KPTCard({
         )}
         {/* Try専用フィールドの表示 */}
         {item.column === 'try' && (item.status || item.assigneeNickname || item.dueDate) && (
-          <div className="mt-3 flex flex-wrap items-center gap-3 border-t border-gray-200 pt-3 text-sm">
+          <div className="border-border mt-3 flex flex-wrap items-center gap-3 border-t pt-3 text-sm">
             {item.status && <span className={cn(statusBadge({ status: item.status }), 'text-xs')}>{STATUS_LABELS[item.status]}</span>}
             {item.assigneeNickname && <span className="text-muted-foreground">担当: {item.assigneeNickname}</span>}
             {item.dueDate && (

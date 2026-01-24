@@ -79,7 +79,7 @@ export function SignUpForm({ onSignIn, onSuccess }: SignUpFormProps): ReactEleme
       </LoadingButton>
 
       <div className="text-center text-sm">
-        <button type="button" onClick={onSignIn} className="rounded text-gray-500 underline hover:text-gray-700">
+        <button type="button" onClick={onSignIn} className="text-muted-foreground hover:text-foreground rounded underline">
           すでにアカウントをお持ちですか？ログイン
         </button>
       </div>

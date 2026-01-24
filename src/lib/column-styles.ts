@@ -15,10 +15,21 @@ export const columnDot = cva('h-2 w-2 rounded-full', {
 export const columnButton = cva('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm transition-colors border', {
   variants: {
     selected: {
-      true: 'border-primary bg-primary/10 text-primary',
-      false: 'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600',
+      true: 'border-primary/40 bg-primary/10 text-primary',
+      false:
+        'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-300',
+    },
+    column: {
+      keep: '',
+      problem: '',
+      try: '',
     },
   },
+  compoundVariants: [
+    { selected: true, column: 'keep', class: 'dark:border-lime-500/50 dark:bg-lime-500/30 dark:text-lime-400' },
+    { selected: true, column: 'problem', class: 'dark:border-red-400/50 dark:bg-red-400/30 dark:text-red-400' },
+    { selected: true, column: 'try', class: 'dark:border-blue-500/50 dark:bg-blue-500/30 dark:text-blue-400' },
+  ],
   defaultVariants: {
     selected: false,
   },

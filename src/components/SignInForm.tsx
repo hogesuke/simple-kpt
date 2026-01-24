@@ -71,7 +71,7 @@ export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps): Rea
       </LoadingButton>
 
       <div className="-mt-2 text-center text-sm">
-        <button type="button" onClick={onForgotPassword} className="rounded text-gray-500 underline hover:text-gray-700">
+        <button type="button" onClick={onForgotPassword} className="text-muted-foreground hover:text-foreground rounded underline">
           パスワードをお忘れですか？
         </button>
       </div>

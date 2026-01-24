@@ -73,20 +73,20 @@ export function AccountSettings(): ReactElement {
     return (
       <>
         <title>アカウント設定 - Simple KPT</title>
-        <div className="flex h-full items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+        <div className="bg-muted flex h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
           <div className="w-full max-w-md space-y-8">
             <div>
-              <h2 className="text-center text-2xl font-bold tracking-tight text-gray-900">ニックネームの設定</h2>
+              <h2 className="text-center text-2xl font-bold tracking-tight">ニックネームの設定</h2>
               <p className="text-muted-foreground mt-2 text-center text-sm">アプリで表示される名前を設定してください</p>
             </div>
 
-            <div className="rounded-lg bg-white px-8 py-8 shadow">
+            <div className="bg-card rounded-lg px-8 py-8 shadow">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {errors.root && <FormErrorAlert>{errors.root.message}</FormErrorAlert>}
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="nickname" className="block text-sm font-medium">
                       ニックネーム
                     </label>
                     <CharacterCounter current={nickname.length} max={NICKNAME_MAX_LENGTH} />
@@ -97,7 +97,7 @@ export function AccountSettings(): ReactElement {
                       type="text"
                       autoComplete="off"
                       {...register('nickname')}
-                      className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm sm:text-sm"
+                      className="border-input bg-background placeholder-muted-foreground block w-full appearance-none rounded-md border px-3 py-2 shadow-sm sm:text-sm"
                       placeholder="ふりかえり太郎"
                       disabled={isSubmitting}
                     />
@@ -122,7 +122,7 @@ export function AccountSettings(): ReactElement {
   return (
     <>
       <title>アカウント設定 - Simple KPT</title>
-      <div className="min-h-full bg-gray-50 py-8">
+      <div className="bg-muted min-h-full py-8">
         <div className="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
           <button
             type="button"
@@ -134,20 +134,20 @@ export function AccountSettings(): ReactElement {
           </button>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900">アカウント設定</h1>
+            <h1 className="text-2xl font-bold">アカウント設定</h1>
             <p className="text-muted-foreground mt-1 text-sm">プロフィールやアカウントの管理ができます</p>
           </div>
 
           {/* ニックネーム */}
           <section className="mb-8">
-            <h2 className="mb-4 text-lg font-medium text-gray-900">ニックネームの変更</h2>
-            <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <h2 className="mb-4 text-lg font-medium">ニックネームの変更</h2>
+            <div className="border-border bg-card rounded-lg border p-6">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {errors.root && <FormErrorAlert>{errors.root.message}</FormErrorAlert>}
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="nickname" className="block text-sm font-medium">
                       ニックネーム
                     </label>
                     <CharacterCounter current={nickname.length} max={NICKNAME_MAX_LENGTH} />
@@ -157,7 +157,7 @@ export function AccountSettings(): ReactElement {
                     type="text"
                     autoComplete="off"
                     {...register('nickname')}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 shadow-sm"
+                    className="border-input bg-background placeholder-muted-foreground mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm"
                     placeholder="ふりかえり太郎"
                     disabled={isSubmitting}
                   />
@@ -175,16 +175,16 @@ export function AccountSettings(): ReactElement {
 
           {/* パスワード変更 */}
           <section className="mb-8">
-            <h2 className="mb-4 text-lg font-medium text-gray-900">パスワードの変更</h2>
-            <div className="rounded-lg border border-gray-200 bg-white p-6">
+            <h2 className="mb-4 text-lg font-medium">パスワードの変更</h2>
+            <div className="border-border bg-card rounded-lg border p-6">
               <ChangePasswordForm onSuccess={() => toast.success('パスワードを変更しました')} />
             </div>
           </section>
 
           {/* アカウント削除 */}
           <section>
-            <h2 className="mb-4 text-lg font-medium text-gray-900">アカウントの削除</h2>
-            <div className="rounded-lg border border-red-500 bg-white p-6">
+            <h2 className="mb-4 text-lg font-medium">アカウントの削除</h2>
+            <div className="border-destructive bg-card rounded-lg border p-6">
               <p className="text-muted-foreground mb-4 text-sm">
                 アカウントを削除すると、すべてのデータが完全に削除されます。
                 <br />
