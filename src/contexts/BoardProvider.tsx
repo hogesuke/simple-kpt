@@ -29,6 +29,7 @@ export function BoardProvider({ boardId, children }: BoardProviderProps) {
   const setFilterMemberId = useBoardStore((state) => state.setFilterMemberId);
   const startTimerStore = useBoardStore((state) => state.startTimer);
   const stopTimerStore = useBoardStore((state) => state.stopTimer);
+  const toggleVote = useBoardStore((state) => state.toggleVote);
 
   const [members, setMembers] = useState<BoardMember[]>([]);
 
@@ -86,6 +87,7 @@ export function BoardProvider({ boardId, children }: BoardProviderProps) {
       setFilterMemberId,
       startTimer,
       stopTimer,
+      toggleVote,
       isDemo: false,
       currentUserId: user?.id ?? null,
     }),
@@ -106,6 +108,7 @@ export function BoardProvider({ boardId, children }: BoardProviderProps) {
       setFilterMemberId,
       startTimer,
       stopTimer,
+      toggleVote,
       user?.id,
     ]
   );

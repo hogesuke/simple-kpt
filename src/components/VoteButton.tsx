@@ -61,12 +61,12 @@ export function VoteButton({
           onClick={handleClick}
           className={cn(
             'inline-flex items-center gap-1.5 rounded-full transition-colors',
-            size === 'sm' ? 'py-1 pr-1.25 pl-2 text-xs' : 'px-2.5 py-1 text-sm',
+            size === 'sm' ? 'py-1 pr-1.25 pl-2 text-xs' : 'min-h-[30px] px-2.5 py-1 text-sm',
             isAllVoted
               ? 'border border-red-500/30 bg-red-500/10 text-red-600 hover:bg-red-500/20'
               : hasVoted
-                ? 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/40 dark:bg-primary/30 dark:hover:bg-primary/40 border'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                ? 'border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 dark:bg-primary/30 dark:hover:bg-primary/40 border'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent',
             className
           )}
           aria-label={ariaLabel}

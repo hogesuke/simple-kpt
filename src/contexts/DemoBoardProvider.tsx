@@ -26,6 +26,7 @@ export function DemoBoardProvider({ children }: DemoBoardProviderProps) {
   const setFilterMemberId = useDemoStore((state) => state.setFilterMemberId);
   const startTimer = useDemoStore((state) => state.startTimer);
   const stopTimer = useDemoStore((state) => state.stopTimer);
+  const toggleVote = useDemoStore((state) => state.toggleVote);
 
   const setItems = useCallback((newItems: KptItem[]) => {
     useDemoStore.setState({ items: newItems });
@@ -49,6 +50,7 @@ export function DemoBoardProvider({ children }: DemoBoardProviderProps) {
       setFilterMemberId,
       startTimer,
       stopTimer,
+      toggleVote,
       isDemo: true,
       currentUserId: DEMO_USER_ID,
     }),
@@ -67,6 +69,7 @@ export function DemoBoardProvider({ children }: DemoBoardProviderProps) {
       setFilterMemberId,
       startTimer,
       stopTimer,
+      toggleVote,
     ]
   );
 
