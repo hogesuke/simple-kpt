@@ -209,7 +209,7 @@ export function KPTCard({
         <button
           type="button"
           onClick={handleCardClick}
-          className="bg-background text-foreground sr-only rounded px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2"
+          className="bg-background text-foreground focus:ring-ring sr-only rounded px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2 focus:ring-2 focus:outline-none"
           aria-expanded={isSelected}
         >
           詳細を開く
@@ -269,6 +269,7 @@ export function SortableKPTCard({
       className={cn(
         // ドラッグ中に元の位置のカードを薄く表示する
         isDragging && 'opacity-30',
+        'focus-visible:ring-ring rounded-md focus-visible:ring-2 focus-visible:outline-none',
         className
       )}
       {...restAttributes}
