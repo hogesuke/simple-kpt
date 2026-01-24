@@ -262,18 +262,30 @@ export function SortableKPTCard({
     transition,
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLLIElement>) => {
+    if (e.key === 'Enter' && onCardClick) {
+      e.preventDefault();
+      onCardClick(item);
+    }
+
+    // dnd-kitのlistenersにもキーイベントを伝播する
+    listeners?.onKeyDown?.(e as unknown as KeyboardEvent);
+  };
+
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- dnd-kitのドラッグ&ドロップとキーボードナビゲーションに必要なため許容する
     <li
       ref={setNodeRef}
       style={style}
       className={cn(
         // ドラッグ中に元の位置のカードを薄く表示する
         isDragging && 'opacity-30',
-        'focus-visible:ring-ring rounded-md focus-visible:ring-2 focus-visible:outline-none',
+        'focus-visible:ring-ring focus-visible:ring-offset-background rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
         className
       )}
       {...restAttributes}
       {...listeners}
+      onKeyDown={handleKeyDown}
       {...props}
     >
       <KPTCard
