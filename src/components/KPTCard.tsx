@@ -209,7 +209,7 @@ export function KPTCard({
         <button
           type="button"
           onClick={handleCardClick}
-          className="text-muted-foreground sr-only rounded bg-white px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2"
+          className="bg-background text-foreground sr-only rounded px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2"
           aria-expanded={isSelected}
         >
           詳細を開く
