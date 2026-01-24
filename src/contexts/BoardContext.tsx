@@ -23,6 +23,7 @@ export interface BoardContextValue {
   deleteItem: (id: string) => void | Promise<void>;
   setSelectedItem: (item: KptItem | null) => void;
   setItems: (items: KptItem[]) => void;
+  toggleVote: (itemId: string) => void | Promise<void>;
 
   // フィルター操作
   setFilterTag: (tag: string | null) => void;

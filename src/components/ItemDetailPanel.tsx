@@ -7,7 +7,6 @@ import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useBoardContext } from '@/contexts/BoardContext';
 import { cn } from '@/lib/cn';
 import { columnDot, columnLabels } from '@/lib/column-styles';
-import { useBoardStore } from '@/stores/useBoardStore';
 import { ITEM_TEXT_MAX_LENGTH } from '@shared/constants';
 
 import { CharacterCounter } from './CharacterCounter';
@@ -46,8 +45,7 @@ function formatDate(dateString?: string): string {
 }
 
 export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactElement | null {
-  const { updateItem, setFilterTag, members } = useBoardContext();
-  const toggleVote = useBoardStore((state) => state.toggleVote);
+  const { updateItem, setFilterTag, members, toggleVote } = useBoardContext();
   const [isEditing, setIsEditing] = useState(false);
   const [editingText, setEditingText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -279,7 +277,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         <TextWithHashtags text={item.text} onTagClick={handleTagClick} />
                       </p>
                     </div>
-                    <div className="mt-3 flex justify-end pr-3">
+                    <div className="mt-3 flex justify-end">
                       <VoteButton
                         voteCount={item.voteCount ?? 0}
                         hasVoted={item.hasVoted ?? false}
@@ -287,6 +285,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         onVote={() => toggleVote(item.id)}
                         size="md"
                         totalMemberCount={members.length}
+                        className={item.hasVoted ? 'mr-3' : ''}
                       />
                     </div>
                   </div>
