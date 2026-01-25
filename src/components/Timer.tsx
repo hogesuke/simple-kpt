@@ -154,7 +154,7 @@ export function Timer({ disabled }: TimerProps) {
   // タイマー起動中
   if (isRunning) {
     return (
-      <div className="border-primary flex h-9 items-center gap-2 rounded-full border pr-1 pl-1">
+      <div className="border-primary flex h-9 w-fit items-center gap-2 rounded-full border pr-1 pl-1">
         <button
           type="button"
           onClick={() => setIsSoundEnabled(!isSoundEnabled)}

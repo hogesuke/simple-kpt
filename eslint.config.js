@@ -1,3 +1,5 @@
+import storybook from 'eslint-plugin-storybook';
+
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import react from 'eslint-plugin-react';
@@ -73,8 +75,7 @@ export default tseslint.config(
       ...vitest.configs.recommended.rules,
       'vitest/no-focused-tests': 'error',
     },
-  },
-
-  // Prettier（最後に配置して他のルールを上書き）
-  prettier
+  }, // Prettier（最後に配置して他のルールを上書き）
+  prettier,
+  storybook.configs['flat/recommended']
 );
