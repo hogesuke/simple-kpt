@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Prettierでフォーマット中..."
+echo "ESLint/Prettierでフォーマット中..."
 pnpm lint-staged || exit 1
 
 echo "型チェックを実行中..."
