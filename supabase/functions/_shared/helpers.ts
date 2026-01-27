@@ -43,7 +43,7 @@ function getCorsHeaders(): Record<string, string> {
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Authorization, Content-Type, apikey, x-client-info',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type, apikey, x-client-info, x-supabase-client-platform',
   };
 }
 
