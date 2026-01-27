@@ -224,7 +224,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                           e.preventDefault();
                           const isOverLimit = editingText.length > ITEM_TEXT_MAX_LENGTH;
-                          if (!isSaving && editingText.trim() && !isOverLimit && editingText !== item?.text) {
+                          if (!isSaving && !isOverLimit) {
                             handleSaveEdit();
                           }
                         }
