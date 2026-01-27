@@ -26,7 +26,11 @@ export interface RealtimeSlice {
   handleRealtimeInsert: (item: KptItem) => Promise<void>;
   handleRealtimeUpdate: (item: KptItem) => void;
   handleRealtimeDelete: (id: string) => void;
-  handleRealtimeVoteChanged: (itemId: string, voteCount: number, voter?: { id: string; nickname: string | null; hasVoted: boolean }) => void;
+  handleRealtimeVoteChanged: (
+    itemId: string,
+    voteCount: number,
+    voter?: { id: string; nickname: string | null; hasVoted: boolean }
+  ) => void;
 }
 
 /**
@@ -178,14 +182,13 @@ export const createRealtimeSlice: StateCreator<BoardState, [['zustand/devtools',
       const members = await api.fetchBoardMembers(boardId);
       const member = members.find((m) => m.userId === userId);
 
-      if (member) {
-        const nickname = member.nickname ?? '';
-        // キャッシュを更新
-        set((state) => {
-          state.memberNicknameMap[userId] = nickname;
-        });
-        return nickname || null;
-      }
+      // membersとmemberNicknameMapを更新
+      set((state) => {
+        state.members = members;
+        state.memberNicknameMap = Object.fromEntries(members.map((m) => [m.userId, m.nickname ?? '']));
+      });
+
+      return member?.nickname ?? null;
     } catch {
       // NOOP
     }

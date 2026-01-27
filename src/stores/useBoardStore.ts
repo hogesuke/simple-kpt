@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 
 import { createRealtimeSlice, RealtimeSlice } from './realtimeSlice';
 
-import type { KptBoard, KptColumnType, KptItem, TimerState } from '@/types/kpt';
+import type { BoardMember, KptBoard, KptColumnType, KptItem, TimerState } from '@/types/kpt';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import type { StateCreator } from 'zustand';
 
@@ -26,6 +26,7 @@ interface CoreSlice {
   loadError: string | null;
   joinError: string | null;
   isNotFound: boolean;
+  members: BoardMember[];
   memberNicknameMap: Record<string, string>;
   filter: FilterState;
   timerState: TimerState | null;
@@ -65,6 +66,7 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
   loadError: null,
   joinError: null,
   isNotFound: false,
+  members: [],
   memberNicknameMap: {},
   filter: initialFilterState,
   timerState: null,
@@ -72,12 +74,13 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
   loadBoard: async (boardId: string) => {
     set({ isLoading: true, loadError: null, joinError: null, isNotFound: false });
     try {
-      const buildNicknameMap = async (): Promise<Record<string, string>> => {
+      const fetchMembersData = async (): Promise<{ members: BoardMember[]; nicknameMap: Record<string, string> }> => {
         try {
           const members = await api.fetchBoardMembers(boardId);
-          return Object.fromEntries(members.map((member) => [member.userId, member.nickname ?? '']));
+          const nicknameMap = Object.fromEntries(members.map((member) => [member.userId, member.nickname ?? '']));
+          return { members, nicknameMap };
         } catch {
-          return {};
+          return { members: [], nicknameMap: {} };
         }
       };
 
@@ -96,22 +99,24 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
 
         const updatedBoard = await api.fetchBoard(boardId);
         const items = await api.fetchKptItems(boardId);
-        const nicknameMap = await buildNicknameMap();
+        const { members, nicknameMap } = await fetchMembersData();
 
         set({
           currentBoard: updatedBoard,
           items,
+          members,
           memberNicknameMap: nicknameMap,
           timerState: updatedBoard?.timer ?? null,
           isLoading: false,
         });
       } else {
         const items = await api.fetchKptItems(boardId);
-        const nicknameMap = await buildNicknameMap();
+        const { members, nicknameMap } = await fetchMembersData();
 
         set({
           currentBoard: board,
           items,
+          members,
           memberNicknameMap: nicknameMap,
           timerState: board?.timer ?? null,
           isLoading: false,
@@ -390,6 +395,7 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
       isNotFound: false,
       itemEventsChannel: null,
       timerEventsChannel: null,
+      members: [],
       memberNicknameMap: {},
       filter: initialFilterState,
       timerState: null,
