@@ -68,13 +68,6 @@ const tryChartConfig = {
   },
 } satisfies ChartConfig;
 
-// 最後のポイントだけドットを表示するカスタムコンポーネント
-function LastPointDot(props: { cx?: number; cy?: number; index?: number; dataLength: number; color?: string }) {
-  const { cx, cy, index, dataLength, color = 'hsl(0, 0%, 55%)' } = props;
-  if (index !== dataLength - 1 || cx === undefined || cy === undefined) return null;
-  return <circle cx={cx} cy={cy} r={4} fill={color} />;
-}
-
 // 基底カードコンポーネント
 interface StatsCardContainerProps {
   label: string;
@@ -124,15 +117,69 @@ function SimpleStatsCard({ label, dotColorClass, totalCount, weeklyData, gradien
           </defs>
           <XAxis dataKey="week" hide />
           <YAxis hide domain={[0, yAxisMax]} />
-          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
           <Area
             type="monotone"
             dataKey="cumulativeCount"
             stroke="var(--color-cumulativeCount)"
             strokeWidth={1.5}
             fill={`url(#${gradientId})`}
-            dot={(props) => <LastPointDot {...props} dataLength={weeklyData.length} color={CHART_COLOR} />}
+            dot={false}
             activeDot={{ r: 4 }}
+            animationDuration={1000}
+          />
+        </AreaChart>
+      </ChartContainer>
+    </StatsCardContainer>
+  );
+}
+
+// Try用の2本線グラフカード
+interface TryStatsCardProps {
+  totalCount: number;
+  completedCount: number;
+  achievementRate: number;
+  weeklyData: { week: string; cumulativeCount: number; cumulativeCompletedCount: number }[];
+  yAxisMax: number;
+}
+
+function TryStatsCard({ totalCount, completedCount, achievementRate, weeklyData, yAxisMax }: TryStatsCardProps) {
+  return (
+    <StatsCardContainer
+      label="累計Try"
+      dotColorClass="bg-blue-500"
+      totalCount={totalCount}
+      subtitle={`完了 ${completedCount} (${achievementRate}%)`}
+    >
+      <ChartContainer config={tryChartConfig} className="h-full w-full">
+        <AreaChart data={weeklyData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
+          <defs>
+            <linearGradient id="tryCompletedGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={CHART_COLOR} stopOpacity={0.2} />
+              <stop offset="100%" stopColor={CHART_COLOR} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <XAxis dataKey="week" hide />
+          <YAxis hide domain={[0, yAxisMax]} />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+          <Area
+            type="monotone"
+            dataKey="cumulativeCount"
+            stroke="var(--color-cumulativeCount)"
+            strokeWidth={1.5}
+            fill="none"
+            dot={false}
+            activeDot={{ r: 4 }}
+            animationDuration={1000}
+          />
+          <Area
+            type="monotone"
+            dataKey="cumulativeCompletedCount"
+            stroke="var(--color-cumulativeCompletedCount)"
+            strokeWidth={1.5}
+            fill="url(#tryCompletedGradient)"
+            dot={false}
+            activeDot={{ r: 3 }}
             animationDuration={1000}
           />
         </AreaChart>
@@ -242,46 +289,13 @@ export function StatsSummary(): ReactElement | null {
           chartConfig={problemChartConfig}
           yAxisMax={yAxisMax}
         />
-        <StatsCardContainer
-          label="累計Try"
-          dotColorClass="bg-blue-500"
+        <TryStatsCard
           totalCount={stats.tryStats.totalCount}
-          subtitle={`完了 ${stats.tryStats.completedCount} (${stats.tryStats.achievementRate}%)`}
-        >
-          <ChartContainer config={tryChartConfig} className="h-full w-full">
-            <AreaChart data={tryWeeklyData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
-              <defs>
-                <linearGradient id="tryCompletedGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={CHART_COLOR} stopOpacity={0.2} />
-                  <stop offset="100%" stopColor={CHART_COLOR} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="week" hide />
-              <YAxis hide domain={[0, yAxisMax]} />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Area
-                type="monotone"
-                dataKey="cumulativeCount"
-                stroke="var(--color-cumulativeCount)"
-                strokeWidth={1.5}
-                fill="none"
-                dot={(props) => <LastPointDot {...props} dataLength={tryWeeklyData.length} color={CHART_COLOR_LIGHT} />}
-                activeDot={{ r: 4 }}
-                animationDuration={1000}
-              />
-              <Area
-                type="monotone"
-                dataKey="cumulativeCompletedCount"
-                stroke="var(--color-cumulativeCompletedCount)"
-                strokeWidth={1.5}
-                fill="url(#tryCompletedGradient)"
-                dot={(props) => <LastPointDot {...props} dataLength={tryWeeklyData.length} color={CHART_COLOR} />}
-                activeDot={{ r: 3 }}
-                animationDuration={1000}
-              />
-            </AreaChart>
-          </ChartContainer>
-        </StatsCardContainer>
+          completedCount={stats.tryStats.completedCount}
+          achievementRate={stats.tryStats.achievementRate}
+          weeklyData={tryWeeklyData}
+          yAxisMax={yAxisMax}
+        />
       </div>
     </div>
   );
