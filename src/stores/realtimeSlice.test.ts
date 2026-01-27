@@ -444,6 +444,25 @@ describe('realtimeSlice', () => {
       expect(useBoardStore.getState().memberNicknameMap['user-2']).toBe('ユーザー2');
     });
 
+    it('membersとmemberNicknameMapが更新されること', async () => {
+      const mockMembers = [
+        { userId: 'user-1', nickname: 'ユーザー1', id: 'm1', role: 'owner', createdAt: '' },
+        { userId: 'user-2', nickname: 'ユーザー2', id: 'm2', role: 'member', createdAt: '' },
+      ];
+      vi.mocked(api.fetchBoardMembers).mockResolvedValue(mockMembers);
+
+      await act(async () => {
+        await useBoardStore.getState().fetchAndCacheNickname('board-1', 'user-2');
+      });
+
+      const state = useBoardStore.getState();
+      expect(state.members).toEqual(mockMembers);
+      expect(state.memberNicknameMap).toEqual({
+        'user-1': 'ユーザー1',
+        'user-2': 'ユーザー2',
+      });
+    });
+
     it('メンバーが見つからない場合はnullを返すこと', async () => {
       vi.mocked(api.fetchBoardMembers).mockResolvedValue([]);
 

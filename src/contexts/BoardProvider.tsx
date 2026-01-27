@@ -1,11 +1,8 @@
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 
 import { BoardContextProvider, BoardContextValue } from '@/contexts/BoardContext';
-import { fetchBoardMembers } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBoardStore } from '@/stores/useBoardStore';
-
-import type { BoardMember } from '@/types/kpt';
 
 interface BoardProviderProps {
   boardId: string;
@@ -19,6 +16,7 @@ export function BoardProvider({ boardId, children }: BoardProviderProps) {
   const selectedItem = useBoardStore((state) => state.selectedItem);
   const filter = useBoardStore((state) => state.filter);
   const timerState = useBoardStore((state) => state.timerState);
+  const members = useBoardStore((state) => state.members);
   const memberNicknameMap = useBoardStore((state) => state.memberNicknameMap);
   const isLoading = useBoardStore((state) => state.isLoading);
   const addItemStore = useBoardStore((state) => state.addItem);
@@ -30,15 +28,6 @@ export function BoardProvider({ boardId, children }: BoardProviderProps) {
   const startTimerStore = useBoardStore((state) => state.startTimer);
   const stopTimerStore = useBoardStore((state) => state.stopTimer);
   const toggleVote = useBoardStore((state) => state.toggleVote);
-
-  const [members, setMembers] = useState<BoardMember[]>([]);
-
-  // メンバー一覧を取得
-  useEffect(() => {
-    if (!boardId || isLoading) return;
-
-    fetchBoardMembers(boardId).then(setMembers).catch(console.error);
-  }, [boardId, isLoading]);
 
   const setItems = useCallback((newItems: typeof items) => {
     useBoardStore.setState({ items: newItems });

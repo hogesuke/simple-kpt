@@ -66,6 +66,7 @@ describe('useBoardStore', () => {
       loadError: null,
       joinError: null,
       isNotFound: false,
+      members: [],
       memberNicknameMap: {},
       filter: { tag: null, memberId: null },
       timerState: null,
@@ -433,6 +434,76 @@ describe('useBoardStore', () => {
       });
 
       expect(useBoardStore.getState().filter.memberId).toBeNull();
+    });
+  });
+
+  describe('loadBoard', () => {
+    const mockBoard = {
+      id: 'board-1',
+      name: 'テストボード',
+      isMember: true,
+      createdAt: '2024-01-01T00:00:00.000Z',
+    };
+
+    const mockMembers = [
+      { id: 'member-1', userId: 'user-1', role: 'owner', createdAt: '2024-01-01', nickname: 'ユーザー1' },
+      { id: 'member-2', userId: 'user-2', role: 'member', createdAt: '2024-01-02', nickname: 'ユーザー2' },
+    ];
+
+    const mockItems = [createMockItem({ id: 'item-1' })];
+
+    it('ボード読み込み時にmembersとmemberNicknameMapが設定されること', async () => {
+      vi.mocked(api.fetchBoard).mockResolvedValue(mockBoard);
+      vi.mocked(api.fetchKptItems).mockResolvedValue(mockItems);
+      vi.mocked(api.fetchBoardMembers).mockResolvedValue(mockMembers);
+
+      await act(async () => {
+        await useBoardStore.getState().loadBoard('board-1');
+      });
+
+      const state = useBoardStore.getState();
+      expect(state.members).toEqual(mockMembers);
+      expect(state.memberNicknameMap).toEqual({
+        'user-1': 'ユーザー1',
+        'user-2': 'ユーザー2',
+      });
+      expect(state.isLoading).toBe(false);
+    });
+
+    it('fetchBoardMembersがエラーでもボード読み込みは成功すること', async () => {
+      vi.mocked(api.fetchBoard).mockResolvedValue(mockBoard);
+      vi.mocked(api.fetchKptItems).mockResolvedValue(mockItems);
+      vi.mocked(api.fetchBoardMembers).mockRejectedValue(new Error('Members fetch failed'));
+
+      await act(async () => {
+        await useBoardStore.getState().loadBoard('board-1');
+      });
+
+      const state = useBoardStore.getState();
+      expect(state.members).toEqual([]);
+      expect(state.memberNicknameMap).toEqual({});
+      expect(state.currentBoard).toEqual(mockBoard);
+      expect(state.isLoading).toBe(false);
+    });
+  });
+
+  describe('reset', () => {
+    it('membersがクリアされること', () => {
+      const mockMembers = [{ id: 'member-1', userId: 'user-1', role: 'owner', createdAt: '2024-01-01', nickname: 'ユーザー1' }];
+      useBoardStore.setState({
+        members: mockMembers,
+        memberNicknameMap: { 'user-1': 'ユーザー1' },
+        items: [createMockItem()],
+      });
+
+      act(() => {
+        useBoardStore.getState().reset();
+      });
+
+      const state = useBoardStore.getState();
+      expect(state.members).toEqual([]);
+      expect(state.memberNicknameMap).toEqual({});
+      expect(state.items).toEqual([]);
     });
   });
 });
