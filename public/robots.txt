@@ -4,3 +4,5 @@ Allow: /demo
 Disallow: /boards
 Disallow: /login
 Disallow: /account
+
+Sitemap: https://simple-kpt.com/sitemap.xml
