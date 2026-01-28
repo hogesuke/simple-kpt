@@ -6,12 +6,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import type { BoardState } from './useBoardStore';
 import type { ItemRow } from '@/types/db';
 import type { KptItem } from '@/types/kpt';
-import type {
-  RealtimeChannel,
-  RealtimePostgresDeletePayload,
-  RealtimePostgresInsertPayload,
-  RealtimePostgresUpdatePayload,
-} from '@supabase/supabase-js';
+import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import type { StateCreator } from 'zustand';
 
 export interface RealtimeSlice {
@@ -60,51 +55,26 @@ export const createRealtimeSlice: StateCreator<BoardState, [['zustand/devtools',
           broadcast: { self: false },
         },
       })
+      // INSERT/UPDATEを1つの購読に統合（ポーリング回数削減のため）
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'items',
           filter: `board_id=eq.${boardId}`,
         },
-        (payload: RealtimePostgresInsertPayload<ItemRow>) => {
-          const newItem = mapRowToItem(payload.new);
-          // 自分が追加したアイテム（楽観的更新）の場合はスキップ
-          const currentUserId = useAuthStore.getState().user?.id;
-          if (newItem.authorId !== currentUserId) {
-            get().handleRealtimeInsert(newItem);
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'items',
-          filter: `board_id=eq.${boardId}`,
-        },
-        (payload: RealtimePostgresUpdatePayload<ItemRow>) => {
-          const updatedItem = mapRowToItem(payload.new);
-          get().handleRealtimeUpdate(updatedItem);
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'items',
-        },
-        (payload: RealtimePostgresDeletePayload<ItemRow>) => {
-          if (payload.old?.id) {
-            // DELETEイベントではRLSによりboard_idが取得できないため、
-            // クライアント側で現在のボードのアイテムかどうかをチェックする
-            const existItem = get().items.some((item) => item.id === payload.old.id);
-            if (existItem) {
-              get().handleRealtimeDelete(payload.old.id);
+        (payload: RealtimePostgresChangesPayload<ItemRow>) => {
+          if (payload.eventType === 'INSERT') {
+            const newItem = mapRowToItem(payload.new);
+            // 自分が追加したアイテム（楽観的更新）の場合はスキップ
+            const currentUserId = useAuthStore.getState().user?.id;
+            if (newItem.authorId !== currentUserId) {
+              get().handleRealtimeInsert(newItem);
             }
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedItem = mapRowToItem(payload.new);
+            get().handleRealtimeUpdate(updatedItem);
           }
         }
       )
@@ -115,6 +85,13 @@ export const createRealtimeSlice: StateCreator<BoardState, [['zustand/devtools',
           voter?: { id: string; nickname: string | null; hasVoted: boolean };
         };
         get().handleRealtimeVoteChanged(votePayload.itemId, votePayload.voteCount, votePayload.voter);
+      })
+      // DELETEはBroadcast経由で受信（RLSの制約を回避し、該当ボードのみに通知するため）
+      .on('broadcast', { event: 'item-deleted' }, (payload) => {
+        const deletePayload = payload.payload as { itemId: string };
+        if (deletePayload.itemId) {
+          get().handleRealtimeDelete(deletePayload.itemId);
+        }
       })
       .subscribe((status, err) => {
         if (err) {

@@ -222,6 +222,43 @@ describe('useBoardStore', () => {
       expect(state.items[0].id).toBe('item-1');
       expect(state.selectedItem?.id).toBe('item-1');
     });
+
+    it('削除成功時にBroadcastが送信されること', async () => {
+      const existingItem = createMockItem({ id: 'item-1' });
+      const mockSend = vi.fn().mockResolvedValue(undefined);
+      const mockChannel = { send: mockSend };
+
+      useBoardStore.setState({
+        items: [existingItem],
+        itemEventsChannel: mockChannel as unknown as ReturnType<typeof useBoardStore.getState>['itemEventsChannel'],
+      });
+
+      vi.mocked(api.deleteKptItem).mockResolvedValue(undefined);
+
+      await act(async () => {
+        await useBoardStore.getState().deleteItem('item-1', 'board-1');
+      });
+
+      expect(mockSend).toHaveBeenCalledWith({
+        type: 'broadcast',
+        event: 'item-deleted',
+        payload: { itemId: 'item-1' },
+      });
+    });
+
+    it('itemEventsChannelがnullの場合はBroadcast送信をスキップすること', async () => {
+      const existingItem = createMockItem({ id: 'item-1' });
+      useBoardStore.setState({ items: [existingItem], itemEventsChannel: null });
+
+      vi.mocked(api.deleteKptItem).mockResolvedValue(undefined);
+
+      await act(async () => {
+        await useBoardStore.getState().deleteItem('item-1', 'board-1');
+      });
+
+      // エラーなく完了すること（Broadcastは送信されない）
+      expect(useBoardStore.getState().items).toHaveLength(0);
+    });
   });
 
   describe('toggleVote', () => {

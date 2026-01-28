@@ -234,6 +234,16 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
 
     try {
       await api.deleteKptItem(id, boardId);
+
+      // 他のクライアントに削除を通知する
+      const { itemEventsChannel } = get();
+      if (itemEventsChannel) {
+        await itemEventsChannel.send({
+          type: 'broadcast',
+          event: 'item-deleted',
+          payload: { itemId: id },
+        });
+      }
     } catch (error) {
       // エラー時はロールバックする
       set({ items: oldItems, selectedItem: oldSelectedItem });
