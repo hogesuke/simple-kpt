@@ -33,11 +33,12 @@ export function Landing(): ReactElement {
               <div className="grid items-center gap-12 lg:grid-cols-2">
                 {/* 左側: テキスト */}
                 <div className="flex flex-col items-start">
-                  <h1 className="mb-8 text-4xl font-semibold tracking-tight sm:text-5xl">
+                  <h1 className="mb-4 text-4xl font-semibold tracking-tight sm:text-5xl">
                     チームの振り返りを
                     <br />
                     <span className="text-primary">もっとシンプルに</span>
                   </h1>
+                  <p className="text-muted-foreground mb-8 text-lg">準備も操作も最小限。振り返りに集中できるKPTツール</p>
                   <div className="flex flex-wrap gap-4">
                     <Button size="lg" className="rounded-full px-6" asChild>
                       <Link to="/demo">
