@@ -1,7 +1,7 @@
 <div align="center">
+  <img height="48" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
+  &nbsp;&nbsp;&nbsp;
   <a href="https://simple-kpt.com" target="_blank" rel="noopener noreferrer">
-    <img height="48" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
-    &nbsp;&nbsp;&nbsp;
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./public/logotype-dark.svg">
       <source media="(prefers-color-scheme: light)" srcset="./public/logotype.svg">
