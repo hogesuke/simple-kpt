@@ -92,7 +92,7 @@
 
   --popover-foreground: oklch(0.145 0 0);
 
-  --primary: oklch(0.58 0.15 260);
+  --primary: oklch(0.57 0.15 260);
 
   --primary-foreground: oklch(1 0 0);
 
@@ -132,7 +132,7 @@
 
   --sidebar-foreground: oklch(0.145 0 0);
 
-  --sidebar-primary: oklch(0.58 0.15 260);
+  --sidebar-primary: oklch(0.57 0.15 260);
 
   --sidebar-primary-foreground: oklch(1 0 0);
 
@@ -280,7 +280,8 @@ a[href='#auth-forgot_password'] {
 
 /* PageLoaderのウェーブアニメーション */
 @keyframes wave {
-  0%, 100% {
+  0%,
+  100% {
     height: 1.5rem;
   }
   50% {
