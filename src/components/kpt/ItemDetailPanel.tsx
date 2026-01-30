@@ -160,7 +160,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
     <>
       {/* オーバーレイ */}
       <div
-        className="animate-in fade-in fixed inset-0 z-30 bg-black/50 backdrop-blur-[1px] duration-300"
+        className="animate-in fade-in fixed inset-0 z-30 bg-black/50 backdrop-blur-[1px] duration-300 dark:bg-white/15"
         onClick={onClose}
         aria-hidden="true"
       />
