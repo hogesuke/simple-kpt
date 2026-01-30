@@ -98,7 +98,7 @@ export function TextWithHashtags({ text, onTagClick }: TextWithHashtagsProps) {
                 e.stopPropagation();
                 onTagClick?.(part.text);
               }}
-              className="text-primary/90 hover:text-primary rounded text-[0.96em] hover:underline dark:text-blue-400 dark:hover:text-blue-300"
+              className="rounded text-[0.96em] text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
             >
               {part.text}
             </button>
