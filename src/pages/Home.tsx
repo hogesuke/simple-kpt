@@ -2,18 +2,18 @@ import { Plus, User } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { BoardCreateDialog } from '@/components/BoardCreateDialog';
-import { BoardTableRow } from '@/components/BoardTableRow';
-import { BoardTableRowSkeleton } from '@/components/BoardTableRowSkeleton';
-import { ErrorAlert, ErrorAlertAction } from '@/components/ErrorAlert';
-import { FilterChip } from '@/components/FilterChip';
-import { LoadMoreButton } from '@/components/LoadMoreButton';
+import { BoardCreateDialog } from '@/components/board/BoardCreateDialog';
+import { BoardTableRow } from '@/components/board/BoardTableRow';
+import { BoardTableRowSkeleton } from '@/components/board/BoardTableRowSkeleton';
+import { LoadMoreButton } from '@/components/forms/LoadMoreButton';
+import { FilterChip } from '@/components/kpt/FilterChip';
+import { StatsSummary } from '@/components/kpt/StatsSummary';
+import { StatusFilter } from '@/components/kpt/StatusFilter';
+import { TryItemsTable } from '@/components/kpt/TryItemsTable';
+import { ErrorAlert, ErrorAlertAction } from '@/components/layout/ErrorAlert';
 import { Button } from '@/components/shadcn/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
-import { StatsSummary } from '@/components/StatsSummary';
-import { StatusFilter } from '@/components/StatusFilter';
-import { TryItemsTable } from '@/components/TryItemsTable';
 import { useDeleteBoard } from '@/hooks/useDeleteBoard';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { fetchBoards, fetchTryItems, updateBoard } from '@/lib/kpt-api';
@@ -271,11 +271,7 @@ export function Home(): ReactElement {
             <div className="mb-4 flex flex-wrap items-center gap-4">
               <StatusFilter selectedStatuses={filterStatuses} onStatusChange={handleStatusChange} />
               {filterAssignee && (
-                <FilterChip
-                  icon={<User className="h-3 w-3" />}
-                  label={filterAssignee.nickname}
-                  onRemove={handleClearAssigneeFilter}
-                />
+                <FilterChip icon={<User className="h-3 w-3" />} label={filterAssignee.nickname} onRemove={handleClearAssigneeFilter} />
               )}
             </div>
 

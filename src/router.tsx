@@ -1,7 +1,8 @@
 import { createBrowserRouter, createRoutesFromElements, Navigate, Route } from 'react-router';
 
-import { Layout } from './components/Layout';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Layout } from '@/components/layout/Layout';
+
 import { AccountSettings } from './pages/AccountSettings';
 import { DemoBoard } from './pages/DemoBoard';
 import { Home } from './pages/Home';

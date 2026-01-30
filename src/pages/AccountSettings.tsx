@@ -5,12 +5,12 @@ import { useForm, useWatch } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
-import { AccountDeleteDialog } from '@/components/AccountDeleteDialog';
-import { ChangePasswordForm } from '@/components/ChangePasswordForm';
-import { CharacterCounter } from '@/components/CharacterCounter';
-import { FieldError } from '@/components/FieldError';
-import { FormErrorAlert } from '@/components/FormErrorAlert';
-import { LoadingButton } from '@/components/LoadingButton';
+import { AccountDeleteDialog } from '@/components/account/AccountDeleteDialog';
+import { ChangePasswordForm } from '@/components/account/ChangePasswordForm';
+import { CharacterCounter } from '@/components/forms/CharacterCounter';
+import { FieldError } from '@/components/forms/FieldError';
+import { FormErrorAlert } from '@/components/forms/FormErrorAlert';
+import { LoadingButton } from '@/components/forms/LoadingButton';
 import { Button } from '@/components/shadcn/button';
 import { updateProfile } from '@/lib/kpt-api';
 import { nicknameSchema, NicknameFormData } from '@/lib/schemas';
