@@ -12,7 +12,13 @@ const DialogPortal = DialogPrimitive.Portal;
 const DialogClose = DialogPrimitive.Close;
 
 function DialogOverlay({ className, ref, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
-  return <DialogPrimitive.Overlay ref={ref} className={cn('fixed inset-0 z-50 bg-black/60 backdrop-blur-[1px]', className)} {...props} />;
+  return (
+    <DialogPrimitive.Overlay
+      ref={ref}
+      className={cn('fixed inset-0 z-50 bg-black/60 backdrop-blur-[1px] dark:bg-white/15', className)}
+      {...props}
+    />
+  );
 }
 
 function DialogContent({ className, children, ref, ...props }: React.ComponentProps<typeof DialogPrimitive.Content>) {
