@@ -43,8 +43,8 @@
 ## スクリーンショット
 
 <p>
-  <img src="./docs/screenshots/boad.webp" width="32%">
-  <img src="./docs/screenshots/bord_list.webp" width="32%">
+  <img src="./docs/screenshots/board.webp" width="32%">
+  <img src="./docs/screenshots/board_list.webp" width="32%">
   <img src="./docs/screenshots/try_list.webp" width="32%">
 </p>
 
