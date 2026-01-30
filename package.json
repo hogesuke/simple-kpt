@@ -5,6 +5,9 @@
   "main": "index.js",
   "type": "module",
   "packageManager": "pnpm@10.11.1",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "vite",
