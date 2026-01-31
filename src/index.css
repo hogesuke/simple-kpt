@@ -292,3 +292,15 @@ a[href='#auth-forgot_password'] {
 .animate-wave {
   animation: wave 0.8s ease-in-out infinite;
 }
+
+/* a11y: 視差効果を減らす設定が有効な場合はアニメーションを抑制 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
