@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
 Allow: /demo
+Allow: /login
 Disallow: /boards
-Disallow: /login
 Disallow: /account
 
 Sitemap: https://simple-kpt.com/sitemap.xml

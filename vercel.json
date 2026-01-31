@@ -1,8 +1,6 @@
 {
   "regions": ["hnd1"],
-  "rewrites": [
-    { "source": "/((?!assets/).*)", "destination": "/index.html" }
-  ],
+  "rewrites": [{ "source": "/((?!assets/).*)", "destination": "/index.html" }],
   "headers": [
     {
       "source": "/(.*)",
@@ -15,27 +13,23 @@
     },
     {
       "source": "/:path*.(svg|ico|png|jpg|webp|xml)",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "index, follow" }
-      ]
+      "headers": [{ "key": "X-Robots-Tag", "value": "index, follow" }]
     },
     {
       "source": "/",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "index, follow" }
-      ]
+      "headers": [{ "key": "X-Robots-Tag", "value": "index, follow" }]
     },
     {
       "source": "/demo",
-      "headers": [
-        { "key": "X-Robots-Tag", "value": "index, follow" }
-      ]
+      "headers": [{ "key": "X-Robots-Tag", "value": "index, follow" }]
+    },
+    {
+      "source": "/login",
+      "headers": [{ "key": "X-Robots-Tag", "value": "index, follow" }]
     },
     {
       "source": "/assets/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     }
   ]
 }
