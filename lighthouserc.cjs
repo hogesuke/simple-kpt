@@ -1,16 +1,13 @@
+const baseUrls = ['http://localhost:4173/', 'http://localhost:4173/demo', 'http://localhost:4173/login', 'http://localhost:4173/not-found'];
+
 /** @type {import('@lhci/cli').LighthouseConfig} */
 module.exports = {
   ci: {
     collect: {
       startServerCommand: 'pnpm preview',
       startServerReadyPattern: 'Local:',
-      // 認証不要のページのみ対象
-      url: [
-        'http://localhost:4173/',
-        'http://localhost:4173/demo',
-        'http://localhost:4173/login',
-        'http://localhost:4173/not-found',
-      ],
+      // ライトモード + ダークモード（?theme=dark）
+      url: [...baseUrls, ...baseUrls.map((url) => `${url}?theme=dark`)],
       numberOfRuns: 1,
       settings: {
         preset: 'desktop',

@@ -77,20 +77,31 @@ jobs:
               return `${emoji} ${percent}`;
             };
 
-            let comment = '## ⚡ Lighthouse Results\n\n';
-            comment += '| URL | Performance | Accessibility | Best Practices | SEO |\n';
-            comment += '|-----|-------------|---------------|----------------|-----|\n';
+            const lightResults = manifest.filter(r => !r.url.includes('theme=dark'));
+            const darkResults = manifest.filter(r => r.url.includes('theme=dark'));
 
-            for (const result of manifest) {
-              const url = new URL(result.url).pathname || '/';
-              const perf = formatScore(result.summary.performance);
-              const a11y = formatScore(result.summary.accessibility);
-              const bp = formatScore(result.summary['best-practices']);
-              const seo = formatScore(result.summary.seo);
-              const reportLink = links[result.url];
-              const urlText = reportLink ? `[${url}](${reportLink})` : url;
-              comment += `| ${urlText} | ${perf} | ${a11y} | ${bp} | ${seo} |\n`;
-            }
+            const formatTable = (results) => {
+              let table = '| URL | Performance | Accessibility | Best Practices | SEO |\n';
+              table += '|-----|-------------|---------------|----------------|-----|\n';
+              for (const result of results) {
+                const urlObj = new URL(result.url);
+                const path = urlObj.pathname || '/';
+                const perf = formatScore(result.summary.performance);
+                const a11y = formatScore(result.summary.accessibility);
+                const bp = formatScore(result.summary['best-practices']);
+                const seo = formatScore(result.summary.seo);
+                const reportLink = links[result.url];
+                const urlText = reportLink ? `[${path}](${reportLink})` : path;
+                table += `| ${urlText} | ${perf} | ${a11y} | ${bp} | ${seo} |\n`;
+              }
+              return table;
+            };
+
+            let comment = '## ⚡ Lighthouse Results\n\n';
+            comment += '### ☀️ Light Mode\n\n';
+            comment += formatTable(lightResults);
+            comment += '\n### 🌙 Dark Mode\n\n';
+            comment += formatTable(darkResults);
 
             core.setOutput('comment', comment);
 

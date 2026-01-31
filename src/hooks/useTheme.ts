@@ -13,6 +13,19 @@ function getSystemTheme(): 'light' | 'dark' {
 }
 
 /**
+ * URLクエリパラメータからテーマを取得する（Lighthouse CI用）
+ */
+function getQueryTheme(): 'light' | 'dark' | null {
+  if (typeof window === 'undefined') return null;
+  const params = new URLSearchParams(window.location.search);
+  const theme = params.get('theme');
+  if (theme === 'light' || theme === 'dark') {
+    return theme;
+  }
+  return null;
+}
+
+/**
  * localStorageからテーマ設定を取得する
  */
 function getStoredTheme(): Theme {
@@ -67,7 +80,16 @@ export function useTheme() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
-  const resolvedTheme = theme === 'system' ? getSystemTheme() : theme;
+  // URLクエリパラメータによる強制的に適用するテーマ
+  const queryTheme = getQueryTheme();
+  const resolvedTheme = queryTheme ?? (theme === 'system' ? getSystemTheme() : theme);
+
+  // クエリパラメータがある場合は優先的に適用
+  useEffect(() => {
+    if (queryTheme) {
+      applyTheme(queryTheme);
+    }
+  }, [queryTheme]);
 
   return {
     theme,
