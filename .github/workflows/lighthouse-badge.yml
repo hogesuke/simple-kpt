@@ -28,16 +28,8 @@ jobs:
         id: lighthouse
         uses: treosh/lighthouse-ci-action@v12
         with:
-          urls: |
-            https://simple-kpt.com/
-            https://simple-kpt.com/demo
-            https://simple-kpt.com/login
-            https://simple-kpt.com/?theme=dark
-            https://simple-kpt.com/demo?theme=dark
-            https://simple-kpt.com/login?theme=dark
-          runs: 3
+          configPath: lighthouserc.badge.cjs
           uploadArtifacts: true
-          temporaryPublicStorage: true
 
       - name: Calculate average scores
         id: scores

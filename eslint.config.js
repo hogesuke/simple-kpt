@@ -13,7 +13,16 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['dist/', 'node_modules/', 'coverage/', 'supabase/', 'storybook-static/', 'playwright-report/', 'lighthouserc.cjs'],
+    ignores: [
+      'dist/',
+      'node_modules/',
+      'coverage/',
+      'supabase/',
+      'storybook-static/',
+      'playwright-report/',
+      'lighthouserc.cjs',
+      'lighthouserc.badge.cjs',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
