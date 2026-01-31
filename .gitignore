@@ -153,3 +153,6 @@ dist
 # Storybook
 *storybook.log
 storybook-static
+
+# Lighthouse CI
+.lighthouseci
