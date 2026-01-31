@@ -43,9 +43,8 @@
 ## スクリーンショット
 
 <p>
-  <img src="./docs/screenshots/board.webp" width="32%">
-  <img src="./docs/screenshots/board_list.webp" width="32%">
-  <img src="./docs/screenshots/try_list.webp" width="32%">
+  <img src="./docs/screenshots/board.webp" width="49.5%">
+  <img src="./docs/screenshots/try_list.webp" width="49.5%">
 </p>
 
 ## 技術スタック
