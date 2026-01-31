@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { cva } from 'class-variance-authority';
 import { AlertTriangle, X } from 'lucide-react';
 import * as React from 'react';
+import { useMemo } from 'react';
 
 import { cn } from '@/lib/cn';
 import { isOverdue } from '@/lib/date-utils';
@@ -84,7 +85,7 @@ interface TextWithHashtagsProps {
  * テキスト内のハッシュタグをハイライト表示するコンポーネント
  */
 export function TextWithHashtags({ text, onTagClick }: TextWithHashtagsProps) {
-  const parts = parseTextWithHashtags(text);
+  const parts = useMemo(() => parseTextWithHashtags(text), [text]);
 
   return (
     <>
@@ -240,7 +241,7 @@ export interface SortableKPTCardProps extends React.LiHTMLAttributes<HTMLLIEleme
   totalMemberCount?: number;
 }
 
-export function SortableKPTCard({
+export const SortableKPTCard = React.memo(function SortableKPTCard({
   item,
   isSelected,
   onDelete,
@@ -301,4 +302,4 @@ export function SortableKPTCard({
       />
     </li>
   );
-}
+});

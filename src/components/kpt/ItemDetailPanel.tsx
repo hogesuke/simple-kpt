@@ -87,32 +87,41 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
     [setFilterTag, onClose]
   );
 
-  const handleStatusChange = async (status: TryStatus) => {
-    if (!item) return;
+  const handleStatusChange = useCallback(
+    async (status: TryStatus) => {
+      if (!item) return;
 
-    // 対応不要の場合は担当者と期日をクリア
-    if (status === 'wont_fix') {
-      await updateItem({ ...item, status, assigneeId: null, dueDate: null });
-    } else {
-      await updateItem({ ...item, status });
-    }
-  };
+      // 対応不要の場合は担当者と期日をクリア
+      if (status === 'wont_fix') {
+        await updateItem({ ...item, status, assigneeId: null, dueDate: null });
+      } else {
+        await updateItem({ ...item, status });
+      }
+    },
+    [item, updateItem]
+  );
 
-  const handleAssigneeChange = async (assigneeId: string) => {
-    if (!item) return;
-    const newAssigneeId = assigneeId === 'unassigned' ? null : assigneeId;
-    const newAssigneeNickname = newAssigneeId ? (members.find((m) => m.userId === newAssigneeId)?.nickname ?? null) : null;
-    await updateItem({ ...item, assigneeId: newAssigneeId, assigneeNickname: newAssigneeNickname });
-  };
+  const handleAssigneeChange = useCallback(
+    async (assigneeId: string) => {
+      if (!item) return;
+      const newAssigneeId = assigneeId === 'unassigned' ? null : assigneeId;
+      const newAssigneeNickname = newAssigneeId ? (members.find((m) => m.userId === newAssigneeId)?.nickname ?? null) : null;
+      await updateItem({ ...item, assigneeId: newAssigneeId, assigneeNickname: newAssigneeNickname });
+    },
+    [item, members, updateItem]
+  );
 
-  const handleDueDateChange = async (date: Date | undefined) => {
-    if (!item) return;
-    const dueDate = date ? format(date, 'yyyy-MM-dd') : null;
-    await updateItem({ ...item, dueDate });
-    setDueDateOpen(false);
-  };
+  const handleDueDateChange = useCallback(
+    async (date: Date | undefined) => {
+      if (!item) return;
+      const dueDate = date ? format(date, 'yyyy-MM-dd') : null;
+      await updateItem({ ...item, dueDate });
+      setDueDateOpen(false);
+    },
+    [item, updateItem]
+  );
 
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = useCallback(async () => {
     if (!item) return;
 
     // 空文字または変更がない場合は保存しない
@@ -132,7 +141,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [item, editingText, updateItem]);
 
   useEffect(() => {
     if (!item) return;

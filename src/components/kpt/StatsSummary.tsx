@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Area, AreaChart, XAxis, YAxis } from 'recharts';
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/shadcn/chart';
@@ -218,6 +218,33 @@ export function StatsSummary(): ReactElement | null {
     setPeriod(value);
   };
 
+  // データがない場合はダミーデータを使用する（hooksはearly returnの前に呼ぶ必要がある）
+  const keepWeeklyData = useMemo(
+    () =>
+      stats?.keepStats.weeklyData && stats.keepStats.weeklyData.length > 0 ? stats.keepStats.weeklyData : generateEmptyWeeklyData(period),
+    [stats?.keepStats.weeklyData, period]
+  );
+  const problemWeeklyData = useMemo(
+    () =>
+      stats?.problemStats.weeklyData && stats.problemStats.weeklyData.length > 0
+        ? stats.problemStats.weeklyData
+        : generateEmptyWeeklyData(period),
+    [stats?.problemStats.weeklyData, period]
+  );
+  const tryWeeklyData = useMemo(
+    () =>
+      stats?.tryStats.weeklyData && stats.tryStats.weeklyData.length > 0 ? stats.tryStats.weeklyData : generateEmptyTryWeeklyData(period),
+    [stats?.tryStats.weeklyData, period]
+  );
+
+  // 全グラフのY軸スケールを統一するために最大値を計算
+  const yAxisMax = useMemo(() => {
+    const keepMax = Math.max(...keepWeeklyData.map((d) => d.cumulativeCount), 0);
+    const problemMax = Math.max(...problemWeeklyData.map((d) => d.cumulativeCount), 0);
+    const tryMax = Math.max(...tryWeeklyData.map((d) => Math.max(d.cumulativeCount, d.cumulativeCompletedCount)), 0);
+    return Math.max(keepMax, problemMax, tryMax, 1); // 最低1とする
+  }, [keepWeeklyData, problemWeeklyData, tryWeeklyData]);
+
   // 初回ローディング中の表示
   if (isInitialLoad) {
     return (
@@ -238,17 +265,6 @@ export function StatsSummary(): ReactElement | null {
   if (!stats) {
     return null;
   }
-
-  // データがない場合はダミーデータを使用する
-  const keepWeeklyData = stats.keepStats.weeklyData.length > 0 ? stats.keepStats.weeklyData : generateEmptyWeeklyData(period);
-  const problemWeeklyData = stats.problemStats.weeklyData.length > 0 ? stats.problemStats.weeklyData : generateEmptyWeeklyData(period);
-  const tryWeeklyData = stats.tryStats.weeklyData.length > 0 ? stats.tryStats.weeklyData : generateEmptyTryWeeklyData(period);
-
-  // 全グラフのY軸スケールを統一するために最大値を計算
-  const keepMax = Math.max(...keepWeeklyData.map((d) => d.cumulativeCount), 0);
-  const problemMax = Math.max(...problemWeeklyData.map((d) => d.cumulativeCount), 0);
-  const tryMax = Math.max(...tryWeeklyData.map((d) => Math.max(d.cumulativeCount, d.cumulativeCompletedCount)), 0);
-  const yAxisMax = Math.max(keepMax, problemMax, tryMax, 1); // 最低1とする
 
   return (
     <div className="mb-10">

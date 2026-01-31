@@ -1,5 +1,5 @@
 import { User } from 'lucide-react';
-import { ReactElement } from 'react';
+import { memo, ReactElement } from 'react';
 
 import { FilterChip } from '@/components/kpt/FilterChip';
 
@@ -13,7 +13,12 @@ interface FilterBarProps {
 /**
  * アクティブなフィルターを表示するバー
  */
-export function FilterBar({ filterTag, filterMemberName, onRemoveTag, onRemoveMember }: FilterBarProps): ReactElement | null {
+export const FilterBar = memo(function FilterBar({
+  filterTag,
+  filterMemberName,
+  onRemoveTag,
+  onRemoveMember,
+}: FilterBarProps): ReactElement | null {
   const hasFilters = filterTag || filterMemberName;
 
   if (!hasFilters) {
@@ -29,4 +34,4 @@ export function FilterBar({ filterTag, filterMemberName, onRemoveTag, onRemoveMe
       </div>
     </div>
   );
-}
+});
