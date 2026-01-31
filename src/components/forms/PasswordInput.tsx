@@ -27,7 +27,7 @@ export function PasswordInput({ error, ref, id, ...props }: PasswordInputProps) 
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 rounded"
+          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-0 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded"
           aria-label={showPassword ? 'パスワードを非表示' : 'パスワードを表示'}
         >
           {showPassword ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
