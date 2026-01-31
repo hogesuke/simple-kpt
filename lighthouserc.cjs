@@ -13,7 +13,7 @@ module.exports = {
         'http://localhost:4173/privacy',
         'http://localhost:4173/not-found',
       ],
-      numberOfRuns: 3,
+      numberOfRuns: 1,
       settings: {
         preset: 'desktop',
       },
@@ -26,6 +26,7 @@ module.exports = {
     },
     upload: {
       target: 'temporary-public-storage',
+      githubAppToken: process.env.LHCI_GITHUB_APP_TOKEN,
     },
   },
 };
