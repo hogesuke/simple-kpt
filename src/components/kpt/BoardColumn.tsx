@@ -1,7 +1,7 @@
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/lib/cn';
 import { columnDot, columnLabels } from '@/lib/column-styles';
@@ -43,24 +43,26 @@ export function BoardColumn({
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
 
-  // マウント時とアイテム変更時にスクロール状態を確認する
-  useEffect(() => {
-    const checkScrollability = () => {
-      const container = scrollContainerRef.current;
-      if (!container) return;
-
-      const hasScrollableContent = container.scrollHeight > container.clientHeight;
-      const scrollTop = container.scrollTop;
-      const scrollBottom = container.scrollHeight - container.clientHeight - scrollTop;
-
-      setCanScrollUp(hasScrollableContent && scrollTop > 1);
-      setCanScrollDown(hasScrollableContent && scrollBottom > 1);
-    };
-
-    checkScrollability();
-
+  // スクロール状態を確認する関数
+  const checkScrollability = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
+
+    const hasScrollableContent = container.scrollHeight > container.clientHeight;
+    const scrollTop = container.scrollTop;
+    const scrollBottom = container.scrollHeight - container.clientHeight - scrollTop;
+
+    setCanScrollUp(hasScrollableContent && scrollTop > 1);
+    setCanScrollDown(hasScrollableContent && scrollBottom > 1);
+  }, []);
+
+  // マウント時にリスナーを設定
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- リアルDOMに基づく状態更新のためuseEffect内での実行が必要
+    checkScrollability();
 
     container.addEventListener('scroll', checkScrollability);
 
@@ -71,7 +73,13 @@ export function BoardColumn({
       container.removeEventListener('scroll', checkScrollability);
       resizeObserver.disconnect();
     };
-  }, [items]);
+  }, [checkScrollability]);
+
+  // アイテム変更時にスクロール状態を再確認
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM測定に基づく状態更新のため必要
+    checkScrollability();
+  }, [items, checkScrollability]);
 
   return (
     <section ref={setNodeRef} className={cn(columnStyles, 'relative flex flex-col overflow-hidden', className)} {...props}>
