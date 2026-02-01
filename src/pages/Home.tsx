@@ -71,6 +71,12 @@ export function Home(): ReactElement {
     }
   }, [activeTab, hasTryLoaded, isTryLoading, loadTryItems]);
 
+  useEffect(() => {
+    return () => {
+      useHomeStore.setState({ hasTryLoaded: false });
+    };
+  }, []);
+
   const handleTabChange = (value: string) => {
     const tab = value as 'boards' | 'try';
     setActiveTab(tab);
