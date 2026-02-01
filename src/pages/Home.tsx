@@ -49,6 +49,7 @@ export function Home(): ReactElement {
   const filterAssignee = useHomeStore((state) => state.filterAssignee);
   const setFilterAssignee = useHomeStore((state) => state.setFilterAssignee);
   const loadTryItems = useHomeStore((state) => state.loadTryItems);
+  const hasTryLoaded = useHomeStore((state) => state.hasTryLoaded);
 
   const [renamingBoardId, setRenamingBoardId] = useState<string | null>(null);
 
@@ -65,15 +66,15 @@ export function Home(): ReactElement {
 
   // Tryアイテムのロード（Tryタブがアクティブで未読み込みの場合）
   useEffect(() => {
-    if (activeTab === 'try' && tryItems.length === 0 && !isTryLoading) {
+    if (activeTab === 'try' && !hasTryLoaded && !isTryLoading) {
       void loadTryItems();
     }
-  }, [activeTab, tryItems.length, isTryLoading, loadTryItems]);
+  }, [activeTab, hasTryLoaded, isTryLoading, loadTryItems]);
 
   const handleTabChange = (value: string) => {
     const tab = value as 'boards' | 'try';
     setActiveTab(tab);
-    if (tab === 'try' && tryItems.length === 0 && !isTryLoading) {
+    if (tab === 'try' && !hasTryLoaded && !isTryLoading) {
       void loadTryItems();
     }
   };
