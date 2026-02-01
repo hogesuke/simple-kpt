@@ -4,6 +4,8 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
+import { Label } from '@/components/shadcn/label';
+import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
 import { copyToClipboard, downloadFile, generateCSV, generateMarkdown } from '@/lib/export-helpers';
 
 import type { KptItem } from '@/types/kpt';
@@ -84,28 +86,28 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
           {/* 形式選択 */}
           <div className="flex flex-col gap-2">
             <span className="text-sm font-medium">形式</span>
-            <div className="flex gap-2" role="group" aria-label="エクスポート形式">
-              <button
-                type="button"
-                onClick={() => setFormat('markdown')}
-                aria-pressed={format === 'markdown'}
-                className={`flex-1 rounded-md border px-3 py-2 text-sm transition-colors ${
-                  format === 'markdown' ? 'border-primary bg-primary/10 text-primary' : 'border-input hover:bg-muted'
+            <RadioGroup value={format} onValueChange={(value) => setFormat(value as ExportFormat)} className="grid grid-cols-2 gap-3">
+              <Label
+                htmlFor="format-markdown"
+                className={`cursor-pointer rounded-lg border-2 p-3 transition-colors ${
+                  format === 'markdown' ? 'border-primary bg-primary/5' : 'border-input hover:border-muted-foreground/50 hover:bg-muted/50'
                 }`}
               >
-                Markdown
-              </button>
-              <button
-                type="button"
-                onClick={() => setFormat('csv')}
-                aria-pressed={format === 'csv'}
-                className={`flex-1 rounded-md border px-3 py-2 text-sm transition-colors ${
-                  format === 'csv' ? 'border-primary bg-primary/10 text-primary' : 'border-input hover:bg-muted'
+                <RadioGroupItem value="markdown" id="format-markdown" className="sr-only" />
+                <span className="block text-sm font-medium">Markdown</span>
+                <span className="text-muted-foreground block text-xs">.md形式</span>
+              </Label>
+              <Label
+                htmlFor="format-csv"
+                className={`cursor-pointer rounded-lg border-2 p-3 transition-colors ${
+                  format === 'csv' ? 'border-primary bg-primary/5' : 'border-input hover:border-muted-foreground/50 hover:bg-muted/50'
                 }`}
               >
-                CSV
-              </button>
-            </div>
+                <RadioGroupItem value="csv" id="format-csv" className="sr-only" />
+                <span className="block text-sm font-medium">CSV</span>
+                <span className="text-muted-foreground block text-xs">表形式</span>
+              </Label>
+            </RadioGroup>
           </div>
 
           {/* アクションボタン */}
