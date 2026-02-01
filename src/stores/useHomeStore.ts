@@ -39,6 +39,7 @@ interface HomeState {
   tryError: string | null;
   tryOffset: number;
   tryHasMore: boolean;
+  hasTryLoaded: boolean;
   filterStatuses: TryStatus[];
   setFilterStatuses: (statuses: TryStatus[]) => void;
   filterAssignee: FilterAssignee | null;
@@ -113,6 +114,7 @@ export const useHomeStore = create<HomeState>()(
       tryError: null,
       tryOffset: 0,
       tryHasMore: false,
+      hasTryLoaded: false,
       filterStatuses: DEFAULT_STATUSES,
       setFilterStatuses: (statuses) => set({ filterStatuses: statuses }),
       filterAssignee: null,
@@ -149,7 +151,11 @@ export const useHomeStore = create<HomeState>()(
         } catch {
           set({ tryError: 'Tryアイテムの読み込みに失敗しました' });
         } finally {
-          set({ isTryLoading: false, isTryLoadingMore: false });
+          if (reset) {
+            set({ isTryLoading: false, hasTryLoaded: true });
+          } else {
+            set({ isTryLoadingMore: false });
+          }
         }
       },
     }),

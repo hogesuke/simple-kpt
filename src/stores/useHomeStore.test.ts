@@ -56,6 +56,7 @@ describe('useHomeStore', () => {
       tryError: null,
       tryOffset: 0,
       tryHasMore: false,
+      hasTryLoaded: false,
       filterStatuses: ['pending', 'in_progress'],
       filterAssignee: null,
     });
@@ -85,6 +86,11 @@ describe('useHomeStore', () => {
     it('tryItemsが空配列であること', () => {
       const state = useHomeStore.getState();
       expect(state.tryItems).toEqual([]);
+    });
+
+    it('hasTryLoadedがfalseであること', () => {
+      const state = useHomeStore.getState();
+      expect(state.hasTryLoaded).toBe(false);
     });
   });
 
@@ -411,6 +417,27 @@ describe('useHomeStore', () => {
         limit: 20,
         offset: 0,
       });
+    });
+
+    it('読み込み完了後にhasTryLoadedがtrueになること', async () => {
+      mockFetchTryItems.mockResolvedValueOnce({
+        items: [],
+        hasMore: false,
+      });
+
+      expect(useHomeStore.getState().hasTryLoaded).toBe(false);
+
+      await useHomeStore.getState().loadTryItems();
+
+      expect(useHomeStore.getState().hasTryLoaded).toBe(true);
+    });
+
+    it('エラー時もhasTryLoadedがtrueになること', async () => {
+      mockFetchTryItems.mockRejectedValueOnce(new Error('Network error'));
+
+      await useHomeStore.getState().loadTryItems();
+
+      expect(useHomeStore.getState().hasTryLoaded).toBe(true);
     });
   });
 
