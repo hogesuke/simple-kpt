@@ -214,7 +214,7 @@ export function Home(): ReactElement {
           </TabsContent>
 
           <TabsContent value="try">
-            <div className="mb-4 flex flex-wrap items-center gap-4">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
               <StatusFilter selectedStatuses={filterStatuses} onStatusChange={handleStatusChange} />
               {filterAssignee && (
                 <FilterChip icon={<User className="h-3 w-3" />} label={filterAssignee.nickname} onRemove={handleClearAssigneeFilter} />

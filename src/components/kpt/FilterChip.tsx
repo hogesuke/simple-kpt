@@ -9,7 +9,7 @@ interface FilterChipProps {
 
 export function FilterChip({ icon, label, onRemove }: FilterChipProps) {
   return (
-    <span className="border-primary/30 bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full border px-2 py-1 text-sm">
+    <span className="border-primary/30 bg-primary/10 text-primary-dark inline-flex items-center gap-1 rounded-full border px-2 py-1 text-sm">
       {icon}
       <span>{label}</span>
       <button

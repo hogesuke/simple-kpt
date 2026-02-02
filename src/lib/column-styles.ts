@@ -15,7 +15,7 @@ export const columnDot = cva('h-2 w-2 rounded-full', {
 export const columnButton = cva('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm transition-colors border', {
   variants: {
     selected: {
-      true: 'border-primary bg-primary/10 text-gray-700 dark:bg-white/10 dark:text-white',
+      true: 'border-primary bg-primary/10 text-primary-dark dark:bg-white/10',
       false:
         'border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-300',
     },
