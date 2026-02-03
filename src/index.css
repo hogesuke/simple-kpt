@@ -237,7 +237,7 @@
     @apply border-ring! outline-none;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground dark:bg-neutral-900;
   }
   button {
     cursor: pointer;

@@ -99,7 +99,7 @@ export function Landing(): ReactElement {
         </main>
 
         {/* フッター */}
-        <footer className="border-t py-8">
+        <footer className="bg-background border-t py-8">
           <div className="mx-auto max-w-7xl px-4">
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
               <p className="text-muted-foreground text-sm">© Simple KPT</p>
