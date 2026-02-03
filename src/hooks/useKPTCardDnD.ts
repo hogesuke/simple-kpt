@@ -139,7 +139,9 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
 
       // 新しいpositionを計算
       const newPosition = calculateNewPosition(targetList, insertIndex);
-      const updated: KptItem = { ...dragged, column: targetColumn, position: newPosition };
+      // Tryカラムに移動した場合、statusが未設定ならpendingを設定
+      const status = targetColumn === 'try' ? (dragged.status ?? 'pending') : dragged.status;
+      const updated: KptItem = { ...dragged, column: targetColumn, position: newPosition, status };
 
       // 最後にドラッグした位置のカードを保持しておき、ドロップ時のサーバー更新に利用する
       lastDraggedItemRef.current = updated;
