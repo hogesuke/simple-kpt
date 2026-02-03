@@ -49,8 +49,8 @@
 ## スクリーンショット
 
 <p>
-  <img src="./docs/screenshots/board.webp" width="49.5%">
-  <img src="./docs/screenshots/try_list.webp" width="49.5%">
+  <img src="./docs/screenshots/board.webp" width="49.5%" alt="ボード画面のスクリーンショット">
+  <img src="./docs/screenshots/try_list.webp" width="49.5%" alt="トライリスト画面のスクリーンショット">
 </p>
 
 ## 技術スタック
