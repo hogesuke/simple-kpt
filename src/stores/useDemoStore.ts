@@ -48,7 +48,7 @@ const createInitialItems = (): KptItem[] => [
     id: 'demo-keep-3',
     boardId: 'demo',
     column: 'keep',
-    text: 'チーム内のコミュニケーションが活発',
+    text: '24時間以内にPRのレビューを完了できている',
     position: 300,
     authorId: 'demo-user-2',
     authorNickname: 'デモ子さん',
