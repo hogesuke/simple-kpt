@@ -180,10 +180,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
             <AlertTriangle className="text-destructive h-5 w-5" />
             {t('アカウントの削除')}
           </DialogTitle>
-          <DialogDescription>
-            {t('アカウントを削除すると、すべてのデータが完全に削除されます。')}
-            {t('この操作は取り消すことができません。')}
-          </DialogDescription>
+          <DialogDescription>{t('この操作は取り消すことができません。')}</DialogDescription>
         </DialogHeader>
 
         {step === 'loading' && (
