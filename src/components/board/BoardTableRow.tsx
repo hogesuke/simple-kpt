@@ -1,5 +1,6 @@
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { BoardDeleteDialog } from '@/components/board/BoardDeleteDialog';
@@ -23,6 +24,7 @@ interface BoardTableRowProps {
  * ボードリストテーブルの行
  */
 export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete, onRename }: BoardTableRowProps): ReactElement {
+  const { t, i18n } = useTranslation('board');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
 
@@ -31,7 +33,7 @@ export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete
     setRenameDialogOpen(false);
   };
 
-  const formattedDate = new Date(board.createdAt).toLocaleDateString('ja-JP', {
+  const formattedDate = new Date(board.createdAt).toLocaleDateString(i18n.language === 'ja' ? 'ja-JP' : 'en-US', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -45,13 +47,13 @@ export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete
             {board.name}
           </Link>
         </TableCell>
-        <TableCell className="py-0">{isOwner ? 'オーナー' : 'メンバー'}</TableCell>
+        <TableCell className="py-0">{isOwner ? t('オーナー') : t('メンバー')}</TableCell>
         <TableCell className="py-0">{formattedDate}</TableCell>
         <TableCell className="w-12 py-0">
           {isOwner && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="hover:bg-muted h-8 w-8" aria-label="ボード操作メニュー">
+                <Button variant="ghost" size="icon" className="hover:bg-muted h-8 w-8" aria-label={t('ボード操作メニュー')}>
                   <MoreHorizontal className="text-muted-foreground h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -63,7 +65,7 @@ export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete
                   }}
                 >
                   <Pencil className="h-4 w-4" />
-                  ボード名を変更
+                  {t('ボード名を変更')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
@@ -73,7 +75,7 @@ export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete
                   }}
                 >
                   <Trash2 className="h-4 w-4" />
-                  削除
+                  {t('ボードを削除')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

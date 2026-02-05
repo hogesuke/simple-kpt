@@ -16,7 +16,7 @@ export class BoardPage {
     this.keepColumn = page.getByRole('heading', { name: 'Keep' });
     this.problemColumn = page.getByRole('heading', { name: 'Problem' });
     this.tryColumn = page.getByRole('heading', { name: 'Try' });
-    this.addItemInput = page.getByPlaceholder('アイテムを追加...');
+    this.addItemInput = page.getByPlaceholder('アイテムを追加');
     this.addItemButton = page.getByRole('button', { name: '送信' });
   }
 
@@ -28,8 +28,8 @@ export class BoardPage {
    * カラムを選択
    */
   async selectColumn(column: 'keep' | 'problem' | 'try') {
-    const columnLabel = column === 'keep' ? 'Keep' : column === 'problem' ? 'Problem' : 'Try';
-    await this.page.getByRole('group', { name: 'カラム選択' }).getByRole('button', { name: columnLabel }).click();
+    // ColumnSelectorはRadioGroupを使用しているが、RadioGroupItemはsr-onlyなのでラベルをクリック
+    await this.page.locator(`label:has(#column-${column})`).click();
   }
 
   /**

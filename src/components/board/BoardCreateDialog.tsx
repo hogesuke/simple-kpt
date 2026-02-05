@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import { CharacterCounter } from '@/components/forms/CharacterCounter';
 import { LoadingButton } from '@/components/forms/LoadingButton';
@@ -32,6 +33,7 @@ interface BoardCreateDialogProps {
  * ボード作成ダイアログ
  */
 export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialogProps): ReactElement {
+  const { t } = useTranslation('board');
   const { handleError } = useErrorHandler();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -62,14 +64,14 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
       reset();
       onBoardCreated(board);
     } catch (error) {
-      handleError(error, 'ボードの作成に失敗しました');
+      handleError(error, t('error:ボードの作成に失敗しました'));
     }
   };
 
   const defaultTrigger = (
     <Button type="button">
       <Plus className="h-4 w-4" />
-      ボードを作成
+      {t('ボードを作成')}
     </Button>
   );
 
@@ -79,15 +81,15 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>新しいボードを作成</DialogTitle>
-          <DialogDescription>ボードの名前を入力してください。</DialogDescription>
+          <DialogTitle>{t('新しいボードを作成')}</DialogTitle>
+          <DialogDescription>{t('ボードの名前を入力してください。')}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
             <div className="flex items-center justify-between">
               <label htmlFor="boardName" className="block text-sm font-medium">
-                ボード名
+                {t('ボード名')}
                 <span className="text-red-500"> *</span>
               </label>
               <CharacterCounter current={name.length} max={BOARD_NAME_MAX_LENGTH} />
@@ -98,16 +100,16 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
               {...register('name')}
-              placeholder="アルファチーム振り返り"
+              placeholder={t('アルファチーム振り返り')}
             />
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => handleOpenChange(false)} disabled={isSubmitting}>
-              キャンセル
+              {t('ui:キャンセル')}
             </Button>
             <LoadingButton type="submit" disabled={!name.trim() || name.length > BOARD_NAME_MAX_LENGTH} loading={isSubmitting}>
-              作成
+              {t('ui:送信')}
             </LoadingButton>
           </DialogFooter>
         </form>

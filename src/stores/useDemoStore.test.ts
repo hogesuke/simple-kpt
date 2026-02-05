@@ -1,6 +1,8 @@
 /* eslint-disable vitest/no-conditional-expect */
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import i18n from '@/i18n';
+
 import { DEMO_MEMBERS, useDemoStore } from './useDemoStore';
 
 describe('useDemoStore', () => {
@@ -109,7 +111,7 @@ describe('useDemoStore', () => {
       const addedItem = state.items.find((i) => i.text === 'テスト');
 
       expect(addedItem?.authorId).toBe('demo-user-1');
-      expect(addedItem?.authorNickname).toBe('デモユーザーくん');
+      expect(addedItem?.authorNickname).toBe(i18n.t('board:デモユーザー1'));
     });
   });
 

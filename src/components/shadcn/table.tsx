@@ -38,7 +38,12 @@ function TableRow({ className, ref, ...props }: React.HTMLAttributes<HTMLTableRo
   );
 }
 
-function TableHead({ className, ref, scope = 'col', ...props }: React.ThHTMLAttributes<HTMLTableCellElement> & { ref?: React.Ref<HTMLTableCellElement> }) {
+function TableHead({
+  className,
+  ref,
+  scope = 'col',
+  ...props
+}: React.ThHTMLAttributes<HTMLTableCellElement> & { ref?: React.Ref<HTMLTableCellElement> }) {
   return (
     <th
       ref={ref}

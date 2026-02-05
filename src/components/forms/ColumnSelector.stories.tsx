@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { ColumnSelector } from './ColumnSelector';
 
 import type { KptColumnType } from '@/types/kpt';

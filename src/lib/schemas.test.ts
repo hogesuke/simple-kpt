@@ -43,7 +43,7 @@ describe('nicknameSchema', () => {
     const result = nicknameSchema.safeParse({ nickname: longNickname });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe(`${NICKNAME_MAX_LENGTH}文字以内で入力してください`);
+      expect(result.error.issues[0].message).toBe(`ニックネームは${NICKNAME_MAX_LENGTH}文字以内で入力してください`);
     }
   });
 
@@ -94,7 +94,7 @@ describe('boardNameSchema', () => {
     const result = boardNameSchema.safeParse({ name: longName });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe(`${BOARD_NAME_MAX_LENGTH}文字以内で入力してください`);
+      expect(result.error.issues[0].message).toBe(`ボード名は${BOARD_NAME_MAX_LENGTH}文字以内で入力してください`);
     }
   });
 
@@ -129,7 +129,7 @@ describe('itemTextSchema', () => {
     const result = itemTextSchema.safeParse({ text: longText });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe(`${ITEM_TEXT_MAX_LENGTH}文字以内で入力してください`);
+      expect(result.error.issues[0].message).toBe(`テキストは${ITEM_TEXT_MAX_LENGTH}文字以内で入力してください`);
     }
   });
 
@@ -371,7 +371,7 @@ describe('changePasswordSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const newPasswordError = result.error.issues.find((e) => e.path.includes('newPassword'));
-      expect(newPasswordError?.message).toBe(`新しいパスワードは${PASSWORD_MIN_LENGTH}文字以上で入力してください`);
+      expect(newPasswordError?.message).toBe(`パスワードは${PASSWORD_MIN_LENGTH}文字以上で入力してください`);
     }
   });
 

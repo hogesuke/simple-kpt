@@ -93,10 +93,7 @@ Deno.serve(async (req) => {
   // 投票者のプロフィールを取得
   const voterProfiles: Record<string, string | null> = {};
   if (voterUserIds.size > 0) {
-    const { data: profiles } = await client
-      .from('profiles')
-      .select('id, nickname')
-      .in('id', Array.from(voterUserIds));
+    const { data: profiles } = await client.from('profiles').select('id, nickname').in('id', Array.from(voterUserIds));
 
     for (const profile of profiles ?? []) {
       voterProfiles[profile.id] = profile.nickname;

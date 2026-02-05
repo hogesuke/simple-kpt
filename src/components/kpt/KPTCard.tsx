@@ -4,6 +4,7 @@ import { cva } from 'class-variance-authority';
 import { AlertTriangle, X } from 'lucide-react';
 import * as React from 'react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/cn';
 import { isOverdue } from '@/lib/date-utils';
@@ -23,7 +24,7 @@ const statusBadge = cva('rounded-full px-2 py-0.5', {
   },
 });
 
-const STATUS_LABELS: Record<TryStatus, string> = {
+const STATUS_KEYS: Record<TryStatus, string> = {
   pending: '未対応',
   in_progress: '対応中',
   done: '完了',
@@ -134,6 +135,8 @@ export function KPTCard({
   onVote,
   totalMemberCount,
 }: KPTCardProps) {
+  const { t } = useTranslation('board');
+
   const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     void onDelete?.(item.id);
@@ -148,7 +151,7 @@ export function KPTCard({
   };
 
   return (
-    <article className={cn(cardStyles, 'relative', className)} aria-label={`KPTカード: ${item.text}`}>
+    <article className={cn(cardStyles, 'relative', className)} aria-label={t('KPTカード: {{text}}', { text: item.text })}>
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- キーボードアクセシビリティは別途「詳細を開く」ボタンで提供している */}
       <div
         className={cn('p-4', onClick && 'cursor-pointer transition-shadow hover:shadow-md')}
@@ -167,7 +170,7 @@ export function KPTCard({
                   onMemberClick(item.authorId!, item.authorNickname!);
                 }}
                 className="text-muted-foreground hover:text-foreground rounded hover:underline"
-                aria-label={`${item.authorNickname}でフィルター`}
+                aria-label={t('{{name}}でフィルター', { name: item.authorNickname })}
               >
                 {item.authorNickname}
               </button>
@@ -179,14 +182,18 @@ export function KPTCard({
         {/* Try専用フィールドの表示 */}
         {item.column === 'try' && (item.status || item.assigneeNickname || item.dueDate) && (
           <div className="border-border mt-3 flex flex-wrap items-center gap-3 border-t pt-3 text-sm">
-            {item.status && <span className={cn(statusBadge({ status: item.status }), 'text-xs')}>{STATUS_LABELS[item.status]}</span>}
-            {item.assigneeNickname && <span className="text-muted-foreground">担当: {item.assigneeNickname}</span>}
+            {item.status && <span className={cn(statusBadge({ status: item.status }), 'text-xs')}>{t(STATUS_KEYS[item.status])}</span>}
+            {item.assigneeNickname && (
+              <span className="text-muted-foreground">
+                {t('担当者')}: {item.assigneeNickname}
+              </span>
+            )}
             {item.dueDate && (
               <span
                 className={isOverdue(item.dueDate, item.status) ? 'inline-flex items-center gap-1 text-red-600' : 'text-muted-foreground'}
               >
                 {isOverdue(item.dueDate, item.status) && <AlertTriangle className="h-3.5 w-3.5" />}
-                期日: {item.dueDate.replace(/-/g, '/')}
+                {t('期日')}: {item.dueDate.replace(/-/g, '/')}
               </span>
             )}
           </div>
@@ -213,7 +220,7 @@ export function KPTCard({
           className="bg-background text-foreground focus:ring-ring sr-only rounded px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2 focus:ring-2 focus:outline-none"
           aria-expanded={isSelected}
         >
-          詳細を開く
+          {t('詳細を開く')}
         </button>
       )}
       {onDelete && (
@@ -221,7 +228,7 @@ export function KPTCard({
           type="button"
           onClick={handleDeleteClick}
           className="text-muted-foreground hover:bg-muted absolute top-2 right-2 inline-flex h-6 w-6 items-center justify-center rounded-full"
-          aria-label={`「${item.text}」カードを削除`}
+          aria-label={t('「{{text}}」カードを削除', { text: item.text })}
         >
           <X className="h-4 w-4" aria-hidden="true" />
         </button>

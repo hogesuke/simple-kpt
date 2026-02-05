@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import { FormErrorAlert } from '@/components/forms/FormErrorAlert';
 import { LoadingButton } from '@/components/forms/LoadingButton';
@@ -14,6 +15,7 @@ interface ChangePasswordFormProps {
 }
 
 export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): ReactElement {
+  const { t } = useTranslation('account');
   const user = useAuthStore((state) => state.user);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +32,7 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
     setError(null);
 
     if (!user?.email) {
-      setError('ユーザー情報の取得に失敗しました');
+      setError(t('error:ユーザー情報の取得に失敗しました'));
       return;
     }
 
@@ -41,7 +43,7 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
     });
 
     if (signInError) {
-      setError('現在のパスワードが正しくありません');
+      setError(t('現在のパスワードが正しくありません'));
       return;
     }
 
@@ -51,7 +53,7 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
     });
 
     if (updateError) {
-      setError('パスワードの変更に失敗しました');
+      setError(t('error:パスワードの変更に失敗しました'));
       return;
     }
 
@@ -64,25 +66,30 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
 
       <div className="space-y-1">
         <label htmlFor="currentPassword" className="block text-sm font-medium">
-          現在のパスワード
+          {t('現在のパスワード')}
         </label>
         <PasswordInput id="currentPassword" error={errors.currentPassword?.message} {...register('currentPassword')} />
       </div>
 
       <div className="space-y-1">
         <label htmlFor="newPassword" className="block text-sm font-medium">
-          新しいパスワード
+          {t('新しいパスワード')}
         </label>
-        <PasswordInput id="newPassword" placeholder="8文字以上で入力" error={errors.newPassword?.message} {...register('newPassword')} />
+        <PasswordInput
+          id="newPassword"
+          placeholder={t('8文字以上で入力')}
+          error={errors.newPassword?.message}
+          {...register('newPassword')}
+        />
       </div>
 
       <div className="space-y-1">
         <label htmlFor="confirmPassword" className="block text-sm font-medium">
-          新しいパスワード（確認）
+          {t('新しいパスワード（確認）')}
         </label>
         <PasswordInput
           id="confirmPassword"
-          placeholder="もう一度入力"
+          placeholder={t('もう一度入力')}
           error={errors.confirmPassword?.message}
           {...register('confirmPassword')}
         />
@@ -90,7 +97,7 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
 
       <div className="flex justify-end">
         <LoadingButton type="submit" loading={isSubmitting}>
-          変更
+          {t('ui:変更')}
         </LoadingButton>
       </div>
     </form>

@@ -62,7 +62,7 @@ test.describe('デモページ', () => {
     await demoPage.addItem(testText);
     await demoPage.getCard(testText).click();
 
-    await page.getByRole('button', { name: '閉じる', exact: true }).click();
+    await page.getByRole('button', { name: '詳細パネルを閉じる' }).click();
 
     await expect(page.getByRole('dialog', { name: 'カード詳細' })).not.toBeVisible();
   });

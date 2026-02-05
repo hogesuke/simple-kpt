@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import { FieldError } from '@/components/forms/FieldError';
 import { FormErrorAlert } from '@/components/forms/FormErrorAlert';
 import { LoadingButton } from '@/components/forms/LoadingButton';
 import { Input } from '@/components/shadcn/input';
-import { forgotPasswordSchema, ForgotPasswordFormData } from '@/lib/schemas';
+import { createForgotPasswordSchema, ForgotPasswordFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
 
 interface ForgotPasswordFormProps {
@@ -15,7 +16,9 @@ interface ForgotPasswordFormProps {
 }
 
 export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormProps): ReactElement {
+  const { t } = useTranslation('auth');
   const [error, setError] = useState<string | null>(null);
+  const forgotPasswordSchema = useMemo(() => createForgotPasswordSchema(t), [t]);
 
   const {
     register,
@@ -33,7 +36,7 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
     });
 
     if (error) {
-      setError('パスワードリセットメールの送信に失敗しました');
+      setError(t('パスワードリセットメールの送信に失敗しました'));
     } else {
       onSuccess();
     }
@@ -45,7 +48,7 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
 
       <div className="space-y-1">
         <label htmlFor="email" className="block text-sm font-medium">
-          メールアドレス
+          {t('メールアドレス')}
         </label>
         <Input
           id="email"
@@ -59,12 +62,12 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
       </div>
 
       <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
-        パスワードリセット用のメールを送信
+        {t('パスワードリセット用のメールを送信')}
       </LoadingButton>
 
       <div className="text-center text-sm">
         <button type="button" onClick={onSignIn} className="text-muted-foreground hover:text-foreground rounded underline">
-          ログインに戻る
+          {t('ログインに戻る')}
         </button>
       </div>
     </form>

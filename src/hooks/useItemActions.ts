@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import i18n from '@/i18n';
 import { useBoardStore } from '@/stores/useBoardStore';
 
 import type { KptItem } from '@/types/kpt';
@@ -26,7 +27,7 @@ export function useItemActions(boardId: string | undefined) {
       try {
         await deleteItem(id, boardId);
       } catch (error) {
-        handleError(error, 'カードの削除に失敗しました');
+        handleError(error, i18n.t('error:カードの削除に失敗しました'));
       }
     },
     [boardId, deleteItem, handleError]
@@ -37,7 +38,7 @@ export function useItemActions(boardId: string | undefined) {
       try {
         await updateItem(item);
       } catch (error) {
-        handleError(error, 'カード位置の更新に失敗しました');
+        handleError(error, i18n.t('error:カード位置の更新に失敗しました'));
       }
     },
     [updateItem, handleError]
@@ -62,7 +63,7 @@ export function useItemActions(boardId: string | undefined) {
       try {
         await toggleVote(itemId);
       } catch (error) {
-        handleError(error, '投票に失敗しました');
+        handleError(error, i18n.t('error:投票に失敗しました'));
       }
     },
     [toggleVote, handleError]

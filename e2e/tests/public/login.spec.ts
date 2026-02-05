@@ -28,7 +28,7 @@ test.describe('ログインページ', () => {
     await loginPage.passwordInput.fill('password');
     await loginPage.loginButton.click();
 
-    await expect(page.getByText('有効なメールアドレスを入力してください')).toBeVisible();
+    await expect(page.getByText('メールアドレスを入力してください')).toBeVisible();
   });
 
   test('パスワードをお忘れですかリンクが機能すること', async ({ page }) => {

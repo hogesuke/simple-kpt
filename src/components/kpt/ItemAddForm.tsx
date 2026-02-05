@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ColumnSelector } from '@/components/forms/ColumnSelector';
 import { ItemInput } from '@/components/forms/ItemInput';
@@ -14,10 +15,11 @@ interface ItemAddFormProps {
 }
 
 export function ItemAddForm({ columns, selectedColumn, onColumnChange, onSubmit, disabled = false }: ItemAddFormProps): ReactElement {
+  const { t } = useTranslation('board');
   return (
     <div className="flex flex-col gap-3">
       <ColumnSelector columns={columns} selectedColumn={selectedColumn} onColumnChange={onColumnChange} />
-      <ItemInput onSubmitText={onSubmit} disabled={disabled} placeholder="アイテムを追加..." />
+      <ItemInput onSubmitText={onSubmit} disabled={disabled} placeholder={t('アイテムを追加')} />
     </div>
   );
 }

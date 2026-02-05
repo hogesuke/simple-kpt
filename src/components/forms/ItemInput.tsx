@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SendHorizonal } from 'lucide-react';
 import * as React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import { Input } from '@/components/shadcn/input';
 import { cn } from '@/lib/cn';
@@ -15,6 +16,7 @@ export interface ItemInputProps extends Omit<React.InputHTMLAttributes<HTMLInput
 }
 
 export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemInputProps) {
+  const { t } = useTranslation('board');
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const {
@@ -76,7 +78,7 @@ export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemI
         onMouseDown={(e) => e.preventDefault()}
         disabled={!canSubmit}
         className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary/50 absolute top-1/2 right-2 -translate-y-1/2 rounded-md p-1.5 transition-colors disabled:cursor-not-allowed"
-        aria-label="送信"
+        aria-label={t('送信')}
       >
         <SendHorizonal className="h-4 w-4" />
       </button>

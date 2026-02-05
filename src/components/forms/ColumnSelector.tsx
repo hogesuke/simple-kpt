@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Label } from '@/components/shadcn/label';
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
@@ -13,12 +14,13 @@ interface ColumnSelectorProps {
 }
 
 export function ColumnSelector({ columns, selectedColumn, onColumnChange }: ColumnSelectorProps): ReactElement {
+  const { t } = useTranslation('board');
   return (
     <RadioGroup
       value={selectedColumn}
       onValueChange={(value) => onColumnChange(value as KptColumnType)}
       className="flex gap-2"
-      aria-label="カラム選択"
+      aria-label={t('カラム選択')}
     >
       {columns.map((col) => (
         <Label

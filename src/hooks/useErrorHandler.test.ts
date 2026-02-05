@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import i18n from '@/i18n';
 import { APIError } from '@/lib/api-error';
 
 import { useErrorHandler } from './useErrorHandler';
@@ -37,7 +38,7 @@ describe('useErrorHandler', () => {
 
       result.current.handleError(error);
 
-      expect(mockToastError).toHaveBeenCalledWith('セッションが切れました。再度ログインしてください。');
+      expect(mockToastError).toHaveBeenCalledWith(i18n.t('error:セッションが切れました。再度ログインしてください。'));
     });
 
     it('signOutを呼び出すこと', () => {
@@ -104,7 +105,7 @@ describe('useErrorHandler', () => {
 
       result.current.handleError(error);
 
-      expect(mockToastError).toHaveBeenCalledWith('エラーが発生しました');
+      expect(mockToastError).toHaveBeenCalledWith(i18n.t('error:エラーが発生しました'));
     });
   });
 
@@ -142,7 +143,7 @@ describe('useErrorHandler', () => {
 
       result.current.handleError('string error');
 
-      expect(mockToastError).toHaveBeenCalledWith('エラーが発生しました');
+      expect(mockToastError).toHaveBeenCalledWith(i18n.t('error:エラーが発生しました'));
     });
 
     it('nullエラーでもデフォルトメッセージを表示すること', () => {
@@ -150,7 +151,7 @@ describe('useErrorHandler', () => {
 
       result.current.handleError(null);
 
-      expect(mockToastError).toHaveBeenCalledWith('エラーが発生しました');
+      expect(mockToastError).toHaveBeenCalledWith(i18n.t('error:エラーが発生しました'));
     });
   });
 });

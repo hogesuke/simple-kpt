@@ -1,8 +1,9 @@
 import * as FocusScope from '@radix-ui/react-focus-scope';
 import { format } from 'date-fns';
-import { ja } from 'date-fns/locale';
+import { enUS, ja } from 'date-fns/locale';
 import { CalendarIcon, Edit2, Loader2, X } from 'lucide-react';
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { CharacterCounter } from '@/components/forms/CharacterCounter';
 import { Button } from '@/components/shadcn/button';
@@ -11,20 +12,13 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/pop
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { useBoardContext } from '@/contexts/BoardContext';
 import { cn } from '@/lib/cn';
-import { columnDot, columnLabels } from '@/lib/column-styles';
+import { columnDot } from '@/lib/column-styles';
 import { ITEM_TEXT_MAX_LENGTH } from '@shared/constants';
 
 import { TextWithHashtags } from './KPTCard';
 import { VoteButton } from './VoteButton';
 
 import type { KptItem, TryStatus } from '@/types/kpt';
-
-const PROBLEM_STATUS_OPTIONS: { value: TryStatus; label: string }[] = [
-  { value: 'wont_fix', label: '対応不要' },
-  { value: 'pending', label: '未対応' },
-  { value: 'in_progress', label: '対応中' },
-  { value: 'done', label: '完了' },
-];
 
 export interface ItemDetailPanelProps {
   item: KptItem | null;
@@ -45,12 +39,34 @@ function formatDate(dateString?: string): string {
 }
 
 export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactElement | null {
+  const { t, i18n } = useTranslation('board');
   const { updateItem, setFilterTag, members, toggleVote } = useBoardContext();
   const [isEditing, setIsEditing] = useState(false);
   const [editingText, setEditingText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dueDateOpen, setDueDateOpen] = useState(false);
+
+  // 言語に応じたdate-fnsのlocaleを取得
+  const dateLocale = useMemo(() => (i18n.language === 'ja' ? ja : enUS), [i18n.language]);
+
+  // 翻訳されたステータスオプション
+  const statusOptions: { value: TryStatus; label: string }[] = useMemo(
+    () => [
+      { value: 'wont_fix', label: t('対応不要') },
+      { value: 'pending', label: t('未対応') },
+      { value: 'in_progress', label: t('対応中') },
+      { value: 'done', label: t('完了') },
+    ],
+    [t]
+  );
+
+  // カラムラベル（KPT用語は両言語共通）
+  const columnLabels = {
+    keep: 'Keep',
+    problem: 'Problem',
+    try: 'Try',
+  };
 
   // Detail表示が別itemに変更されたら編集モードを解除
   useEffect(() => {
@@ -179,7 +195,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
         <div
           id={`detail-panel-${item.id}`}
           role="dialog"
-          aria-label="カード詳細"
+          aria-label={t('カード詳細')}
           aria-modal="true"
           className={cn(
             'border-border bg-background fixed top-0 right-0 z-40 h-screen w-full border-l shadow-2xl',
@@ -198,7 +214,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
               type="button"
               onClick={onClose}
               className="text-muted-foreground hover:bg-muted inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors"
-              aria-label="閉じる"
+              aria-label={t('詳細パネルを閉じる')}
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
@@ -209,7 +225,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
             {/* カード内容 */}
             <section className="px-6 py-4">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="text-muted-foreground text-sm font-medium">内容</h3>
+                <h3 className="text-muted-foreground text-sm font-medium">{t('内容')}</h3>
                 {!isEditing && (
                   <button
                     type="button"
@@ -217,7 +233,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                     className="text-muted-foreground hover:bg-muted inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
                   >
                     <Edit2 className="h-3.5 w-3.5" aria-hidden="true" />
-                    編集
+                    {t('編集')}
                   </button>
                 )}
               </div>
@@ -245,7 +261,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       )}
                       rows={6}
                       disabled={isSaving}
-                      placeholder="テキストを入力してください"
+                      placeholder={t('テキストを入力してください')}
                     />
                   </div>
                   <div className="flex justify-end gap-2">
@@ -260,7 +276,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         'disabled:cursor-not-allowed disabled:opacity-50'
                       )}
                     >
-                      キャンセル
+                      {t('ui:キャンセル')}
                     </button>
                     <button
                       type="button"
@@ -274,7 +290,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       )}
                     >
                       {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-                      保存
+                      {t('ui:保存')}
                     </button>
                   </div>
                 </div>
@@ -305,17 +321,17 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
             {/* Try専用フィールド */}
             {item.column === 'try' && (
               <section className="border-border/50 space-y-4 border-t px-6 py-6">
-                <h3 className="text-muted-foreground text-sm font-medium">対応状況</h3>
+                <h3 className="text-muted-foreground text-sm font-medium">{t('対応状況')}</h3>
 
                 {/* ステータス */}
                 <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-16 shrink-0 text-xs">ステータス</span>
+                  <span className="text-muted-foreground w-16 shrink-0 text-xs">{t('ステータス')}</span>
                   <Select value={item.status ?? 'pending'} onValueChange={(v) => handleStatusChange(v as TryStatus)}>
                     <SelectTrigger className="h-8 flex-1">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {PROBLEM_STATUS_OPTIONS.map((option) => (
+                      {statusOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -326,22 +342,22 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
 
                 {/* 担当者 */}
                 <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-16 shrink-0 text-xs">担当者</span>
+                  <span className="text-muted-foreground w-16 shrink-0 text-xs">{t('担当者')}</span>
                   <Select
                     value={item.assigneeId ?? 'unassigned'}
                     onValueChange={handleAssigneeChange}
                     disabled={item.status === 'wont_fix'}
                   >
                     <SelectTrigger className="h-8 flex-1">
-                      <SelectValue placeholder="未設定" />
+                      <SelectValue placeholder={t('未設定')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="unassigned">
-                        <span className="text-muted-foreground">未設定</span>
+                        <span className="text-muted-foreground">{t('未設定')}</span>
                       </SelectItem>
                       {members.map((member) => (
                         <SelectItem key={member.userId} value={member.userId}>
-                          {member.nickname ?? '匿名ユーザー'}
+                          {member.nickname ?? t('ui:匿名ユーザー')}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -350,7 +366,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
 
                 {/* 期日 */}
                 <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-16 shrink-0 text-xs">期日</span>
+                  <span className="text-muted-foreground w-16 shrink-0 text-xs">{t('期日')}</span>
                   <Popover open={dueDateOpen} onOpenChange={setDueDateOpen}>
                     <PopoverTrigger asChild>
                       <Button
@@ -359,7 +375,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         disabled={item.status === 'wont_fix'}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {item.dueDate ? format(new Date(item.dueDate), 'yyyy/MM/dd') : '未設定'}
+                        {item.dueDate ? format(new Date(item.dueDate), 'yyyy/MM/dd') : t('未設定')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
@@ -367,13 +383,13 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         mode="single"
                         selected={item.dueDate ? new Date(item.dueDate) : undefined}
                         onSelect={handleDueDateChange}
-                        locale={ja}
+                        locale={dateLocale}
                         initialFocus
                       />
                       {item.dueDate && (
                         <div className="border-t p-2">
                           <Button variant="ghost" size="sm" className="w-full" onClick={() => handleDueDateChange(undefined)}>
-                            期日をクリア
+                            {t('期日をクリア')}
                           </Button>
                         </div>
                       )}
@@ -387,17 +403,17 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
             <section className="border-border/50 border-t px-6 py-6">
               <dl className="grid grid-cols-[5rem_1fr] items-center gap-x-3 gap-y-3">
                 {/* 作成者情報 */}
-                <dt className="text-muted-foreground text-xs font-medium">作成者</dt>
-                <dd className="text-sm">{item.authorNickname || '匿名ユーザー'}</dd>
+                <dt className="text-muted-foreground text-xs font-medium">{t('作成者')}</dt>
+                <dd className="text-sm">{item.authorNickname || t('ui:匿名ユーザー')}</dd>
 
                 {/* 作成日時 */}
-                <dt className="text-muted-foreground text-xs font-medium">作成日時</dt>
+                <dt className="text-muted-foreground text-xs font-medium">{t('作成日時')}</dt>
                 <dd className="text-sm">{formatDate(item.createdAt)}</dd>
 
                 {/* 更新日時 */}
                 {item.updatedAt && item.updatedAt !== item.createdAt && (
                   <>
-                    <dt className="text-muted-foreground text-xs font-medium">更新日時</dt>
+                    <dt className="text-muted-foreground text-xs font-medium">{t('更新日時')}</dt>
                     <dd className="text-sm">{formatDate(item.updatedAt)}</dd>
                   </>
                 )}

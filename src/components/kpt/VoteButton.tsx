@@ -1,6 +1,7 @@
 import { Flame, ThumbsUp } from 'lucide-react';
 import * as React from 'react';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/shadcn/tooltip';
 import { cn } from '@/lib/cn';
@@ -33,6 +34,8 @@ export function VoteButton({
   stopPropagation = false,
   totalMemberCount,
 }: VoteButtonProps): ReactElement {
+  const { t } = useTranslation('board');
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (stopPropagation) {
       event.stopPropagation();
@@ -45,11 +48,11 @@ export function VoteButton({
 
   const ariaLabel = itemText
     ? hasVoted
-      ? `「${itemText}」の投票を取り消す`
-      : `「${itemText}」に投票する`
+      ? t('「{{text}}」の投票を取り消す', { text: itemText })
+      : t('「{{text}}」に投票する', { text: itemText })
     : hasVoted
-      ? '投票を取り消す'
-      : '投票する';
+      ? t('投票を取り消す')
+      : t('投票する');
 
   const Icon = isAllVoted ? Flame : ThumbsUp;
 
@@ -78,7 +81,7 @@ export function VoteButton({
       </TooltipTrigger>
       {voters.length > 0 && (
         <TooltipContent side="bottom" className="max-w-48">
-          {voters.map((voter) => voter.nickname ?? '名前未設定').join(', ')}
+          {voters.map((voter) => voter.nickname ?? t('名前未設定')).join(', ')}
         </TooltipContent>
       )}
     </Tooltip>

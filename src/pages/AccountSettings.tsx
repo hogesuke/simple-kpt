@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft } from 'lucide-react';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
@@ -22,6 +23,7 @@ interface LocationState {
 }
 
 export function AccountSettings(): ReactElement {
+  const { t } = useTranslation('account');
   const profile = useAuthStore((state) => state.profile);
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,10 +60,10 @@ export function AccountSettings(): ReactElement {
     try {
       const updatedProfile = await updateProfile(data.nickname);
       setProfileStore(updatedProfile);
-      toast.success('ニックネームを更新しました');
+      toast.success(t('ニックネームを更新しました'));
       navigate(returnTo, { replace: true });
     } catch {
-      setError('root', { message: 'ニックネームの更新に失敗しました。もう一度お試しください。' });
+      setError('root', { message: t('ニックネームの更新に失敗しました。もう一度お試しください。') });
     }
   };
 
@@ -72,12 +74,12 @@ export function AccountSettings(): ReactElement {
   if (isInitialSetup) {
     return (
       <>
-        <title>アカウント設定 - Simple KPT</title>
+        <title>{t('アカウント設定 - Simple KPT')}</title>
         <div className="bg-muted flex h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
           <div className="w-full max-w-md space-y-8">
             <div>
-              <h2 className="text-center text-2xl font-bold tracking-tight">ニックネームの設定</h2>
-              <p className="text-muted-foreground mt-2 text-center text-sm">アプリで表示される名前を設定してください</p>
+              <h2 className="text-center text-2xl font-bold tracking-tight">{t('ニックネームの設定')}</h2>
+              <p className="text-muted-foreground mt-2 text-center text-sm">{t('アプリで表示される名前を設定してください')}</p>
             </div>
 
             <div className="bg-card rounded-lg px-8 py-8 shadow">
@@ -87,7 +89,7 @@ export function AccountSettings(): ReactElement {
                 <div>
                   <div className="flex items-center justify-between">
                     <label htmlFor="nickname" className="block text-sm font-medium">
-                      ニックネーム
+                      {t('board:ニックネーム')}
                     </label>
                     <CharacterCounter current={nickname.length} max={NICKNAME_MAX_LENGTH} />
                   </div>
@@ -98,7 +100,7 @@ export function AccountSettings(): ReactElement {
                       autoComplete="off"
                       {...register('nickname')}
                       className="border-input bg-background placeholder-muted-foreground block w-full appearance-none rounded-md border px-3 py-2 shadow-sm sm:text-sm"
-                      placeholder="ふりかえり太郎"
+                      placeholder={t('ふりかえり太郎')}
                       disabled={isSubmitting}
                     />
                   </div>
@@ -106,7 +108,7 @@ export function AccountSettings(): ReactElement {
                 </div>
 
                 <LoadingButton type="submit" loading={isSubmitting} className="w-full">
-                  設定
+                  {t('ui:保存')}
                 </LoadingButton>
               </form>
             </div>
@@ -121,7 +123,7 @@ export function AccountSettings(): ReactElement {
   // アカウント設定画面
   return (
     <>
-      <title>アカウント設定 - Simple KPT</title>
+      <title>{t('アカウント設定 - Simple KPT')}</title>
       <div className="bg-muted min-h-full py-8">
         <div className="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
           <button
@@ -130,17 +132,17 @@ export function AccountSettings(): ReactElement {
             className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 rounded text-sm transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            戻る
+            {t('ui:戻る')}
           </button>
 
           <div className="mb-8">
-            <h1 className="text-2xl font-bold">アカウント設定</h1>
-            <p className="text-muted-foreground mt-1 text-sm">プロフィールやアカウントの管理ができます</p>
+            <h1 className="text-2xl font-bold">{t('ui:アカウント設定')}</h1>
+            <p className="text-muted-foreground mt-1 text-sm">{t('プロフィールやアカウントの管理ができます')}</p>
           </div>
 
           {/* ニックネーム */}
           <section className="mb-8">
-            <h2 className="mb-4 text-lg font-medium">ニックネームの変更</h2>
+            <h2 className="mb-4 text-lg font-medium">{t('ニックネームの変更')}</h2>
             <div className="border-border bg-card rounded-lg border p-6">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {errors.root && <FormErrorAlert>{errors.root.message}</FormErrorAlert>}
@@ -148,7 +150,7 @@ export function AccountSettings(): ReactElement {
                 <div>
                   <div className="flex items-center justify-between">
                     <label htmlFor="nickname" className="block text-sm font-medium">
-                      ニックネーム
+                      {t('board:ニックネーム')}
                     </label>
                     <CharacterCounter current={nickname.length} max={NICKNAME_MAX_LENGTH} />
                   </div>
@@ -158,7 +160,7 @@ export function AccountSettings(): ReactElement {
                     autoComplete="off"
                     {...register('nickname')}
                     className="border-input bg-background placeholder-muted-foreground mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm"
-                    placeholder="ふりかえり太郎"
+                    placeholder={t('ふりかえり太郎')}
                     disabled={isSubmitting}
                   />
                   <FieldError id="nickname-error" message={errors.nickname?.message} />
@@ -166,7 +168,7 @@ export function AccountSettings(): ReactElement {
 
                 <div className="flex justify-end">
                   <LoadingButton type="submit" loading={isSubmitting}>
-                    変更
+                    {t('ui:変更')}
                   </LoadingButton>
                 </div>
               </form>
@@ -175,24 +177,24 @@ export function AccountSettings(): ReactElement {
 
           {/* パスワード変更 */}
           <section className="mb-8">
-            <h2 className="mb-4 text-lg font-medium">パスワードの変更</h2>
+            <h2 className="mb-4 text-lg font-medium">{t('パスワードの変更')}</h2>
             <div className="border-border bg-card rounded-lg border p-6">
-              <ChangePasswordForm onSuccess={() => toast.success('パスワードを変更しました')} />
+              <ChangePasswordForm onSuccess={() => toast.success(t('パスワードを変更しました'))} />
             </div>
           </section>
 
           {/* アカウント削除 */}
           <section>
-            <h2 className="mb-4 text-lg font-medium">アカウントの削除</h2>
+            <h2 className="mb-4 text-lg font-medium">{t('アカウントの削除')}</h2>
             <div className="border-destructive bg-card rounded-lg border p-6">
               <p className="text-muted-foreground mb-4 text-sm">
-                アカウントを削除すると、すべてのデータが完全に削除されます。
+                {t('アカウントを削除すると、すべてのデータが完全に削除されます。')}
                 <br />
-                この操作は取り消すことができません。
+                {t('この操作は取り消すことができません。')}
               </p>
               <div className="flex justify-end">
                 <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
-                  アカウントを削除
+                  {t('アカウントを削除')}
                 </Button>
               </div>
             </div>

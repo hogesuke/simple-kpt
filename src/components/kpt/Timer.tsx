@@ -1,5 +1,6 @@
 import { Pause, Play, Timer as TimerIcon, Volume2, VolumeX } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
@@ -9,14 +10,16 @@ import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
 import { useBoardContext } from '@/contexts/BoardContext';
-import { TIMER_PRESETS } from '@/types/kpt';
+import { getTimerPresets } from '@/types/kpt';
 
 interface TimerProps {
   disabled?: boolean;
 }
 
 export function Timer({ disabled }: TimerProps) {
+  const { t } = useTranslation('board');
   const { timerState, startTimer, stopTimer } = useBoardContext();
+  const TIMER_PRESETS = getTimerPresets();
   const [isOpen, setIsOpen] = useState(false);
   const [minutes, setMinutes] = useState<string>('3');
   const [hideOthersCards, setHideOthersCards] = useState(true);
@@ -115,10 +118,10 @@ export function Timer({ disabled }: TimerProps) {
     // timerStateが有効な状態からnullに変わった時に通知
     if (prevTimerStateRef.current && !timerState) {
       playNotificationSound();
-      toast.success('タイマーが終了しました');
+      toast.success(t('タイマーが終了しました'));
     }
     prevTimerStateRef.current = timerState;
-  }, [timerState, playNotificationSound]);
+  }, [timerState, playNotificationSound, t]);
 
   const handleStart = useCallback(async () => {
     const mins = Number(minutes);
@@ -161,7 +164,7 @@ export function Timer({ disabled }: TimerProps) {
           type="button"
           onClick={() => setIsSoundEnabled(!isSoundEnabled)}
           className="hover:bg-muted-foreground/10 flex h-7 w-7 items-center justify-center rounded-full transition-colors"
-          aria-label={isSoundEnabled ? '通知音をオフにする' : '通知音をオンにする'}
+          aria-label={isSoundEnabled ? t('通知音をオフにする') : t('通知音をオンにする')}
         >
           {isSoundEnabled ? <Volume2 className="text-primary h-4 w-4" /> : <VolumeX className="text-muted-foreground h-4 w-4" />}
         </button>
@@ -171,7 +174,7 @@ export function Timer({ disabled }: TimerProps) {
           onClick={handleStop}
           disabled={disabled || isProcessing}
           className="bg-background hover:bg-muted-foreground/10 flex h-7 w-7 items-center justify-center rounded-full transition-colors disabled:opacity-50"
-          aria-label="タイマーを停止"
+          aria-label={t('タイマーを停止')}
         >
           <Pause className="text-muted-foreground h-4 w-4" />
         </button>
@@ -189,16 +192,16 @@ export function Timer({ disabled }: TimerProps) {
           className="border-input hover:bg-muted flex h-9 items-center gap-2 rounded-full border px-3 text-sm transition-colors disabled:opacity-50"
         >
           <TimerIcon className="h-4 w-4" />
-          タイマー
+          {t('タイマー')}
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-80">
         <DialogHeader>
-          <DialogTitle>タイマー設定</DialogTitle>
+          <DialogTitle>{t('タイマー設定')}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 pt-2">
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium">時間</span>
+            <span className="text-sm font-medium">{t('時間')}</span>
 
             {/* プリセットボタン */}
             <RadioGroup
@@ -206,7 +209,7 @@ export function Timer({ disabled }: TimerProps) {
               onValueChange={setMinutes}
               disabled={isProcessing}
               className="flex rounded-lg bg-slate-50 p-0.5 dark:bg-slate-900"
-              aria-label="プリセット時間"
+              aria-label={t('プリセット時間')}
             >
               {TIMER_PRESETS.map((preset) => (
                 <Label
@@ -236,10 +239,10 @@ export function Timer({ disabled }: TimerProps) {
                 onChange={(e) => setMinutes(e.target.value)}
                 className="text-center"
                 disabled={isProcessing}
-                aria-label="タイマー時間（分）"
+                aria-label={t('タイマー時間（分）')}
               />
               <span className="text-sm" aria-hidden="true">
-                分
+                {t('分')}
               </span>
             </div>
           </div>
@@ -252,13 +255,13 @@ export function Timer({ disabled }: TimerProps) {
               disabled={isProcessing}
             />
             <label htmlFor="hide-others-cards" className="cursor-pointer text-sm">
-              タイマー中は他の人のカードを隠す
+              {t('タイマー中は他の人のカードを隠す')}
             </label>
           </div>
 
           <Button onClick={handleStart} disabled={isProcessing || !minutes || Number(minutes) < 1} className="w-full">
             <Play className="mr-1 h-4 w-4" />
-            開始
+            {t('開始')}
           </Button>
         </div>
       </DialogContent>

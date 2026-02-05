@@ -1,5 +1,6 @@
 import { Plus, User } from 'lucide-react';
 import { ReactElement, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
 import { BoardCreateDialog } from '@/components/board/BoardCreateDialog';
@@ -23,6 +24,7 @@ import { useHomeStore } from '@/stores/useHomeStore';
 import type { KptBoard, TryStatus } from '@/types/kpt';
 
 export function Home(): ReactElement {
+  const { t } = useTranslation('board');
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const { handleError } = useErrorHandler();
@@ -111,7 +113,7 @@ export function Home(): ReactElement {
       const updatedBoard = await updateBoard(boardId, newName);
       updateBoardInStore(boardId, updatedBoard);
     } catch (error) {
-      handleError(error, 'ボード名の変更に失敗しました');
+      handleError(error, t('ボード名の変更に失敗しました'));
     } finally {
       setRenamingBoardId(null);
     }
@@ -129,14 +131,14 @@ export function Home(): ReactElement {
 
   return (
     <>
-      <title>ボード一覧 - Simple KPT</title>
+      <title>{t('ボード一覧 - Simple KPT')}</title>
       <section className="mx-auto max-w-7xl px-4 py-8">
         <StatsSummary />
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="mb-6 flex items-center justify-between">
             <TabsList>
-              <TabsTrigger value="boards">ボードリスト</TabsTrigger>
-              <TabsTrigger value="try">Tryリスト</TabsTrigger>
+              <TabsTrigger value="boards">{t('ボードリスト')}</TabsTrigger>
+              <TabsTrigger value="try">{t('Tryリスト')}</TabsTrigger>
             </TabsList>
             <BoardCreateDialog onBoardCreated={handleBoardCreated} />
           </div>
@@ -147,7 +149,7 @@ export function Home(): ReactElement {
                 <ErrorAlert message={boardsError}>
                   <ErrorAlertAction>
                     <Button size="sm" variant="destructive" onClick={() => window.location.reload()}>
-                      再読み込み
+                      {t('ui:再読み込み')}
                     </Button>
                   </ErrorAlertAction>
                 </ErrorAlert>
@@ -158,9 +160,9 @@ export function Home(): ReactElement {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ボード名</TableHead>
-                    <TableHead className="w-24">ロール</TableHead>
-                    <TableHead className="w-28">作成日</TableHead>
+                    <TableHead>{t('ボード名')}</TableHead>
+                    <TableHead className="w-24">{t('ロール')}</TableHead>
+                    <TableHead className="w-28">{t('作成日')}</TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -172,13 +174,13 @@ export function Home(): ReactElement {
               </Table>
             ) : boards.length === 0 ? (
               <div className="text-muted-foreground rounded-lg border border-dashed p-12 text-center">
-                <p className="mb-4">まだボードがありません</p>
+                <p className="mb-4">{t('まだボードがありません')}</p>
                 <BoardCreateDialog
                   onBoardCreated={handleBoardCreated}
                   trigger={
                     <Button type="button">
                       <Plus className="h-4 w-4" />
-                      最初のボードを作成
+                      {t('最初のボードを作成')}
                     </Button>
                   }
                 />
@@ -188,9 +190,9 @@ export function Home(): ReactElement {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ボード名</TableHead>
-                      <TableHead className="w-24">ロール</TableHead>
-                      <TableHead className="w-28">作成日</TableHead>
+                      <TableHead>{t('ボード名')}</TableHead>
+                      <TableHead className="w-24">{t('ロール')}</TableHead>
+                      <TableHead className="w-28">{t('作成日')}</TableHead>
                       <TableHead className="w-12"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -226,7 +228,7 @@ export function Home(): ReactElement {
                 <ErrorAlert message={tryError}>
                   <ErrorAlertAction>
                     <Button size="sm" variant="destructive" onClick={() => loadTryItems()}>
-                      再読み込み
+                      {t('ui:再読み込み')}
                     </Button>
                   </ErrorAlertAction>
                 </ErrorAlert>

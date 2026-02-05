@@ -1,5 +1,6 @@
 import { FunctionsHttpError } from '@supabase/supabase-js';
 
+import i18n from '@/i18n';
 import { APIError } from '@/lib/api-error';
 import { mapRowToItem, ItemRowWithProfiles } from '@/lib/item-mapper';
 import { supabase } from '@/lib/supabase-client';
@@ -71,7 +72,7 @@ export async function fetchBoards(options?: FetchBoardsOptions): Promise<Paginat
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'ボードリストの取得に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:ボードリストの取得に失敗しました'));
   }
 
   if (!data) {
@@ -104,7 +105,7 @@ export async function fetchBoard(boardId: string): Promise<KptBoard | null> {
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'ボードの取得に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:ボードの取得に失敗しました'));
   }
 
   if (!data) return null;
@@ -140,11 +141,11 @@ export async function createBoard(name: string): Promise<KptBoard> {
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'ボードの作成に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:ボードの作成に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('ボードの作成に失敗しました');
+    throw new APIError(i18n.t('error:ボードの作成に失敗しました'));
   }
 
   const row = data as BoardRow;
@@ -165,7 +166,7 @@ export async function fetchKptItems(boardId: string): Promise<KptItem[]> {
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'アイテム一覧の取得に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:アイテム一覧の取得に失敗しました'));
   }
 
   if (!data) return [];
@@ -186,11 +187,11 @@ export async function createKptItem(input: { boardId: string; column: KptColumnT
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'アイテムの作成に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:アイテムの作成に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('アイテムの作成に失敗しました');
+    throw new APIError(i18n.t('error:アイテムの作成に失敗しました'));
   }
 
   return data as KptItem;
@@ -224,11 +225,11 @@ export async function updateKptItem(input: {
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'アイテムの更新に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:アイテムの更新に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('アイテムの更新に失敗しました');
+    throw new APIError(i18n.t('error:アイテムの更新に失敗しました'));
   }
 
   return mapRowToItem(data as ItemRowWithProfiles);
@@ -244,7 +245,7 @@ export async function deleteKptItem(id: string, boardId: string): Promise<void> 
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'アイテムの削除に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:アイテムの削除に失敗しました'));
   }
 
   void data;
@@ -259,7 +260,7 @@ export async function fetchProfile(): Promise<UserProfile | null> {
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'プロフィールの取得に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:プロフィールの取得に失敗しました'));
   }
 
   if (!data) return null;
@@ -283,11 +284,11 @@ export async function updateProfile(nickname: string): Promise<UserProfile> {
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'プロフィールの更新に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:プロフィールの更新に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('プロフィールの更新に失敗しました');
+    throw new APIError(i18n.t('error:プロフィールの更新に失敗しました'));
   }
 
   const row = data as ProfileRow;
@@ -308,7 +309,7 @@ export async function fetchBoardMembers(boardId: string): Promise<BoardMember[]>
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'メンバー一覧の取得に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:メンバー一覧の取得に失敗しました'));
   }
 
   if (!data) return [];
@@ -326,11 +327,11 @@ export async function joinBoard(boardId: string): Promise<{ success: boolean; al
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'ボードへの参加に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:ボードへの参加に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('ボードへの参加に失敗しました');
+    throw new APIError(i18n.t('error:ボードへの参加に失敗しました'));
   }
 
   return data as { success: boolean; alreadyMember: boolean };
@@ -346,7 +347,7 @@ export async function deleteBoard(boardId: string): Promise<void> {
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'ボードの削除に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:ボードの削除に失敗しました'));
   }
 
   void data;
@@ -362,11 +363,11 @@ export async function updateBoard(boardId: string, name: string): Promise<KptBoa
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'ボード名の更新に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:ボード名の更新に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('ボード名の更新に失敗しました');
+    throw new APIError(i18n.t('error:ボード名の更新に失敗しました'));
   }
 
   const row = data as BoardRow;
@@ -417,7 +418,7 @@ export async function fetchTryItems(options?: FetchTryItemsOptions): Promise<Off
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'Tryアイテム一覧の取得に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:Tryアイテム一覧の取得に失敗しました'));
   }
 
   if (!data) {
@@ -470,11 +471,11 @@ export async function startTimer(input: StartTimerInput): Promise<StartTimerResp
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'タイマーの開始に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:タイマーの開始に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('タイマーの開始に失敗しました');
+    throw new APIError(i18n.t('error:タイマーの開始に失敗しました'));
   }
 
   return data as StartTimerResponse;
@@ -490,11 +491,11 @@ export async function stopTimer(boardId: string): Promise<{ success: boolean }> 
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'タイマーの停止に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:タイマーの停止に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('タイマーの停止に失敗しました');
+    throw new APIError(i18n.t('error:タイマーの停止に失敗しました'));
   }
 
   return data as { success: boolean };
@@ -516,7 +517,7 @@ export async function fetchOwnedBoards(): Promise<OwnedBoard[]> {
   });
 
   if (error) {
-    throw await convertToAPIError(error, '所有ボードの取得に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:所有ボードの取得に失敗しました'));
   }
 
   if (!data) {
@@ -536,7 +537,7 @@ export async function deleteAccount(transfers: Array<{ boardId: string; newOwner
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'アカウントの削除に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:アカウントの削除に失敗しました'));
   }
 }
 
@@ -556,11 +557,11 @@ export async function toggleVote(itemId: string): Promise<ToggleVoteResponse> {
   });
 
   if (error) {
-    throw await convertToAPIError(error, '投票に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:投票に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('投票に失敗しました');
+    throw new APIError(i18n.t('error:投票に失敗しました'));
   }
 
   return data as ToggleVoteResponse;
@@ -612,7 +613,7 @@ export async function fetchStats(period: StatsPeriod = '3m'): Promise<StatsRespo
   });
 
   if (error) {
-    throw await convertToAPIError(error, '統計データの取得に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:統計データの取得に失敗しました'));
   }
 
   if (!data) {
@@ -642,11 +643,11 @@ export async function generateSummary(boardId: string): Promise<GenerateSummaryR
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'サマリーの生成に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:サマリーの生成に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('サマリーの生成に失敗しました');
+    throw new APIError(i18n.t('error:サマリーの生成に失敗しました'));
   }
 
   return data as GenerateSummaryResponse;
@@ -666,11 +667,11 @@ export async function generateSummaryDemo(items: Array<{ column: string; text: s
   });
 
   if (error) {
-    throw await convertToAPIError(error, 'サマリーの生成に失敗しました');
+    throw await convertToAPIError(error, i18n.t('error:サマリーの生成に失敗しました'));
   }
 
   if (!data) {
-    throw new APIError('サマリーの生成に失敗しました');
+    throw new APIError(i18n.t('error:サマリーの生成に失敗しました'));
   }
 
   return data as GenerateSummaryDemoResponse;

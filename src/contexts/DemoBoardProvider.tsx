@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useMemo } from 'react';
 
 import { BoardContextProvider, BoardContextValue } from '@/contexts/BoardContext';
-import { DEMO_MEMBERS, useDemoStore } from '@/stores/useDemoStore';
+import { getDemoMembers, useDemoStore } from '@/stores/useDemoStore';
 
 import type { KptItem } from '@/types/kpt';
 
@@ -32,6 +32,10 @@ export function DemoBoardProvider({ children }: DemoBoardProviderProps) {
     useDemoStore.setState({ items: newItems });
   }, []);
 
+  // memberNicknameMapが更新されたらmembersも再取得（言語変更時に更新される）
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- memberNicknameMapの更新を検知して言語変更時に再取得
+  const members = useMemo(() => getDemoMembers(), [memberNicknameMap]);
+
   const value: BoardContextValue = useMemo(
     () => ({
       items,
@@ -39,7 +43,7 @@ export function DemoBoardProvider({ children }: DemoBoardProviderProps) {
       filter,
       timerState,
       memberNicknameMap,
-      members: DEMO_MEMBERS,
+      members,
       isLoading: false,
       addItem,
       updateItem,
@@ -60,6 +64,7 @@ export function DemoBoardProvider({ children }: DemoBoardProviderProps) {
       filter,
       timerState,
       memberNicknameMap,
+      members,
       addItem,
       updateItem,
       deleteItem,

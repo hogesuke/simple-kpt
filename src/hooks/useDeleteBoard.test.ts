@@ -5,6 +5,12 @@ import { APIError } from '@/lib/api-error';
 
 import { useDeleteBoard } from './useDeleteBoard';
 
+vi.mock('@/i18n', () => ({
+  default: {
+    t: (key: string) => key.replace('error:', ''),
+  },
+}));
+
 vi.mock('@/lib/kpt-api', () => ({
   deleteBoard: vi.fn(),
 }));

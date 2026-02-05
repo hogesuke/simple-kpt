@@ -1,4 +1,5 @@
 import { ReactElement, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
 
 import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm';
@@ -15,6 +16,7 @@ interface LocationState {
 type AuthView = 'sign_in' | 'sign_up' | 'forgot_password' | 'check_email' | 'reset_email_sent' | 'reset_password';
 
 export function Login(): ReactElement {
+  const { t } = useTranslation('auth');
   const user = useAuthStore((state) => state.user);
   const initialized = useAuthStore((state) => state.initialized);
   const isPasswordRecovery = useAuthStore((state) => state.isPasswordRecovery);
@@ -43,17 +45,17 @@ export function Login(): ReactElement {
   const getHeadingText = () => {
     switch (currentView) {
       case 'sign_up':
-        return 'アカウント作成';
+        return t('アカウント作成');
       case 'forgot_password':
-        return 'パスワードをリセット';
+        return t('パスワードをリセット');
       case 'check_email':
-        return '確認メールを送信しました';
+        return t('確認メールを送信しました');
       case 'reset_email_sent':
-        return 'メールを送信しました';
+        return t('メールを送信しました');
       case 'reset_password':
-        return '新しいパスワードを設定';
+        return t('新しいパスワードを設定');
       default:
-        return 'Simple KPTにログイン';
+        return t('Simple KPTにログイン');
     }
   };
 
@@ -67,10 +69,10 @@ export function Login(): ReactElement {
         return (
           <div className="space-y-4 text-center">
             <p className="text-muted-foreground">
-              確認メールを送信しました。メール内のリンクをクリックして、アカウントを有効化してください。
+              {t('確認メールを送信しました。メール内のリンクをクリックして、アカウントを有効化してください。')}
             </p>
             <button type="button" onClick={() => setAuthView('sign_in')} className="text-primary rounded hover:underline">
-              ログインに戻る
+              {t('ログインに戻る')}
             </button>
           </div>
         );
@@ -78,12 +80,12 @@ export function Login(): ReactElement {
         return (
           <div className="space-y-4 text-center">
             <p className="text-muted-foreground">
-              パスワードリセット用のメールを送信しました。
+              {t('パスワードリセット用のメールを送信しました。')}
               <br />
-              メール内のリンクをクリックして、新しいパスワードを設定してください。
+              {t('メール内のリンクをクリックして、新しいパスワードを設定してください。')}
             </p>
             <Button type="button" className="h-10 w-full" onClick={() => setAuthView('sign_in')}>
-              ログインに戻る
+              {t('ログインに戻る')}
             </Button>
           </div>
         );
@@ -104,7 +106,7 @@ export function Login(): ReactElement {
 
   return (
     <>
-      <title>ログイン - Simple KPT</title>
+      <title>{t('ログイン - Simple KPT')}</title>
       <div className="bg-muted flex h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8">
           <div>

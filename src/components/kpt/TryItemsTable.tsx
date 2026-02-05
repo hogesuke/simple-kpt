@@ -1,11 +1,12 @@
 import { AlertTriangle } from 'lucide-react';
 import { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import { TryTableRowSkeleton } from '@/components/kpt/TryTableRowSkeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { isOverdue } from '@/lib/date-utils';
-import { PROBLEM_STATUS_LABELS, TryItemWithBoard, TryStatus } from '@/types/kpt';
+import { TryItemWithBoard, TryStatus } from '@/types/kpt';
 
 interface TryItemsTableProps {
   items: TryItemWithBoard[];
@@ -13,7 +14,14 @@ interface TryItemsTableProps {
   onAssigneeClick?: (assigneeId: string, assigneeNickname: string) => void;
 }
 
-function StatusBadge({ status }: { status: TryStatus | null }): ReactElement {
+const STATUS_KEYS: Record<TryStatus, string> = {
+  pending: '未対応',
+  in_progress: '対応中',
+  done: '完了',
+  wont_fix: '対応不要',
+};
+
+function StatusBadge({ status, t }: { status: TryStatus | null; t: (key: string) => string }): ReactElement {
   if (!status) {
     return <span className="text-muted-foreground">-</span>;
   }
@@ -27,7 +35,7 @@ function StatusBadge({ status }: { status: TryStatus | null }): ReactElement {
 
   return (
     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colorClasses[status]}`}>
-      {PROBLEM_STATUS_LABELS[status]}
+      {t(STATUS_KEYS[status])}
     </span>
   );
 }
@@ -64,16 +72,18 @@ function truncateText(text: string, maxLength: number): string {
 }
 
 export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTableProps): ReactElement {
+  const { t } = useTranslation('board');
+
   if (isLoading) {
     return (
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[40%]">内容</TableHead>
-            <TableHead className="w-[20%]">ボード</TableHead>
-            <TableHead className="w-[12%]">ステータス</TableHead>
-            <TableHead className="w-[12%]">期日</TableHead>
-            <TableHead className="w-[16%]">担当者</TableHead>
+            <TableHead className="w-[40%]">{t('内容')}</TableHead>
+            <TableHead className="w-[20%]">{t('board:ボード')}</TableHead>
+            <TableHead className="w-[12%]">{t('ステータス')}</TableHead>
+            <TableHead className="w-[12%]">{t('期日')}</TableHead>
+            <TableHead className="w-[16%]">{t('担当者')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -88,7 +98,7 @@ export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTab
   if (items.length === 0) {
     return (
       <div className="flex h-32 items-center justify-center">
-        <p className="text-muted-foreground text-sm">Tryアイテムがありません</p>
+        <p className="text-muted-foreground text-sm">{t('Tryアイテムがありません')}</p>
       </div>
     );
   }
@@ -97,11 +107,11 @@ export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTab
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[40%]">内容</TableHead>
-          <TableHead className="w-[20%]">ボード</TableHead>
-          <TableHead className="w-[12%]">ステータス</TableHead>
-          <TableHead className="w-[12%]">期日</TableHead>
-          <TableHead className="w-[16%]">担当者</TableHead>
+          <TableHead className="w-[40%]">{t('内容')}</TableHead>
+          <TableHead className="w-[20%]">{t('board:ボード')}</TableHead>
+          <TableHead className="w-[12%]">{t('ステータス')}</TableHead>
+          <TableHead className="w-[12%]">{t('期日')}</TableHead>
+          <TableHead className="w-[16%]">{t('担当者')}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -121,7 +131,7 @@ export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTab
               </Link>
             </TableCell>
             <TableCell className="py-0">
-              <StatusBadge status={item.status} />
+              <StatusBadge status={item.status} t={t} />
             </TableCell>
             <TableCell className="py-0">
               <DueDateCell dueDate={item.dueDate} status={item.status} />
@@ -132,7 +142,7 @@ export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTab
                   type="button"
                   onClick={() => onAssigneeClick?.(item.assigneeId!, item.assigneeNickname!)}
                   className="flex h-full w-full items-center rounded p-2 hover:underline"
-                  aria-label={`${item.assigneeNickname}でフィルター`}
+                  aria-label={t('{{name}}でフィルター', { name: item.assigneeNickname })}
                 >
                   {item.assigneeNickname}
                 </button>

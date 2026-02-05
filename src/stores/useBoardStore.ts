@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+import i18n from '@/i18n';
 import * as api from '@/lib/kpt-api';
 import { APIError } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -92,7 +93,7 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
         try {
           await get().joinBoard(boardId);
         } catch (joinError) {
-          const message = joinError instanceof Error ? joinError.message : 'ボードへの参加に失敗しました';
+          const message = joinError instanceof Error ? joinError.message : i18n.t('error:ボードへの参加に失敗しました');
           set({ isLoading: false, joinError: message });
           throw joinError;
         }
@@ -130,7 +131,7 @@ const createCoreSlice: StateCreator<BoardState, [['zustand/devtools', never], ['
       if (error instanceof APIError && error.status === 404) {
         set({ isLoading: false, isNotFound: true });
       } else {
-        const message = error instanceof Error ? error.message : 'ボードの読み込みに失敗しました';
+        const message = error instanceof Error ? error.message : i18n.t('error:ボードの読み込みに失敗しました');
         set({ isLoading: false, loadError: message });
       }
       throw error;

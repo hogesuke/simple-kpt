@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+import i18n from '@/i18n';
 import { fetchBoards, fetchTryItems } from '@/lib/kpt-api';
 
 import type { KptBoard, TryItemWithBoard, TryStatus } from '@/types/kpt';
@@ -87,7 +88,7 @@ export const useHomeStore = create<HomeState>()(
           });
         } catch {
           if (reset) {
-            set({ boardsError: 'ボードリストの読み込みに失敗しました' });
+            set({ boardsError: i18n.t('error:ボードリストの読み込みに失敗しました') });
           }
           // 追加読み込み時のエラーはtoastで表示するため、ここでは何もしない
         } finally {
@@ -149,7 +150,7 @@ export const useHomeStore = create<HomeState>()(
             tryHasMore: response.hasMore,
           });
         } catch {
-          set({ tryError: 'Tryアイテムの読み込みに失敗しました' });
+          set({ tryError: i18n.t('error:Tryアイテムの読み込みに失敗しました') });
         } finally {
           if (reset) {
             set({ isTryLoading: false, hasTryLoaded: true });

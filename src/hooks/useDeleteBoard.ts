@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import i18n from '@/i18n';
 import { deleteBoard } from '@/lib/kpt-api';
 
 interface UseDeleteBoardOptions {
@@ -22,7 +23,7 @@ export function useDeleteBoard({ onSuccess }: UseDeleteBoardOptions) {
         await deleteBoard(boardId);
         await onSuccess(boardId);
       } catch (error) {
-        handleError(error, 'ボードの削除に失敗しました');
+        handleError(error, i18n.t('error:ボードの削除に失敗しました'));
       } finally {
         setDeletingBoardId(null);
       }

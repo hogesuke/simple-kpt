@@ -7,6 +7,12 @@ import { useItemActions } from './useItemActions';
 
 import type { KptItem } from '@/types/kpt';
 
+vi.mock('@/i18n', () => ({
+  default: {
+    t: (key: string) => key.replace('error:', ''),
+  },
+}));
+
 const mockHandleError = vi.fn();
 vi.mock('@/hooks/useErrorHandler', () => ({
   useErrorHandler: () => ({

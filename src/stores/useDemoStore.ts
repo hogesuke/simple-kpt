@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+import i18n from '@/i18n';
+
 import type { BoardMember, KptColumnType, KptItem, TimerState, TryStatus } from '@/types/kpt';
 
 interface FilterState {
@@ -9,110 +11,131 @@ interface FilterState {
   memberId: string | null;
 }
 
-// デモ用のダミーメンバー
-export const DEMO_MEMBERS: BoardMember[] = [
-  { id: 'member-1', userId: 'demo-user-1', nickname: 'デモユーザーくん', role: 'owner', createdAt: new Date().toISOString() },
-  { id: 'member-2', userId: 'demo-user-2', nickname: 'デモ子さん', role: 'member', createdAt: new Date().toISOString() },
-  { id: 'member-3', userId: 'demo-user-3', nickname: 'デモ太郎', role: 'member', createdAt: new Date().toISOString() },
-];
+// デモ用のダミーメンバーを生成する関数
+function createDemoMembers(): BoardMember[] {
+  return [
+    { id: 'member-1', userId: 'demo-user-1', nickname: i18n.t('board:デモユーザー1'), role: 'owner', createdAt: new Date().toISOString() },
+    { id: 'member-2', userId: 'demo-user-2', nickname: i18n.t('board:デモユーザー2'), role: 'member', createdAt: new Date().toISOString() },
+    { id: 'member-3', userId: 'demo-user-3', nickname: i18n.t('board:デモユーザー3'), role: 'member', createdAt: new Date().toISOString() },
+  ];
+}
 
 // サマリー生成時に除外するアイテム
 export const DEMO_EXPLANATION_ITEM_IDS = ['demo-keep-1', 'demo-keep-2'];
 
-// デモ用の初期データ
-const createInitialItems = (): KptItem[] => [
-  {
-    id: 'demo-keep-1',
-    boardId: 'demo',
-    column: 'keep',
-    text: 'ドラッグして順序の入れ替えやカラム移動できます',
-    position: 100,
-    authorId: 'demo-user-1',
-    authorNickname: 'デモユーザーくん',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'demo-keep-2',
-    boardId: 'demo',
-    column: 'keep',
-    text: '実際のボードでは、全体にリアルタイム同期されます',
-    position: 200,
-    authorId: 'demo-user-3',
-    authorNickname: 'デモ太郎',
-    createdAt: new Date().toISOString(),
-    voteCount: 1,
-    hasVoted: true,
-    voters: [{ id: 'demo-user-1', nickname: 'デモユーザーくん' }],
-  },
-  {
-    id: 'demo-keep-3',
-    boardId: 'demo',
-    column: 'keep',
-    text: '24時間以内にPRのレビューを完了できている',
-    position: 300,
-    authorId: 'demo-user-2',
-    authorNickname: 'デモ子さん',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'demo-problem-1',
-    boardId: 'demo',
-    column: 'problem',
-    text: 'ドキュメントが古くなっている #doc',
-    position: 1000,
-    authorId: 'demo-user-1',
-    authorNickname: 'デモユーザーくん',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'demo-problem-2',
-    boardId: 'demo',
-    column: 'problem',
-    text: 'テストカバレッジが低い',
-    position: 2000,
-    authorId: 'demo-user-3',
-    authorNickname: 'デモ太郎',
-    createdAt: new Date().toISOString(),
-    voteCount: 2,
-    hasVoted: false,
-    voters: [
-      { id: 'demo-user-2', nickname: 'デモ子さん' },
-      { id: 'demo-user-3', nickname: 'デモ太郎' },
-    ],
-  },
-  {
-    id: 'demo-try-1',
-    boardId: 'demo',
-    column: 'try',
-    text: '週1回のドキュメント更新日を設ける #doc',
-    position: 1000,
-    authorId: 'demo-user-2',
-    authorNickname: 'デモ子さん',
-    status: 'pending' as TryStatus,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'demo-try-2',
-    boardId: 'demo',
-    column: 'try',
-    text: 'CIにテストカバレッジチェックを追加する #CI',
-    position: 2000,
-    authorId: 'demo-user-1',
-    authorNickname: 'デモユーザーくん',
-    status: 'in_progress' as TryStatus,
-    assigneeId: 'demo-user-3',
-    assigneeNickname: 'デモ太郎',
-    dueDate: '2026-02-28',
-    createdAt: new Date().toISOString(),
-    voteCount: 3,
-    hasVoted: true,
-    voters: [
-      { id: 'demo-user-1', nickname: 'デモユーザーくん' },
-      { id: 'demo-user-2', nickname: 'デモ子さん' },
-      { id: 'demo-user-3', nickname: 'デモ太郎' },
-    ],
-  },
-];
+// デモ用の初期データを生成する関数
+function createInitialItems(): KptItem[] {
+  const user1 = i18n.t('board:デモユーザー1');
+  const user2 = i18n.t('board:デモユーザー2');
+  const user3 = i18n.t('board:デモユーザー3');
+
+  return [
+    {
+      id: 'demo-keep-1',
+      boardId: 'demo',
+      column: 'keep',
+      text: i18n.t('board:デモKeep1'),
+      position: 100,
+      authorId: 'demo-user-1',
+      authorNickname: user1,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'demo-keep-2',
+      boardId: 'demo',
+      column: 'keep',
+      text: i18n.t('board:デモKeep2'),
+      position: 200,
+      authorId: 'demo-user-3',
+      authorNickname: user3,
+      createdAt: new Date().toISOString(),
+      voteCount: 1,
+      hasVoted: true,
+      voters: [{ id: 'demo-user-1', nickname: user1 }],
+    },
+    {
+      id: 'demo-keep-3',
+      boardId: 'demo',
+      column: 'keep',
+      text: i18n.t('board:デモKeep3'),
+      position: 300,
+      authorId: 'demo-user-2',
+      authorNickname: user2,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'demo-problem-1',
+      boardId: 'demo',
+      column: 'problem',
+      text: i18n.t('board:デモProblem1'),
+      position: 1000,
+      authorId: 'demo-user-1',
+      authorNickname: user1,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'demo-problem-2',
+      boardId: 'demo',
+      column: 'problem',
+      text: i18n.t('board:デモProblem2'),
+      position: 2000,
+      authorId: 'demo-user-3',
+      authorNickname: user3,
+      createdAt: new Date().toISOString(),
+      voteCount: 2,
+      hasVoted: false,
+      voters: [
+        { id: 'demo-user-2', nickname: user2 },
+        { id: 'demo-user-3', nickname: user3 },
+      ],
+    },
+    {
+      id: 'demo-try-1',
+      boardId: 'demo',
+      column: 'try',
+      text: i18n.t('board:デモTry1'),
+      position: 1000,
+      authorId: 'demo-user-2',
+      authorNickname: user2,
+      status: 'pending' as TryStatus,
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'demo-try-2',
+      boardId: 'demo',
+      column: 'try',
+      text: i18n.t('board:デモTry2'),
+      position: 2000,
+      authorId: 'demo-user-1',
+      authorNickname: user1,
+      status: 'in_progress' as TryStatus,
+      assigneeId: 'demo-user-3',
+      assigneeNickname: user3,
+      dueDate: '2026-02-28',
+      createdAt: new Date().toISOString(),
+      voteCount: 3,
+      hasVoted: true,
+      voters: [
+        { id: 'demo-user-1', nickname: user1 },
+        { id: 'demo-user-2', nickname: user2 },
+        { id: 'demo-user-3', nickname: user3 },
+      ],
+    },
+  ];
+}
+
+// memberNicknameMapを生成する関数
+function createMemberNicknameMap(): Record<string, string> {
+  return Object.fromEntries(createDemoMembers().map((m) => [m.userId, m.nickname ?? '']));
+}
+
+// エクスポート用のDEMO_MEMBERSゲッター（常に最新の翻訳を返す）
+export function getDemoMembers(): BoardMember[] {
+  return createDemoMembers();
+}
+
+// 後方互換性のためのDEMO_MEMBERSエクスポート（初回読み込み時の値）
+export const DEMO_MEMBERS: BoardMember[] = createDemoMembers();
 
 interface DemoState {
   items: KptItem[];
@@ -131,15 +154,13 @@ interface DemoState {
   stopTimer: () => void;
   toggleVote: (itemId: string) => void;
   reset: () => void;
+  refreshTranslations: () => void;
 }
 
 const initialFilterState: FilterState = {
   tag: null,
   memberId: null,
 };
-
-// memberNicknameMapの初期値
-const initialMemberNicknameMap: Record<string, string> = Object.fromEntries(DEMO_MEMBERS.map((m) => [m.userId, m.nickname ?? '']));
 
 export const useDemoStore = create<DemoState>()(
   devtools(
@@ -148,7 +169,7 @@ export const useDemoStore = create<DemoState>()(
       selectedItem: null,
       filter: initialFilterState,
       timerState: null,
-      memberNicknameMap: initialMemberNicknameMap,
+      memberNicknameMap: createMemberNicknameMap(),
 
       addItem: (column: KptColumnType, text: string) => {
         const columnItems = get().items.filter((item) => item.column === column);
@@ -161,7 +182,7 @@ export const useDemoStore = create<DemoState>()(
           text,
           position: maxPosition + 1000,
           authorId: 'demo-user-1',
-          authorNickname: 'デモユーザーくん',
+          authorNickname: i18n.t('board:デモユーザー1'),
           createdAt: new Date().toISOString(),
           status: column === 'try' ? 'pending' : undefined,
         };
@@ -234,7 +255,7 @@ export const useDemoStore = create<DemoState>()(
             const newVoteCount = newHasVoted ? oldVoteCount + 1 : Math.max(0, oldVoteCount - 1);
 
             // デモユーザーの投票者情報
-            const demoVoter = { id: 'demo-user-1', nickname: 'デモユーザーくん' };
+            const demoVoter = { id: 'demo-user-1', nickname: i18n.t('board:デモユーザー1') };
             const newVoters = newHasVoted ? [...oldVoters, demoVoter] : oldVoters.filter((v) => v.id !== demoVoter.id);
 
             state.items[index].voteCount = newVoteCount;
@@ -256,9 +277,23 @@ export const useDemoStore = create<DemoState>()(
           selectedItem: null,
           filter: initialFilterState,
           timerState: null,
+          memberNicknameMap: createMemberNicknameMap(),
+        });
+      },
+
+      // 言語変更時に翻訳を更新
+      refreshTranslations: () => {
+        set({
+          items: createInitialItems(),
+          memberNicknameMap: createMemberNicknameMap(),
         });
       },
     })),
     { name: 'DemoStore', enabled: import.meta.env.DEV }
   )
 );
+
+// 言語変更時にデモストアを更新
+i18n.on('languageChanged', () => {
+  useDemoStore.getState().refreshTranslations();
+});

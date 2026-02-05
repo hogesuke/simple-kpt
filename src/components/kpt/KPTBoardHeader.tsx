@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import { ReactElement, useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router';
 
 import { SummaryButton } from '@/components/kpt/SummaryButton';
@@ -12,6 +13,7 @@ import { useBoardStore } from '@/stores/useBoardStore';
 import { useHomeStore } from '@/stores/useHomeStore';
 
 export function KPTBoardHeader(): ReactElement {
+  const { t } = useTranslation('board');
   const { boardId } = useParams<{ boardId: string }>();
   const { handleError } = useErrorHandler();
 
@@ -40,11 +42,11 @@ export function KPTBoardHeader(): ReactElement {
       setRemainingCount(result.remainingCount);
     } catch (error) {
       setIsSummaryDialogOpen(false);
-      handleError(error, 'サマリーの生成に失敗しました');
+      handleError(error, t('サマリーの生成に失敗しました'));
     } finally {
       setIsGenerating(false);
     }
-  }, [boardId, handleError]);
+  }, [boardId, handleError, t]);
 
   return (
     <header className="flex-none">
@@ -54,7 +56,7 @@ export function KPTBoardHeader(): ReactElement {
           className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded text-sm transition-colors hover:underline"
         >
           <ArrowLeft className="h-4 w-4" />
-          {fromTry ? 'Tryリストに戻る' : 'ボードリストに戻る'}
+          {fromTry ? t('Tryリストに戻る') : t('ボードリストに戻る')}
         </Link>
       </nav>
       <div className="flex items-center justify-between gap-4">

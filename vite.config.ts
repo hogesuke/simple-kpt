@@ -37,8 +37,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@shared': fileURLToPath(new URL('./shared', import.meta.url)),
     },
+    dedupe: ['react', 'react-dom', 'react-i18next'],
   },
   server: {
     port: 5173,
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'i18next', 'i18next-browser-languagedetector', 'react-i18next'],
   },
 });

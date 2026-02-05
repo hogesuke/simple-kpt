@@ -1,6 +1,7 @@
 dist
 node_modules
 coverage
+.github
 package.json
 pnpm-lock.yaml
 supabase/*

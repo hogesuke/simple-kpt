@@ -6,6 +6,12 @@ import { useHomeStore } from './useHomeStore';
 
 import type { KptBoard, TryItemWithBoard } from '@/types/kpt';
 
+vi.mock('@/i18n', () => ({
+  default: {
+    t: (key: string) => key.replace('error:', ''),
+  },
+}));
+
 vi.mock('@/lib/kpt-api', () => ({
   fetchBoards: vi.fn(),
   fetchTryItems: vi.fn(),

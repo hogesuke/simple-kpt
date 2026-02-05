@@ -1,5 +1,6 @@
 import { Download, Pencil, Settings, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { BoardDeleteDialog } from '@/components/board/BoardDeleteDialog';
@@ -23,6 +24,7 @@ interface LocationState {
 }
 
 export function KPTBoardActions(): ReactElement {
+  const { t } = useTranslation('board');
   const navigate = useNavigate();
   const location = useLocation();
   const { boardId } = useParams<{ boardId: string }>();
@@ -65,12 +67,12 @@ export function KPTBoardActions(): ReactElement {
         useBoardStore.setState({ currentBoard: updatedBoard });
         setRenameDialogOpen(false);
       } catch (error) {
-        handleError(error, 'ボード名の変更に失敗しました');
+        handleError(error, t('ボード名の変更に失敗しました'));
       } finally {
         setIsRenaming(false);
       }
     },
-    [boardId, handleError]
+    [boardId, handleError, t]
   );
 
   const isOwner = user?.id && (!board || user.id === board.ownerId);
@@ -81,25 +83,25 @@ export function KPTBoardActions(): ReactElement {
         <BoardMembersDialog boardId={boardId ?? ''} disabled={isLoading} />
         <Button variant="ghost" size="sm" onClick={() => setExportDialogOpen(true)} disabled={isLoading || !board}>
           <Download className="h-4 w-4" />
-          エクスポート
+          {t('エクスポート')}
         </Button>
         {isOwner && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label="ボード設定" disabled={isLoading || !board}>
+              <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label={t('ボード設定')} disabled={isLoading || !board}>
                 <Settings className="text-muted-foreground h-4 w-4" />
-                ボード設定
+                {t('ボード設定')}
               </Button>
             </DropdownMenuTrigger>
             {!isLoading && board && (
               <DropdownMenuContent align="end" className="w-44">
                 <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
                   <Pencil className="h-4 w-4" />
-                  ボード名を変更
+                  {t('名前を変更')}
                 </DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
                   <Trash2 className="h-4 w-4" />
-                  削除
+                  {t('ボードを削除')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             )}

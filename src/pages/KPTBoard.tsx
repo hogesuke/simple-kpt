@@ -1,5 +1,6 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { toast } from 'sonner';
 
@@ -25,6 +26,7 @@ import type { KptColumnType, KptItem } from '@/types/kpt';
 const columns: KptColumnType[] = ['keep', 'problem', 'try'];
 
 export function KPTBoard(): ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { boardId } = useParams<{ boardId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -158,16 +160,16 @@ export function KPTBoard(): ReactElement {
       try {
         await addItem(boardId, newItemColumn, text);
       } catch (error) {
-        handleError(error, 'カードの追加に失敗しました');
+        handleError(error, t('error:アイテムの追加に失敗しました'));
       }
     },
-    [boardId, addItem, newItemColumn, handleError]
+    [boardId, addItem, newItemColumn, handleError, t]
   );
 
   if (!boardId) {
     return (
       <section className="mx-auto flex h-screen max-w-240 items-center justify-center px-4">
-        <p className="text-destructive text-sm">ボードIDが指定されていません。</p>
+        <p className="text-destructive text-sm">{t('error:ボードIDが指定されていません')}</p>
       </section>
     );
   }
@@ -191,10 +193,10 @@ export function KPTBoard(): ReactElement {
 
             {loadError && (
               <div className="py-4">
-                <ErrorAlert message="ボード情報の読み込みに失敗しました">
+                <ErrorAlert message={t('board:ボードの読み込みに失敗しました')}>
                   <ErrorAlertAction>
                     <Button size="sm" variant="destructive" onClick={() => window.location.reload()}>
-                      再読み込み
+                      {t('ui:再読み込み')}
                     </Button>
                   </ErrorAlertAction>
                 </ErrorAlert>
@@ -205,7 +207,7 @@ export function KPTBoard(): ReactElement {
               <div className="flex-none pt-4">
                 <FilterBar
                   filterTag={filter.tag}
-                  filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || '不明なメンバー' : null}
+                  filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || t('ui:匿名ユーザー') : null}
                   onRemoveTag={() => setFilterTag(null)}
                   onRemoveMember={() => setFilterMemberId(null)}
                 />

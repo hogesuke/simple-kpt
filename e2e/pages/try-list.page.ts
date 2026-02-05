@@ -24,17 +24,17 @@ export class TryListPage {
   }
 
   /**
-   * ステータスフィルターボタンを取得
+   * ステータスフィルターチェックボックスを取得
    */
-  getStatusFilterButton(status: '未対応' | '対応中' | '完了' | '対応不要'): Locator {
-    return this.statusFilterGroup.getByRole('button', { name: status });
+  getStatusFilterCheckbox(status: '未対応' | '対応中' | '完了' | '対応不要'): Locator {
+    return this.statusFilterGroup.getByRole('checkbox', { name: status });
   }
 
   /**
    * ステータスでフィルター
    */
   async filterByStatus(status: '未対応' | '対応中' | '完了' | '対応不要') {
-    await this.getStatusFilterButton(status).click();
+    await this.getStatusFilterCheckbox(status).click();
   }
 
   /**

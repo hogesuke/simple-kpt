@@ -2,6 +2,7 @@ import { DndContext, DragOverlay } from '@dnd-kit/core';
 import { formatInTimeZone } from 'date-fns-tz';
 import { ArrowLeft, Download } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router';
 
 import { ExportDialog } from '@/components/board/ExportDialog';
@@ -39,6 +40,7 @@ const columns: KptColumnType[] = ['keep', 'problem', 'try'];
 const DEMO_USER_ID = 'demo-user-1';
 
 export function DemoBoard(): ReactElement {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const { handleError } = useErrorHandler();
 
@@ -90,11 +92,11 @@ export function DemoBoard(): ReactElement {
       setHasSummaryUsed(true);
     } catch (error) {
       setIsSummaryDialogOpen(false);
-      handleError(error, 'サマリーの生成に失敗しました');
+      handleError(error, t('error:サマリーの生成に失敗しました'));
     } finally {
       setIsGenerating(false);
     }
-  }, [items, handleError]);
+  }, [items, handleError, t]);
 
   // ページ離脱時にリセット
   useEffect(() => {
@@ -212,7 +214,7 @@ export function DemoBoard(): ReactElement {
 
   return (
     <>
-      <title>デモボード - Simple KPT</title>
+      <title>{t('landing:デモボード - Simple KPT')}</title>
       <DemoBoardProvider>
         <DndContext
           sensors={sensors}
@@ -225,7 +227,7 @@ export function DemoBoard(): ReactElement {
           <HeaderActions>
             <Button variant="ghost" size="sm" onClick={() => setExportDialogOpen(true)}>
               <Download className="h-4 w-4" />
-              エクスポート
+              {t('board:エクスポート')}
             </Button>
           </HeaderActions>
 
@@ -238,16 +240,16 @@ export function DemoBoard(): ReactElement {
                     className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded text-sm transition-colors hover:underline"
                   >
                     <ArrowLeft className="h-4 w-4" />
-                    トップページに戻る
+                    {t('landing:トップページに戻る')}
                   </Link>
                 </nav>
                 <div className="flex items-center justify-between gap-4">
-                  <h1 className="text-2xl font-semibold">デモボード</h1>
+                  <h1 className="text-2xl font-semibold">{t('landing:デモボード')}</h1>
                   <div className="flex items-center gap-2">
                     <SummaryButton
                       onClick={handleOpenSummaryDialog}
                       disabled={hasSummaryUsed}
-                      title={hasSummaryUsed ? 'デモでは1回のみ利用可能です' : undefined}
+                      title={hasSummaryUsed ? t('landing:デモでは1回のみ利用可能です') : undefined}
                     />
                     <Timer />
                   </div>
@@ -259,7 +261,7 @@ export function DemoBoard(): ReactElement {
                 <div className="flex-none pt-4">
                   <FilterBar
                     filterTag={filter.tag}
-                    filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || '不明なメンバー' : null}
+                    filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || t('ui:不明なメンバー') : null}
                     onRemoveTag={() => setFilterTag(null)}
                     onRemoveMember={() => setFilterMemberId(null)}
                   />
@@ -323,7 +325,7 @@ export function DemoBoard(): ReactElement {
           <ItemDetailPanel item={selectedItem} onClose={handleClosePanel} />
 
           {/* エクスポートダイアログ */}
-          <ExportDialog boardName="デモボード" items={items} isOpen={exportDialogOpen} onOpenChange={setExportDialogOpen} />
+          <ExportDialog boardName={t('landing:デモボード')} items={items} isOpen={exportDialogOpen} onOpenChange={setExportDialogOpen} />
 
           {/* AIサマリーダイアログ */}
           <SummaryDialog
@@ -333,7 +335,7 @@ export function DemoBoard(): ReactElement {
             summary={summary}
             remainingCount={hasSummaryUsed ? 0 : 1}
             isLoading={isGenerating}
-            boardName="デモボード"
+            boardName={t('landing:デモボード')}
           />
         </DndContext>
       </DemoBoardProvider>

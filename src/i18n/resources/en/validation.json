@@ -1,0 +1,18 @@
+{
+  "有効なメールアドレスを入力してください": "Please enter a valid email address",
+  "メールアドレスを入力してください": "Please enter your email address",
+  "メールアドレスは{{max}}文字以内で入力してください": "Email must be {{max}} characters or less",
+  "パスワードを入力してください": "Please enter your password",
+  "パスワードは{{min}}文字以上で入力してください": "Password must be at least {{min}} characters",
+  "パスワードは{{max}}文字以内で入力してください": "Password must be {{max}} characters or less",
+  "パスワードが一致しません": "Passwords do not match",
+  "確認用パスワードを入力してください": "Please confirm your password",
+  "現在のパスワードを入力してください": "Please enter your current password",
+  "現在のパスワードと同じパスワードは設定できません": "New password cannot be the same as current password",
+  "ニックネームを入力してください": "Please enter your nickname",
+  "ニックネームは{{max}}文字以内で入力してください": "Nickname must be {{max}} characters or less",
+  "ボード名を入力してください": "Please enter a board name",
+  "ボード名は{{max}}文字以内で入力してください": "Board name must be {{max}} characters or less",
+  "テキストを入力してください": "Please enter content",
+  "テキストは{{max}}文字以内で入力してください": "Content must be {{max}} characters or less"
+}

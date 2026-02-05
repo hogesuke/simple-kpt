@@ -1,5 +1,6 @@
 import { Bot, Check, Copy, Info } from 'lucide-react';
 import { ReactElement, useCallback, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
@@ -27,6 +28,7 @@ export function SummaryDialog({
   isLoading,
   boardName,
 }: SummaryDialogProps): ReactElement {
+  const { t } = useTranslation('board');
   const [copied, setCopied] = useState(false);
   const { handleError } = useErrorHandler();
 
@@ -39,9 +41,9 @@ export function SummaryDialog({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      handleError(error, 'コピーに失敗しました');
+      handleError(error, t('コピーに失敗しました'));
     }
-  }, [handleError, fullSummary]);
+  }, [handleError, fullSummary, t]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -49,9 +51,9 @@ export function SummaryDialog({
         <DialogHeader className="flex-none">
           <DialogTitle className="flex items-center gap-2">
             <Bot className="text-primary h-5 w-5" />
-            AIサマリー
+            {t('AIサマリー')}
           </DialogTitle>
-          <DialogDescription>AIによりKPTのサマリーを生成します。</DialogDescription>
+          <DialogDescription>{t('AIによりKPTのサマリーを生成します。')}</DialogDescription>
         </DialogHeader>
 
         {!hasResult && !isLoading ? (
@@ -59,38 +61,43 @@ export function SummaryDialog({
             <div className="flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-neutral-700 dark:bg-neutral-800">
               <Info className="mt-0.5 h-5 w-5 shrink-0 text-neutral-600 dark:text-neutral-400" />
               <div className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
-                <p>Anthropic社のClaude APIにボードのデータを送信し、サマリーを生成します。</p>
+                <p>{t('Anthropic社のClaude APIにボードのデータを送信し、サマリーを生成します。')}</p>
                 <p>
-                  Anthropic社の
-                  <a
-                    href="https://www.anthropic.com/legal/consumer-terms"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Consumer Terms
-                  </a>
-                  および
-                  <a
-                    href="https://www.anthropic.com/legal/commercial-terms"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:underline"
-                  >
-                    Commercial Terms
-                  </a>
-                  によると、2025年1月時点においては、API経由で送信されたデータはAIの学習に使用されないと記載されています。
+                  <Trans
+                    i18nKey="Anthropic社の<consumerTerms>Consumer Terms</consumerTerms>および<commercialTerms>Commercial Terms</commercialTerms>によると、2025年1月時点においては、API経由で送信されたデータはAIの学習に使用されないと記載されています。"
+                    ns="board"
+                    components={{
+                      consumerTerms: (
+                        // eslint-disable-next-line jsx-a11y/anchor-has-content -- 翻訳テキストにリンクを挿入するため
+                        <a
+                          href="https://www.anthropic.com/legal/consumer-terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        />
+                      ),
+                      commercialTerms: (
+                        // eslint-disable-next-line jsx-a11y/anchor-has-content -- 翻訳テキストにリンクを挿入するため
+                        <a
+                          href="https://www.anthropic.com/legal/commercial-terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        />
+                      ),
+                    }}
+                  />
                 </p>
-                <p>上記をご確認のうえ、AIサマリー機能をご利用ください。</p>
+                <p>{t('上記をご確認のうえ、AIサマリー機能をご利用ください。')}</p>
               </div>
             </div>
             <DialogFooter className="flex-none">
-              <p className="text-muted-foreground mr-auto text-xs">本日の残り利用回数: {remainingCount}回</p>
+              <p className="text-muted-foreground mr-auto text-xs">{t('本日の残り利用回数: {{count}}回', { count: remainingCount })}</p>
               <Button size="sm" variant="outline" onClick={() => onOpenChange(false)}>
-                キャンセル
+                {t('ui:キャンセル')}
               </Button>
               <Button size="sm" onClick={onGenerate}>
-                生成する
+                {t('生成する')}
               </Button>
             </DialogFooter>
           </>
@@ -101,7 +108,7 @@ export function SummaryDialog({
                 <div className="flex items-center justify-center py-4">
                   <div className="flex items-center gap-2">
                     <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-                    <span className="text-muted-foreground text-sm">サマリーを生成中...</span>
+                    <span className="text-muted-foreground text-sm">{t('サマリーを生成中...')}</span>
                   </div>
                 </div>
               ) : (
@@ -110,14 +117,14 @@ export function SummaryDialog({
             </div>
 
             <DialogFooter className="flex-none flex-col gap-2 sm:flex-row sm:justify-between">
-              <p className="text-muted-foreground text-xs">本日の残り利用回数: {remainingCount}回</p>
+              <p className="text-muted-foreground text-xs">{t('本日の残り利用回数: {{count}}回', { count: remainingCount })}</p>
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" onClick={handleCopy} disabled={isLoading || !summary}>
                   {copied ? <Check className="mr-1 h-4 w-4" /> : <Copy className="mr-1 h-4 w-4" />}
-                  コピー
+                  {t('ui:コピー')}
                 </Button>
                 <Button size="sm" onClick={() => onOpenChange(false)}>
-                  閉じる
+                  {t('ui:閉じる')}
                 </Button>
               </div>
             </DialogFooter>

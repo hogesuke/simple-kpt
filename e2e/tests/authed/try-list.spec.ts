@@ -15,10 +15,10 @@ test.describe('Tryリストページ', () => {
     const tryListPage = new TryListPage(page);
     await tryListPage.goto();
 
-    await expect(tryListPage.getStatusFilterButton('未対応')).toBeVisible();
-    await expect(tryListPage.getStatusFilterButton('対応中')).toBeVisible();
-    await expect(tryListPage.getStatusFilterButton('完了')).toBeVisible();
-    await expect(tryListPage.getStatusFilterButton('対応不要')).toBeVisible();
+    await expect(tryListPage.getStatusFilterCheckbox('未対応')).toBeVisible();
+    await expect(tryListPage.getStatusFilterCheckbox('対応中')).toBeVisible();
+    await expect(tryListPage.getStatusFilterCheckbox('完了')).toBeVisible();
+    await expect(tryListPage.getStatusFilterCheckbox('対応不要')).toBeVisible();
   });
 
   test('Tryアイテムがテーブルに表示されること', async ({ page }) => {

@@ -16,7 +16,7 @@ export class DemoPage {
     this.keepColumn = page.getByRole('heading', { name: 'Keep' });
     this.problemColumn = page.getByRole('heading', { name: 'Problem' });
     this.tryColumn = page.getByRole('heading', { name: 'Try' });
-    this.addItemInput = page.getByPlaceholder('アイテムを追加...');
+    this.addItemInput = page.getByPlaceholder('アイテムを追加');
     this.addItemButton = page.getByRole('button', { name: '送信' });
   }
 
@@ -25,9 +25,8 @@ export class DemoPage {
   }
 
   async selectColumn(column: 'keep' | 'problem' | 'try') {
-    const columnLabel = column === 'keep' ? 'Keep' : column === 'problem' ? 'Problem' : 'Try';
-    // ColumnSelectorはaria-pressedボタンを使用している
-    await this.page.getByRole('button', { name: columnLabel }).click();
+    // ColumnSelectorはRadioGroupを使用しているが、RadioGroupItemはsr-onlyなのでラベルテキストをクリック
+    await this.page.locator(`label:has(#column-${column})`).click();
   }
 
   async addItem(text: string, column?: 'keep' | 'problem' | 'try') {

@@ -1,4 +1,5 @@
 import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Area, AreaChart, XAxis, YAxis } from 'recharts';
 
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/shadcn/chart';
@@ -6,13 +7,6 @@ import { Label } from '@/components/shadcn/label';
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
 import { Skeleton } from '@/components/shadcn/skeleton';
 import { fetchStats, type StatsResponse, type StatsPeriod } from '@/lib/kpt-api';
-
-const PERIOD_OPTIONS: { value: StatsPeriod; label: string; ariaLabel: string }[] = [
-  { value: '1m', label: '1m', ariaLabel: '過去1ヶ月' },
-  { value: '3m', label: '3m', ariaLabel: '過去3ヶ月' },
-  { value: '6m', label: '6m', ariaLabel: '過去6ヶ月' },
-  { value: '12m', label: '1y', ariaLabel: '過去1年' },
-];
 
 // 期間に応じた週数
 const PERIOD_WEEKS: Record<StatsPeriod, number> = {
@@ -44,31 +38,6 @@ function generateEmptyTryWeeklyData(period: StatsPeriod): { week: string; cumula
 
 const CHART_COLOR = 'hsl(217, 62%, 54%)';
 const CHART_COLOR_LIGHT = 'hsl(217, 62%, 70%)';
-
-const keepChartConfig = {
-  cumulativeCount: {
-    label: '累計Keep',
-    color: CHART_COLOR,
-  },
-} satisfies ChartConfig;
-
-const problemChartConfig = {
-  cumulativeCount: {
-    label: '累計Problem',
-    color: CHART_COLOR,
-  },
-} satisfies ChartConfig;
-
-const tryChartConfig = {
-  cumulativeCount: {
-    label: '累計Try',
-    color: CHART_COLOR_LIGHT,
-  },
-  cumulativeCompletedCount: {
-    label: '完了Try',
-    color: CHART_COLOR,
-  },
-} satisfies ChartConfig;
 
 // 基底カードコンポーネント
 interface StatsCardContainerProps {
@@ -138,22 +107,18 @@ function SimpleStatsCard({ label, dotColorClass, totalCount, weeklyData, gradien
 
 // Try用の2本線グラフカード
 interface TryStatsCardProps {
+  label: string;
+  subtitle: string;
   totalCount: number;
-  completedCount: number;
-  achievementRate: number;
   weeklyData: { week: string; cumulativeCount: number; cumulativeCompletedCount: number }[];
+  chartConfig: ChartConfig;
   yAxisMax: number;
 }
 
-function TryStatsCard({ totalCount, completedCount, achievementRate, weeklyData, yAxisMax }: TryStatsCardProps) {
+function TryStatsCard({ label, subtitle, totalCount, weeklyData, chartConfig, yAxisMax }: TryStatsCardProps) {
   return (
-    <StatsCardContainer
-      label="累計Try"
-      dotColorClass="bg-blue-500"
-      totalCount={totalCount}
-      subtitle={`完了 ${completedCount} (${achievementRate}%)`}
-    >
-      <ChartContainer config={tryChartConfig} className="h-full w-full">
+    <StatsCardContainer label={label} dotColorClass="bg-blue-500" totalCount={totalCount} subtitle={subtitle}>
+      <ChartContainer config={chartConfig} className="h-full w-full">
         <AreaChart data={weeklyData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
           <defs>
             <linearGradient id="tryCompletedGradient" x1="0" y1="0" x2="0" y2="1">
@@ -191,10 +156,60 @@ function TryStatsCard({ totalCount, completedCount, achievementRate, weeklyData,
 }
 
 export function StatsSummary(): ReactElement | null {
+  const { t } = useTranslation('board');
   const [stats, setStats] = useState<StatsResponse | null>(null);
   const [period, setPeriod] = useState<StatsPeriod>('3m');
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const hasLoadedRef = useRef(false);
+
+  // 翻訳された期間オプション
+  const periodOptions = useMemo(
+    () => [
+      { value: '1m' as StatsPeriod, label: '1m', ariaLabel: t('過去1ヶ月') },
+      { value: '3m' as StatsPeriod, label: '3m', ariaLabel: t('過去3ヶ月') },
+      { value: '6m' as StatsPeriod, label: '6m', ariaLabel: t('過去6ヶ月') },
+      { value: '12m' as StatsPeriod, label: '1y', ariaLabel: t('過去1年') },
+    ],
+    [t]
+  );
+
+  // 翻訳されたチャート設定
+  const keepChartConfig = useMemo(
+    () =>
+      ({
+        cumulativeCount: {
+          label: t('累計Keep'),
+          color: CHART_COLOR,
+        },
+      }) satisfies ChartConfig,
+    [t]
+  );
+
+  const problemChartConfig = useMemo(
+    () =>
+      ({
+        cumulativeCount: {
+          label: t('累計Problem'),
+          color: CHART_COLOR,
+        },
+      }) satisfies ChartConfig,
+    [t]
+  );
+
+  const tryChartConfig = useMemo(
+    () =>
+      ({
+        cumulativeCount: {
+          label: t('累計Try'),
+          color: CHART_COLOR_LIGHT,
+        },
+        cumulativeCompletedCount: {
+          label: t('完了Try'),
+          color: CHART_COLOR,
+        },
+      }) satisfies ChartConfig,
+    [t]
+  );
 
   const loadStats = useCallback(async (selectedPeriod: StatsPeriod, isInitial: boolean) => {
     try {
@@ -275,9 +290,9 @@ export function StatsSummary(): ReactElement | null {
           value={period}
           onValueChange={(value) => handlePeriodChange(value as StatsPeriod)}
           className="inline-flex rounded-lg bg-slate-50 p-0.5 dark:bg-slate-900"
-          aria-label="グラフ表示の期間範囲"
+          aria-label={t('グラフ表示の期間範囲')}
         >
-          {PERIOD_OPTIONS.map((option) => (
+          {periodOptions.map((option) => (
             <Label
               key={option.value}
               htmlFor={`period-${option.value}`}
@@ -296,7 +311,7 @@ export function StatsSummary(): ReactElement | null {
 
       <div className="grid grid-cols-3 gap-4">
         <SimpleStatsCard
-          label="累計Keep"
+          label={t('累計Keep')}
           dotColorClass="bg-lime-500"
           totalCount={stats.keepStats.totalCount}
           weeklyData={keepWeeklyData}
@@ -305,7 +320,7 @@ export function StatsSummary(): ReactElement | null {
           yAxisMax={yAxisMax}
         />
         <SimpleStatsCard
-          label="累計Problem"
+          label={t('累計Problem')}
           dotColorClass="bg-red-400"
           totalCount={stats.problemStats.totalCount}
           weeklyData={problemWeeklyData}
@@ -314,10 +329,11 @@ export function StatsSummary(): ReactElement | null {
           yAxisMax={yAxisMax}
         />
         <TryStatsCard
+          label={t('累計Try')}
+          subtitle={`${t('完了Try')} ${stats.tryStats.completedCount} (${stats.tryStats.achievementRate}%)`}
           totalCount={stats.tryStats.totalCount}
-          completedCount={stats.tryStats.completedCount}
-          achievementRate={stats.tryStats.achievementRate}
           weeklyData={tryWeeklyData}
+          chartConfig={tryChartConfig}
           yAxisMax={yAxisMax}
         />
       </div>

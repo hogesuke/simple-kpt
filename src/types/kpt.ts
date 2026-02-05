@@ -1,9 +1,20 @@
+import i18n from 'i18next';
+
 import { VALID_COLUMNS, VALID_TRY_STATUSES } from '@shared/constants';
 
 export type KptColumnType = (typeof VALID_COLUMNS)[number];
 
 export type TryStatus = (typeof VALID_TRY_STATUSES)[number];
 
+// 翻訳されたステータスラベルを取得する関数
+export const getStatusLabels = (): Record<TryStatus, string> => ({
+  pending: i18n.t('board:未対応'),
+  in_progress: i18n.t('board:対応中'),
+  done: i18n.t('board:完了'),
+  wont_fix: i18n.t('board:対応不要'),
+});
+
+// 後方互換性のため（i18n初期化後に正しい値を返す）
 export const PROBLEM_STATUS_LABELS: Record<TryStatus, string> = {
   pending: '未対応',
   in_progress: '対応中',
@@ -22,8 +33,19 @@ export interface TimerState {
 }
 
 /**
- * タイマープリセット
+ * タイマープリセット（秒数のみ）
  */
+export const TIMER_PRESET_SECONDS = [60, 180, 300, 600] as const;
+
+// 翻訳されたタイマープリセットを取得する関数
+export const getTimerPresets = () => [
+  { label: i18n.t('board:1分'), seconds: 60 },
+  { label: i18n.t('board:3分'), seconds: 180 },
+  { label: i18n.t('board:5分'), seconds: 300 },
+  { label: i18n.t('board:10分'), seconds: 600 },
+];
+
+// 後方互換性のため
 export const TIMER_PRESETS = [
   { label: '1分', seconds: 60 },
   { label: '3分', seconds: 180 },

@@ -1,5 +1,6 @@
 import { AlertTriangle, Loader2 } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
@@ -27,6 +28,7 @@ interface AccountDeleteDialogProps {
  * アカウント削除ダイアログ
  */
 export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialogProps): ReactElement {
+  const { t } = useTranslation('account');
   const navigate = useNavigate();
   const { handleError } = useErrorHandler();
   const clearSession = useAuthStore((state) => state.clearSession);
@@ -89,13 +91,13 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
           setStep('confirm');
         }
       } catch (err) {
-        handleError(err, '所有ボードの取得に失敗しました');
+        handleError(err, t('error:所有ボードの取得に失敗しました'));
         onOpenChange(false);
       }
     };
 
     void load();
-  }, [isOpen, handleError, onOpenChange]);
+  }, [isOpen, handleError, onOpenChange, t]);
 
   // onOpenChangeをラップして状態リセットを行う
   const handleOpenChange = useCallback(
@@ -156,19 +158,19 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
       }));
 
       await deleteAccount(transfersArray);
-      toast.success('アカウントを削除しました');
+      toast.success(t('アカウントを削除しました'));
 
       onOpenChange(false);
 
       clearSession();
       navigate('/login', { replace: true });
     } catch (err) {
-      setError('アカウントの削除に失敗しました');
+      setError(t('error:アカウントの削除に失敗しました'));
       setStep('confirm');
       setIsProcessing(false);
-      handleError(err, 'アカウントの削除に失敗しました');
+      handleError(err, t('error:アカウントの削除に失敗しました'));
     }
-  }, [transfers, onOpenChange, clearSession, navigate, handleError]);
+  }, [transfers, onOpenChange, clearSession, navigate, handleError, t]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -176,37 +178,40 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="text-destructive h-5 w-5" />
-            アカウントの削除
+            {t('アカウントの削除')}
           </DialogTitle>
-          <DialogDescription>この操作は取り消すことができません。</DialogDescription>
+          <DialogDescription>
+            {t('アカウントを削除すると、すべてのデータが完全に削除されます。')}
+            {t('この操作は取り消すことができません。')}
+          </DialogDescription>
         </DialogHeader>
 
         {step === 'loading' && (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
-            <span className="text-muted-foreground ml-2 text-sm">所有ボードを確認中...</span>
+            <span className="text-muted-foreground ml-2 text-sm">{t('所有ボードを確認中...')}</span>
           </div>
         )}
 
         {/* ボード譲渡ステップ */}
         {step === 'transfer' && (
           <div className="flex flex-col gap-4">
-            <p className="text-sm">以下のボードの所有権を他のメンバーに譲渡してください。</p>
+            <p className="text-sm">{t('以下のボードの所有権を他のメンバーに譲渡してください。')}</p>
 
             {/* 一括適用 */}
             {unselectedCount > 0 && allMembers.length > 0 && (
               <>
                 <div className="flex flex-col gap-2 py-1">
-                  <p className="text-muted-foreground text-xs">未選択のボードに一括適用</p>
+                  <p className="text-muted-foreground text-xs">{t('未選択のボードに一括適用')}</p>
                   <div className="flex gap-2">
                     <Select value={bulkApplyUserId} onValueChange={setBulkApplyUserId}>
                       <SelectTrigger className="flex-1">
-                        <SelectValue placeholder="ユーザーを選択" />
+                        <SelectValue placeholder={t('ユーザーを選択')} />
                       </SelectTrigger>
                       <SelectContent>
                         {allMembers.map((member) => (
                           <SelectItem key={member.userId} value={member.userId}>
-                            {member.nickname ?? '名前未設定'}
+                            {member.nickname ?? t('名前未設定')}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -217,11 +222,12 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
                       onClick={handleBulkApply}
                       disabled={!bulkApplyUserId || applicableBoardsCount === 0}
                     >
-                      適用{applicableBoardsCount > 0 && `（${applicableBoardsCount}件）`}
+                      {t('適用')}
+                      {applicableBoardsCount > 0 && `（${applicableBoardsCount}件）`}
                     </Button>
                   </div>
                   {bulkApplyUserId && applicableBoardsCount === 0 && (
-                    <p className="text-muted-foreground text-xs">このユーザーがメンバーの未選択ボードはありません</p>
+                    <p className="text-muted-foreground text-xs">{t('このユーザーがメンバーの未選択ボードはありません')}</p>
                   )}
                 </div>
                 <hr className="border-border" />
@@ -232,8 +238,8 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ボード名</TableHead>
-                    <TableHead className="w-40">譲渡先</TableHead>
+                    <TableHead>{t('board:ボード名')}</TableHead>
+                    <TableHead className="w-40">{t('譲渡先')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -243,12 +249,12 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
                       <TableCell>
                         <Select value={transfers[board.id] ?? ''} onValueChange={(value) => handleTransferChange(board.id, value)}>
                           <SelectTrigger className="h-8">
-                            <SelectValue placeholder="選択" />
+                            <SelectValue placeholder={t('選択')} />
                           </SelectTrigger>
                           <SelectContent>
                             {board.members.map((member) => (
                               <SelectItem key={member.userId} value={member.userId}>
-                                {member.nickname ?? '名前未設定'}
+                                {member.nickname ?? t('名前未設定')}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -263,7 +269,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
             {boardsToDelete.length > 0 && (
               <div className="bg-muted rounded-md p-3">
                 <p className="text-muted-foreground text-sm">
-                  以下のボードは他にメンバーがいないため、削除されます:
+                  {t('以下のボードは他にメンバーがいないため、削除されます:')}
                   <br />
                   {boardsToDelete.map((b) => b.name).join('、')}
                 </p>
@@ -279,13 +285,13 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
 
             {boardsNeedingTransfer.length > 0 && (
               <div className="flex flex-col gap-2">
-                <p className="text-muted-foreground text-sm">以下のボードは所有権が譲渡されます:</p>
+                <p className="text-muted-foreground text-sm">{t('以下のボードは所有権が譲渡されます:')}</p>
                 <div className="max-h-40 overflow-y-auto rounded-md border">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>ボード名</TableHead>
-                        <TableHead>新オーナー</TableHead>
+                        <TableHead>{t('board:ボード名')}</TableHead>
+                        <TableHead>{t('新オーナー')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -294,7 +300,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
                         return (
                           <TableRow key={board.id}>
                             <TableCell className="font-medium">{board.name}</TableCell>
-                            <TableCell>{newOwner?.nickname ?? '名前未設定'}</TableCell>
+                            <TableCell>{newOwner?.nickname ?? t('名前未設定')}</TableCell>
                           </TableRow>
                         );
                       })}
@@ -304,7 +310,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
               </div>
             )}
 
-            <p className="text-muted-foreground text-sm">本当にアカウントを削除してもよろしいですか？</p>
+            <p className="text-muted-foreground text-sm">{t('本当にアカウントを削除してもよろしいですか?')}</p>
           </div>
         )}
 
@@ -312,7 +318,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
         {step === 'deleting' && (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
-            <span className="text-muted-foreground ml-2 text-sm">アカウントを削除中...</span>
+            <span className="text-muted-foreground ml-2 text-sm">{t('アカウントを削除中...')}</span>
           </div>
         )}
 
@@ -320,10 +326,10 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
           {step === 'transfer' && (
             <>
               <Button variant="outline" onClick={() => handleOpenChange(false)}>
-                キャンセル
+                {t('ui:キャンセル')}
               </Button>
               <Button onClick={handleGoToConfirm} disabled={!isAllTransfersSelected}>
-                次へ
+                {t('ui:次へ')}
               </Button>
             </>
           )}
@@ -331,15 +337,15 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
           {step === 'confirm' && (
             <>
               <Button variant="outline" onClick={() => handleOpenChange(false)}>
-                キャンセル
+                {t('ui:キャンセル')}
               </Button>
               {boardsNeedingTransfer.length > 0 && (
                 <Button variant="outline" onClick={handleGoBack}>
-                  戻る
+                  {t('戻る')}
                 </Button>
               )}
               <LoadingButton variant="destructive" onClick={handleDelete} loading={isProcessing}>
-                アカウントを削除
+                {t('アカウントを削除')}
               </LoadingButton>
             </>
           )}

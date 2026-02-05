@@ -1,5 +1,6 @@
 import { Clipboard, ClipboardCheck, Download } from 'lucide-react';
 import { ReactElement, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
@@ -37,6 +38,7 @@ function generateTimestamp(): string {
  * エクスポートダイアログ
  */
 export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportDialogProps): ReactElement {
+  const { t } = useTranslation('board');
   const [format, setFormat] = useState<ExportFormat>('markdown');
 
   const generateContent = () => {
@@ -54,7 +56,7 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
     const filename = `${boardName}_${timestamp}.${extension}`;
 
     downloadFile(content, filename, mimeType);
-    toast.success('ファイルをダウンロードしました', {
+    toast.success(t('ファイルをダウンロードしました'), {
       icon: <Download className="h-4 w-4" />,
     });
     onOpenChange(false);
@@ -65,12 +67,12 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
 
     try {
       await copyToClipboard(content);
-      toast.success('クリップボードにコピーしました', {
+      toast.success(t('クリップボードにコピーしました'), {
         icon: <ClipboardCheck className="h-4 w-4" />,
       });
       onOpenChange(false);
     } catch {
-      toast.error('コピーに失敗しました');
+      toast.error(t('コピーに失敗しました'));
     }
   };
 
@@ -78,14 +80,14 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>エクスポート</DialogTitle>
-          <DialogDescription>ボードのカードをエクスポートします。</DialogDescription>
+          <DialogTitle>{t('エクスポート')}</DialogTitle>
+          <DialogDescription>{t('ボードのカードをエクスポートします。')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4 pt-2">
           {/* 形式選択 */}
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium">形式</span>
+            <span className="text-sm font-medium">{t('形式')}</span>
             <RadioGroup value={format} onValueChange={(value) => setFormat(value as ExportFormat)} className="grid grid-cols-2 gap-3">
               <Label
                 htmlFor="format-markdown"
@@ -95,7 +97,7 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
               >
                 <RadioGroupItem value="markdown" id="format-markdown" className="sr-only" />
                 <span className="block text-sm font-medium">Markdown</span>
-                <span className="text-muted-foreground block text-xs">.md形式</span>
+                <span className="text-muted-foreground block text-xs">{t('.md形式')}</span>
               </Label>
               <Label
                 htmlFor="format-csv"
@@ -105,7 +107,7 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
               >
                 <RadioGroupItem value="csv" id="format-csv" className="sr-only" />
                 <span className="block text-sm font-medium">CSV</span>
-                <span className="text-muted-foreground block text-xs">表形式</span>
+                <span className="text-muted-foreground block text-xs">{t('表形式')}</span>
               </Label>
             </RadioGroup>
           </div>
@@ -114,16 +116,18 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
           <div className="flex flex-col gap-2">
             <Button onClick={handleDownload} className="w-full">
               <Download className="h-4 w-4" />
-              ダウンロード
+              {t('ダウンロード')}
             </Button>
             <Button variant="outline" onClick={handleCopyToClipboard} className="w-full">
               <Clipboard className="h-4 w-4" />
-              クリップボードにコピー
+              {t('クリップボードにコピー')}
             </Button>
           </div>
 
           {/* カード数表示 */}
-          <p className="text-muted-foreground text-center text-sm">{items.length}件のカードをエクスポートします</p>
+          <p className="text-muted-foreground text-center text-sm">
+            {t('{{count}}件のカードをエクスポートします', { count: items.length })}
+          </p>
         </div>
       </DialogContent>
     </Dialog>

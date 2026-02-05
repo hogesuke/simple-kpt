@@ -1,11 +1,13 @@
 import { ArrowRight, CheckCircle, Download, RefreshCw, Timer } from 'lucide-react';
 import { ReactElement, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 
 import { Button } from '@/components/shadcn/button';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export function Landing(): ReactElement {
+  const { t } = useTranslation('landing');
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const initialized = useAuthStore((state) => state.initialized);
@@ -33,21 +35,28 @@ export function Landing(): ReactElement {
               <div className="grid items-center gap-12 lg:grid-cols-2">
                 {/* 左側: テキスト */}
                 <div className="flex flex-col items-start">
-                  <h1 className="mb-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-                    チームの振り返りを
-                    <br />
-                    <span className="text-primary">もっとシンプルに</span>
-                  </h1>
-                  <p className="text-muted-foreground mb-8 text-lg">準備も操作も最小限。振り返りに集中できるKPTツール</p>
+                  {(() => {
+                    const [line1, line2] = t('チームの振り返りを\nもっとシンプルに').split('\n');
+                    return (
+                      <h1 className="mb-4 text-4xl font-semibold tracking-tight whitespace-pre-line sm:text-5xl">
+                        {line1}
+                        {'\n'}
+                        <span className="text-primary">{line2}</span>
+                      </h1>
+                    );
+                  })()}
+                  <p className="text-muted-foreground mb-8 text-lg whitespace-pre-line">
+                    {t('準備も操作も最小限。振り返りに集中できるKPTツール')}
+                  </p>
                   <div className="flex flex-wrap gap-4">
                     <Button size="lg" className="rounded-full px-6" asChild>
                       <Link to="/demo">
-                        デモを試す
+                        {t('デモを試す')}
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
                     <Button size="lg" variant="outline" className="rounded-full px-6" asChild>
-                      <Link to="/login">ログインして始める</Link>
+                      <Link to="/login">{t('ログインして始める')}</Link>
                     </Button>
                   </div>
                 </div>
@@ -56,7 +65,7 @@ export function Landing(): ReactElement {
                 <div className="relative">
                   <img
                     src="/hero.webp"
-                    alt="Simple KPTでチームが振り返りを行っている様子"
+                    alt={t('Simple KPTでチームが振り返りを行っている様子')}
                     width={1536}
                     height={1024}
                     className="shadow-primary/10 w-full rounded-3xl shadow-xl"
@@ -69,16 +78,28 @@ export function Landing(): ReactElement {
           {/* 機能紹介 */}
           <section className="py-20">
             <div className="mx-auto max-w-7xl px-4">
-              <h2 className="mb-12 text-center text-3xl font-semibold">主な機能</h2>
+              <h2 className="mb-12 text-center text-3xl font-semibold">{t('主な機能')}</h2>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
                 <FeatureCard
                   icon={<RefreshCw className="h-6 w-6" />}
-                  title="KPTフレームワーク"
-                  description="Keep・Problem・Tryの3つで整理"
+                  title={t('KPTフレームワーク')}
+                  description={t('Keep・Problem・Tryの3つで整理')}
                 />
-                <FeatureCard icon={<Timer className="h-6 w-6" />} title="タイマー機能" description="時間を決めて集中して振り返り" />
-                <FeatureCard icon={<CheckCircle className="h-6 w-6" />} title="Tryの進捗管理" description="誰が何をやるか、チームで管理" />
-                <FeatureCard icon={<Download className="h-6 w-6" />} title="エクスポート" description="MarkdownやCSVで書き出し" />
+                <FeatureCard
+                  icon={<Timer className="h-6 w-6" />}
+                  title={t('タイマー機能')}
+                  description={t('時間を決めて集中して振り返り')}
+                />
+                <FeatureCard
+                  icon={<CheckCircle className="h-6 w-6" />}
+                  title={t('Tryの進捗管理')}
+                  description={t('誰が何をやるか、チームで管理')}
+                />
+                <FeatureCard
+                  icon={<Download className="h-6 w-6" />}
+                  title={t('board:エクスポート')}
+                  description={t('MarkdownやCSVで書き出し')}
+                />
               </div>
             </div>
           </section>
@@ -86,11 +107,11 @@ export function Landing(): ReactElement {
           {/* デモ誘導 */}
           <section className="py-20">
             <div className="mx-auto max-w-3xl px-4 text-center">
-              <h2 className="mb-4 text-3xl font-semibold">まずはデモから</h2>
-              <p className="text-muted-foreground mb-8 leading-relaxed">登録なしで試せます</p>
+              <h2 className="mb-4 text-3xl font-semibold">{t('まずはデモから')}</h2>
+              <p className="text-muted-foreground mb-8 leading-relaxed">{t('登録なしで試せます')}</p>
               <Button size="lg" className="rounded-full px-6" asChild>
                 <Link to="/demo">
-                  デモを試す
+                  {t('デモを試す')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -105,10 +126,10 @@ export function Landing(): ReactElement {
               <p className="text-muted-foreground text-sm">© Simple KPT</p>
               <nav className="flex gap-6">
                 <Link to="/terms" className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors">
-                  利用規約
+                  {t('利用規約')}
                 </Link>
                 <Link to="/privacy" className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors">
-                  プライバシーポリシー
+                  {t('プライバシーポリシー')}
                 </Link>
                 <a
                   href="https://forms.gle/Fo9pQw125S5mcQx79"
@@ -116,7 +137,7 @@ export function Landing(): ReactElement {
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors"
                 >
-                  お問い合わせ
+                  {t('お問い合わせ')}
                 </a>
                 <a
                   href="/licenses.txt"
@@ -124,7 +145,7 @@ export function Landing(): ReactElement {
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-foreground rounded text-sm transition-colors"
                 >
-                  ライセンス
+                  {t('ライセンス')}
                 </a>
               </nav>
             </div>
