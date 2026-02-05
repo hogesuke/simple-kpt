@@ -16,6 +16,7 @@
   "変更": "Change",
   "適用": "Apply",
   "選択": "Select",
+  "（{{count}}件）": "({{count}})",
   "さらに表示": "Show more",
   "再読み込み": "Reload",
   "ホームに戻る": "Back to Home",

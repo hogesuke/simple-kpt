@@ -349,11 +349,11 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                     disabled={item.status === 'wont_fix'}
                   >
                     <SelectTrigger className="h-8 flex-1">
-                      <SelectValue placeholder={t('未設定')} />
+                      <SelectValue placeholder={t('ui:未設定')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="unassigned">
-                        <span className="text-muted-foreground">{t('未設定')}</span>
+                        <span className="text-muted-foreground">{t('ui:未設定')}</span>
                       </SelectItem>
                       {members.map((member) => (
                         <SelectItem key={member.userId} value={member.userId}>
@@ -375,7 +375,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         disabled={item.status === 'wont_fix'}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {item.dueDate ? format(new Date(item.dueDate), 'yyyy/MM/dd') : t('未設定')}
+                        {item.dueDate ? format(new Date(item.dueDate), 'yyyy/MM/dd') : t('ui:未設定')}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">

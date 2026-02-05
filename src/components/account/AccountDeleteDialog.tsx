@@ -219,8 +219,8 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
                       onClick={handleBulkApply}
                       disabled={!bulkApplyUserId || applicableBoardsCount === 0}
                     >
-                      {t('適用')}
-                      {applicableBoardsCount > 0 && `（${applicableBoardsCount}件）`}
+                      {t('ui:適用')}
+                      {applicableBoardsCount > 0 && t('ui:（{{count}}件）', { count: applicableBoardsCount })}
                     </Button>
                   </div>
                   {bulkApplyUserId && applicableBoardsCount === 0 && (
@@ -246,7 +246,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
                       <TableCell>
                         <Select value={transfers[board.id] ?? ''} onValueChange={(value) => handleTransferChange(board.id, value)}>
                           <SelectTrigger className="h-8">
-                            <SelectValue placeholder={t('選択')} />
+                            <SelectValue placeholder={t('ui:選択')} />
                           </SelectTrigger>
                           <SelectContent>
                             {board.members.map((member) => (
