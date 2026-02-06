@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import i18n from '@/i18n';
 
-import { DEMO_MEMBERS, useDemoStore } from './useDemoStore';
+import { getDemoMembers, useDemoStore } from './useDemoStore';
 
 describe('useDemoStore', () => {
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('useDemoStore', () => {
     it('memberNicknameMapが正しく設定されていること', () => {
       const state = useDemoStore.getState();
 
-      DEMO_MEMBERS.forEach((member) => {
+      getDemoMembers().forEach((member) => {
         expect(state.memberNicknameMap[member.userId]).toBe(member.nickname);
       });
     });

@@ -1,4 +1,4 @@
-import { PROBLEM_STATUS_LABELS } from '@/types/kpt';
+import { getStatusLabels } from '@/types/kpt';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
@@ -79,7 +79,7 @@ export function generateMarkdown(boardName: string, items: KptItem[]): string {
       formatDateTime(item.createdAt),
       formatDateTime(item.updatedAt),
       String(item.voteCount ?? 0),
-      item.status ? PROBLEM_STATUS_LABELS[item.status] : '',
+      item.status ? getStatusLabels()[item.status] : '',
       item.assigneeNickname ?? '',
       formatDate(item.dueDate),
     ];
@@ -116,7 +116,7 @@ export function generateCSV(items: KptItem[]): string {
       formatDateTime(item.createdAt),
       formatDateTime(item.updatedAt),
       String(item.voteCount ?? 0),
-      item.status ? PROBLEM_STATUS_LABELS[item.status] : '',
+      item.status ? getStatusLabels()[item.status] : '',
       item.assigneeNickname ?? '',
       formatDate(item.dueDate),
     ];

@@ -13,14 +13,6 @@ export const getStatusLabels = (): Record<TryStatus, string> => ({
   wont_fix: i18n.t('board:対応不要'),
 });
 
-// 後方互換性のため（i18n初期化後に正しい値を返す）
-export const PROBLEM_STATUS_LABELS: Record<TryStatus, string> = {
-  pending: '未対応',
-  in_progress: '対応中',
-  done: '完了',
-  wont_fix: '対応不要',
-};
-
 /**
  * タイマーステータス
  */
@@ -43,14 +35,6 @@ export const getTimerPresets = () => [
   { label: i18n.t('board:5分'), seconds: 300 },
   { label: i18n.t('board:10分'), seconds: 600 },
 ];
-
-// 後方互換性のため
-export const TIMER_PRESETS = [
-  { label: '1分', seconds: 60 },
-  { label: '3分', seconds: 180 },
-  { label: '5分', seconds: 300 },
-  { label: '10分', seconds: 600 },
-] as const;
 
 export interface KptBoard {
   id: string;

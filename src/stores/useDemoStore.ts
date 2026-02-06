@@ -129,13 +129,10 @@ function createMemberNicknameMap(): Record<string, string> {
   return Object.fromEntries(createDemoMembers().map((m) => [m.userId, m.nickname ?? '']));
 }
 
-// エクスポート用のDEMO_MEMBERSゲッター（常に最新の翻訳を返す）
+// エクスポート用のDEMO_MEMBERSゲッター
 export function getDemoMembers(): BoardMember[] {
   return createDemoMembers();
 }
-
-// 後方互換性のためのDEMO_MEMBERSエクスポート（初回読み込み時の値）
-export const DEMO_MEMBERS: BoardMember[] = createDemoMembers();
 
 interface DemoState {
   items: KptItem[];

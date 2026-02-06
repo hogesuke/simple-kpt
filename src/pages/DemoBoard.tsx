@@ -21,7 +21,7 @@ import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
 import { generateSummaryDemo } from '@/lib/kpt-api';
-import { DEMO_EXPLANATION_ITEM_IDS, DEMO_MEMBERS, useDemoStore } from '@/stores/useDemoStore';
+import { DEMO_EXPLANATION_ITEM_IDS, getDemoMembers, useDemoStore } from '@/stores/useDemoStore';
 
 const DEMO_SUMMARY_STORAGE_KEY = 'demo_summary_used_date';
 
@@ -278,7 +278,7 @@ export function DemoBoard(): ReactElement {
                   onTagClick={handleTagClick}
                   onMemberClick={handleMemberClick}
                   onVote={handleVote}
-                  totalMemberCount={DEMO_MEMBERS.length}
+                  totalMemberCount={getDemoMembers().length}
                 />
                 <BoardColumn
                   column="problem"
@@ -289,7 +289,7 @@ export function DemoBoard(): ReactElement {
                   onTagClick={handleTagClick}
                   onMemberClick={handleMemberClick}
                   onVote={handleVote}
-                  totalMemberCount={DEMO_MEMBERS.length}
+                  totalMemberCount={getDemoMembers().length}
                 />
                 <BoardColumn
                   column="try"
@@ -300,7 +300,7 @@ export function DemoBoard(): ReactElement {
                   onTagClick={handleTagClick}
                   onMemberClick={handleMemberClick}
                   onVote={handleVote}
-                  totalMemberCount={DEMO_MEMBERS.length}
+                  totalMemberCount={getDemoMembers().length}
                 />
               </div>
 
@@ -318,7 +318,9 @@ export function DemoBoard(): ReactElement {
 
           {/* ドラッグ中にポインタに追従するカード */}
           <DragOverlay>
-            {activeItem ? <KPTCard item={activeItem} onDelete={() => {}} onVote={() => {}} totalMemberCount={DEMO_MEMBERS.length} /> : null}
+            {activeItem ? (
+              <KPTCard item={activeItem} onDelete={() => {}} onVote={() => {}} totalMemberCount={getDemoMembers().length} />
+            ) : null}
           </DragOverlay>
 
           {/* カード詳細パネル */}

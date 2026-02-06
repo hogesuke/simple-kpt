@@ -8,9 +8,6 @@ import { supabase } from '@/lib/supabase-client';
 import type { BoardRow, ItemRow, ProfileRow } from '@/types/db';
 import type { BoardMember, KptBoard, KptColumnType, KptItem, TimerState, TryItemWithBoard, TryStatus, UserProfile } from '@/types/kpt';
 
-// APIErrorを再エクスポート（後方互換性のため）
-export { APIError } from '@/lib/api-error';
-
 /**
  * ページネーション付きレスポンスの型（カーソルベース）
  */

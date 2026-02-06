@@ -3,8 +3,8 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import i18n from '@/i18n';
+import { APIError } from '@/lib/api-error';
 import * as api from '@/lib/kpt-api';
-import { APIError } from '@/lib/kpt-api';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 import { createRealtimeSlice, RealtimeSlice } from './realtimeSlice';

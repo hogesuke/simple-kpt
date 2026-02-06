@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
+import '@/i18n';
+
+import { getStatusLabels } from '@/types/kpt';
+
 import { generateCSV, generateMarkdown } from './export-helpers';
 
 import type { KptItem } from '@/types/kpt';
@@ -82,7 +86,7 @@ describe('generateMarkdown', () => {
     expect(result).toContain('テスト 改行');
   });
 
-  it('Tryアイテムのステータスが日本語で出力されること', () => {
+  it('Tryアイテムのステータスが翻訳されて出力されること', () => {
     const items: KptItem[] = [
       createMockItem({
         column: 'try',
@@ -94,7 +98,7 @@ describe('generateMarkdown', () => {
     ];
     const result = generateMarkdown('テストボード', items);
 
-    expect(result).toContain('対応中');
+    expect(result).toContain(getStatusLabels().in_progress);
     expect(result).toContain('担当者');
   });
 
@@ -178,7 +182,7 @@ describe('generateCSV', () => {
     expect(result).toContain('"テスト\n改行"');
   });
 
-  it('Tryアイテムのステータスが日本語で出力されること', () => {
+  it('Tryアイテムのステータスが翻訳されて出力されること', () => {
     const items: KptItem[] = [
       createMockItem({
         column: 'try',
@@ -188,7 +192,7 @@ describe('generateCSV', () => {
     ];
     const result = generateCSV(items);
 
-    expect(result).toContain('完了');
+    expect(result).toContain(getStatusLabels().done);
   });
 
   it('オプショナルフィールドがない場合は空文字で出力されること', () => {
