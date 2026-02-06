@@ -73,7 +73,7 @@ export function SummaryDialog({
                           href="https://www.anthropic.com/legal/consumer-terms"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-primary hover:underline"
+                          className="text-primary hover:underline dark:text-blue-400"
                         />
                       ),
                       commercialTerms: (
@@ -82,7 +82,7 @@ export function SummaryDialog({
                           href="https://www.anthropic.com/legal/commercial-terms"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-primary hover:underline"
+                          className="text-primary hover:underline dark:text-blue-400"
                         />
                       ),
                     }}
