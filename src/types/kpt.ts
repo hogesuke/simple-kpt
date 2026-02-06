@@ -6,7 +6,6 @@ export type KptColumnType = (typeof VALID_COLUMNS)[number];
 
 export type TryStatus = (typeof VALID_TRY_STATUSES)[number];
 
-// 翻訳されたステータスラベルを取得する関数
 export const getStatusLabels = (): Record<TryStatus, string> => ({
   pending: i18n.t('board:未対応'),
   in_progress: i18n.t('board:対応中'),
@@ -33,7 +32,7 @@ export interface TimerState {
 }
 
 /**
- * タイマープリセット（秒数のみ）
+ * タイマープリセット
  */
 export const TIMER_PRESET_SECONDS = [60, 180, 300, 600] as const;
 

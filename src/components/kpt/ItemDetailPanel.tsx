@@ -50,7 +50,6 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
   // 言語に応じたdate-fnsのlocaleを取得
   const dateLocale = useMemo(() => (i18n.language === 'ja' ? ja : enUS), [i18n.language]);
 
-  // 翻訳されたステータスオプション
   const statusOptions: { value: TryStatus; label: string }[] = useMemo(
     () => [
       { value: 'wont_fix', label: t('対応不要') },
@@ -61,7 +60,6 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
     [t]
   );
 
-  // カラムラベル（KPT用語は両言語共通）
   const columnLabels = {
     keep: 'Keep',
     problem: 'Problem',
@@ -357,7 +355,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       </SelectItem>
                       {members.map((member) => (
                         <SelectItem key={member.userId} value={member.userId}>
-                          {member.nickname ?? t('ui:匿名ユーザー')}
+                          {member.nickname ?? 'Unknown User'}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -404,7 +402,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
               <dl className="grid grid-cols-[5rem_1fr] items-center gap-x-3 gap-y-3">
                 {/* 作成者情報 */}
                 <dt className="text-muted-foreground text-xs font-medium">{t('作成者')}</dt>
-                <dd className="text-sm">{item.authorNickname || t('ui:匿名ユーザー')}</dd>
+                <dd className="text-sm">{item.authorNickname || 'Unknown User'}</dd>
 
                 {/* 作成日時 */}
                 <dt className="text-muted-foreground text-xs font-medium">{t('作成日時')}</dt>

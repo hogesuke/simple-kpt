@@ -207,7 +207,7 @@ export function KPTBoard(): ReactElement {
               <div className="flex-none pt-4">
                 <FilterBar
                   filterTag={filter.tag}
-                  filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || t('ui:匿名ユーザー') : null}
+                  filterMemberName={filter.memberId ? memberNicknameMap[filter.memberId] || 'Unknown User' : null}
                   onRemoveTag={() => setFilterTag(null)}
                   onRemoveMember={() => setFilterMemberId(null)}
                 />

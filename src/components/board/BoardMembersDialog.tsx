@@ -117,7 +117,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
                 ) : (
                   members.map((member) => (
                     <TableRow key={member.id}>
-                      <TableCell>{member.nickname ?? t('ui:匿名ユーザー')}</TableCell>
+                      <TableCell>{member.nickname ?? 'Unknown User'}</TableCell>
                       <TableCell className="text-muted-foreground">{member.role === 'owner' ? t('オーナー') : t('メンバー')}</TableCell>
                     </TableRow>
                   ))

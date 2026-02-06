@@ -78,7 +78,7 @@ export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemI
         onMouseDown={(e) => e.preventDefault()}
         disabled={!canSubmit}
         className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:bg-primary/50 absolute top-1/2 right-2 -translate-y-1/2 rounded-md p-1.5 transition-colors disabled:cursor-not-allowed"
-        aria-label={t('送信')}
+        aria-label={t('ui:送信')}
       >
         <SendHorizonal className="h-4 w-4" />
       </button>

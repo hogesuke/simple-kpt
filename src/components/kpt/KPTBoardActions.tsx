@@ -97,7 +97,7 @@ export function KPTBoardActions(): ReactElement {
               <DropdownMenuContent align="end" className="w-44">
                 <DropdownMenuItem onClick={() => setRenameDialogOpen(true)}>
                   <Pencil className="h-4 w-4" />
-                  {t('名前を変更')}
+                  {t('ボード名を変更')}
                 </DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => setDeleteDialogOpen(true)}>
                   <Trash2 className="h-4 w-4" />

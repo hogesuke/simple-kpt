@@ -109,7 +109,7 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
               {t('ui:キャンセル')}
             </Button>
             <LoadingButton type="submit" disabled={!name.trim() || name.length > BOARD_NAME_MAX_LENGTH} loading={isSubmitting}>
-              {t('ui:送信')}
+              {t('ui:作成')}
             </LoadingButton>
           </DialogFooter>
         </form>

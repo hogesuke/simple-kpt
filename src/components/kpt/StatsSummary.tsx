@@ -162,7 +162,6 @@ export function StatsSummary(): ReactElement | null {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const hasLoadedRef = useRef(false);
 
-  // 翻訳された期間オプション
   const periodOptions = useMemo(
     () => [
       { value: '1m' as StatsPeriod, label: '1m', ariaLabel: t('過去1ヶ月') },
@@ -173,7 +172,6 @@ export function StatsSummary(): ReactElement | null {
     [t]
   );
 
-  // 翻訳されたチャート設定
   const keepChartConfig = useMemo(
     () =>
       ({
