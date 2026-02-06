@@ -1,11 +1,12 @@
 import { ReactElement, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
+import { Controller, useForm } from 'react-hook-form';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { FieldError } from '@/components/forms/FieldError';
 import { FormErrorAlert } from '@/components/forms/FormErrorAlert';
 import { LoadingButton } from '@/components/forms/LoadingButton';
 import { PasswordInput } from '@/components/forms/PasswordInput';
+import { Checkbox } from '@/components/shadcn/checkbox';
 import { Input } from '@/components/shadcn/input';
 import { signUpSchema, SignUpFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
@@ -23,10 +24,11 @@ export function SignUpForm({ onSignIn, onSuccess }: SignUpFormProps): ReactEleme
   const {
     register,
     handleSubmit,
+    control,
     formState: { isSubmitting, errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolverWithI18n(signUpSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', agreeToTerms: false },
   });
 
   const onSubmit = async (data: SignUpFormData) => {
@@ -74,6 +76,42 @@ export function SignUpForm({ onSignIn, onSuccess }: SignUpFormProps): ReactEleme
           {t('パスワード')}
         </label>
         <PasswordInput id="password" placeholder={t('8文字以上で入力')} error={errors.password?.message} {...register('password')} />
+      </div>
+
+      <div className="space-y-1">
+        <div className="flex items-start gap-2">
+          <Controller
+            name="agreeToTerms"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                id="agreeToTerms"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                aria-invalid={!!errors.agreeToTerms}
+                aria-describedby={errors.agreeToTerms ? 'agreeToTerms-error' : undefined}
+                className="mt-0.5"
+              />
+            )}
+          />
+          <label htmlFor="agreeToTerms" className="text-sm leading-tight">
+            <Trans
+              i18nKey="<termsLink>利用規約</termsLink>と<privacyLink>プライバシーポリシー</privacyLink>に同意する"
+              ns="auth"
+              components={{
+                termsLink: (
+                  // eslint-disable-next-line jsx-a11y/anchor-has-content -- Transコンポーネントでテキストが挿入される
+                  <a href="/terms" target="_blank" className="text-primary hover:underline dark:text-blue-400" />
+                ),
+                privacyLink: (
+                  // eslint-disable-next-line jsx-a11y/anchor-has-content -- Transコンポーネントでテキストが挿入される
+                  <a href="/privacy" target="_blank" className="text-primary hover:underline dark:text-blue-400" />
+                ),
+              }}
+            />
+          </label>
+        </div>
+        <FieldError id="agreeToTerms-error" message={errors.agreeToTerms?.message} />
       </div>
 
       <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>

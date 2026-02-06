@@ -194,6 +194,7 @@ describe('signUpSchema', () => {
     const result = signUpSchema.safeParse({
       email: 'test@example.com',
       password: 'password123',
+      agreeToTerms: true,
     });
     expect(result.success).toBe(true);
   });
@@ -203,6 +204,7 @@ describe('signUpSchema', () => {
     const result = signUpSchema.safeParse({
       email: 'test@example.com',
       password: shortPassword,
+      agreeToTerms: true,
     });
     expect(result.success).toBe(false);
   });
@@ -212,6 +214,7 @@ describe('signUpSchema', () => {
     const result = signUpSchema.safeParse({
       email: 'test@example.com',
       password: minPassword,
+      agreeToTerms: true,
     });
     expect(result.success).toBe(true);
   });
@@ -221,6 +224,16 @@ describe('signUpSchema', () => {
     const result = signUpSchema.safeParse({
       email: 'test@example.com',
       password: longPassword,
+      agreeToTerms: true,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('利用規約に同意しない場合に拒否すること', () => {
+    const result = signUpSchema.safeParse({
+      email: 'test@example.com',
+      password: 'password123',
+      agreeToTerms: false,
     });
     expect(result.success).toBe(false);
   });

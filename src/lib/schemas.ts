@@ -58,6 +58,9 @@ export const signUpSchema = z.object({
     .string()
     .min(PASSWORD_MIN_LENGTH, { message: 'validation:パスワードは{{min}}文字以上で入力してください' })
     .max(PASSWORD_MAX_LENGTH, { message: 'validation:パスワードは{{max}}文字以内で入力してください' }),
+  agreeToTerms: z.boolean().refine((val) => val === true, {
+    message: 'validation:利用規約への同意が必要です',
+  }),
 });
 
 export const forgotPasswordSchema = z.object({

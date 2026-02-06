@@ -14,5 +14,6 @@
   "現在のパスワードを入力してください": "Please enter your current password",
   "新しいパスワードは{{min}}文字以上で入力してください": "New password must be at least {{min}} characters",
   "新しいパスワードは{{max}}文字以内で入力してください": "New password must be {{max}} characters or less",
-  "現在のパスワードと同じパスワードは設定できません": "New password cannot be the same as current password"
+  "現在のパスワードと同じパスワードは設定できません": "New password cannot be the same as current password",
+  "利用規約への同意が必要です": "You must agree to the Terms of Service"
 }
