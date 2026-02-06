@@ -17,7 +17,7 @@ export class LandingPage {
     this.heading = page.getByRole('heading', { name: /チームの振り返りを/ });
     this.heroDemoButton = page.getByRole('link', { name: 'デモを試す' }).first();
     this.bottomDemoButton = page.getByRole('link', { name: 'デモを試す' }).last();
-    this.startLoginButton = page.getByRole('link', { name: 'ログインして始める' });
+    this.startLoginButton = page.getByRole('link', { name: '今すぐ始める' });
     this.headerLoginButton = page.getByRole('button', { name: 'ログイン' });
     this.featureSection = page.getByRole('heading', { name: '主な機能' });
   }

@@ -1,4 +1,4 @@
-import { LogIn, LogOut, Settings, User } from 'lucide-react';
+import { LogIn, LogOut, Settings, User, UserPlus } from 'lucide-react';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
@@ -62,10 +62,16 @@ export function Header(): ReactElement {
           <ThemeToggle />
 
           {!user && (
-            <Button variant="default" size="sm" onClick={() => navigate('/login')}>
-              <LogIn className="h-4 w-4" />
-              {t('auth:ログイン')}
-            </Button>
+            <>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/login')}>
+                <LogIn className="h-4 w-4" />
+                {t('auth:ログイン')}
+              </Button>
+              <Button variant="default" size="sm" onClick={() => navigate('/login', { state: { view: 'sign_up' } })}>
+                <UserPlus className="h-4 w-4" />
+                {t('auth:新規登録')}
+              </Button>
+            </>
           )}
 
           {user && (

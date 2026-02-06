@@ -11,6 +11,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 
 interface LocationState {
   from?: string;
+  view?: 'sign_in' | 'sign_up';
 }
 
 type AuthView = 'sign_in' | 'sign_up' | 'forgot_password' | 'check_email' | 'reset_email_sent' | 'reset_password';
@@ -26,7 +27,8 @@ export function Login(): ReactElement {
   const location = useLocation();
   const state = location.state as LocationState | null;
   const returnTo = state?.from || '/boards';
-  const [authView, setAuthView] = useState<AuthView>('sign_in');
+  const initialView = state?.view || 'sign_in';
+  const [authView, setAuthView] = useState<AuthView>(initialView);
 
   // isPasswordRecoveryがtrueの場合はreset_passwordを優先する
   const currentView = useMemo<AuthView>(() => (isPasswordRecovery ? 'reset_password' : authView), [isPasswordRecovery, authView]);

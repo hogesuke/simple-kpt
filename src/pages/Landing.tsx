@@ -49,14 +49,16 @@ export function Landing(): ReactElement {
                     {t('準備も操作も最小限。振り返りに集中できるKPTツール')}
                   </p>
                   <div className="flex flex-wrap gap-4">
-                    <Button size="lg" className="rounded-full px-6" asChild>
+                    <Button size="lg" className="min-w-40 rounded-full px-6" asChild>
                       <Link to="/demo">
                         {t('デモを試す')}
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
-                    <Button size="lg" variant="outline" className="rounded-full px-6" asChild>
-                      <Link to="/login">{t('ログインして始める')}</Link>
+                    <Button size="lg" variant="outline" className="min-w-40 rounded-full px-6" asChild>
+                      <Link to="/login" state={{ view: 'sign_up' }}>
+                        {t('今すぐ始める')}
+                      </Link>
                     </Button>
                   </div>
                 </div>
