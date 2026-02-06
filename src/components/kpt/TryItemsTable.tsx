@@ -7,6 +7,7 @@ import { TryTableRowSkeleton } from '@/components/kpt/TryTableRowSkeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { isOverdue } from '@/lib/date-utils';
 import { getStatusLabels } from '@/lib/kpt-helpers';
+import { statusBadge } from '@/lib/status-styles';
 import { TryItemWithBoard, TryStatus } from '@/types/kpt';
 
 interface TryItemsTableProps {
@@ -15,23 +16,12 @@ interface TryItemsTableProps {
   onAssigneeClick?: (assigneeId: string, assigneeNickname: string) => void;
 }
 
-function StatusBadge({ status, t }: { status: TryStatus | null; t: (key: string) => string }): ReactElement {
+function StatusBadge({ status }: { status: TryStatus | null }): ReactElement {
   if (!status) {
     return <span className="text-muted-foreground">-</span>;
   }
 
-  const colorClasses: Record<TryStatus, string> = {
-    pending: 'bg-yellow-100 text-yellow-800',
-    in_progress: 'bg-blue-100 text-blue-800',
-    done: 'bg-green-100 text-green-800',
-    wont_fix: 'bg-gray-100 text-gray-800',
-  };
-
-  return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colorClasses[status]}`}>
-      {getStatusLabels()[status]}
-    </span>
-  );
+  return <span className={statusBadge({ status })}>{getStatusLabels()[status]}</span>;
 }
 
 function formatDueDate(dueDate: string | null): string {
@@ -125,7 +115,7 @@ export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTab
               </Link>
             </TableCell>
             <TableCell className="py-0">
-              <StatusBadge status={item.status} t={t} />
+              <StatusBadge status={item.status} />
             </TableCell>
             <TableCell className="py-0">
               <DueDateCell dueDate={item.dueDate} status={item.status} />

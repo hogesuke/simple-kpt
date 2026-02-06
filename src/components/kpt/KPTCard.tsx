@@ -1,6 +1,5 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { cva } from 'class-variance-authority';
 import { AlertTriangle, X } from 'lucide-react';
 import * as React from 'react';
 import { useMemo } from 'react';
@@ -9,21 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 import { isOverdue } from '@/lib/date-utils';
 import { getStatusLabels } from '@/lib/kpt-helpers';
+import { statusBadge } from '@/lib/status-styles';
 
 import { VoteButton } from './VoteButton';
 
 import type { KptItem } from '@/types/kpt';
-
-const statusBadge = cva('rounded-full px-2 py-0.5', {
-  variants: {
-    status: {
-      pending: 'bg-yellow-100 text-yellow-700',
-      in_progress: 'bg-blue-100 text-blue-700',
-      done: 'bg-green-100 text-green-700',
-      wont_fix: 'bg-gray-100 text-gray-600',
-    },
-  },
-});
 
 const cardStyles = 'rounded-md border border-border bg-card shadow-sm';
 
