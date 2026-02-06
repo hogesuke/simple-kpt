@@ -299,6 +299,27 @@ a[href='#auth-forgot_password'] {
   animation: wave 0.8s ease-in-out infinite;
 }
 
+/* スケルトンのシマーアニメーション */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, oklch(0.92 0 0) 25%, oklch(0.88 0 0) 50%, oklch(0.92 0 0) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s linear infinite;
+}
+
+.dark .animate-shimmer {
+  background: linear-gradient(90deg, oklch(0.25 0 0) 25%, oklch(0.3 0 0) 50%, oklch(0.25 0 0) 75%);
+  background-size: 200% 100%;
+}
+
 /* a11y: 視差効果を減らす設定が有効な場合はアニメーションを抑制 */
 @media (prefers-reduced-motion: reduce) {
   *,
