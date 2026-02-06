@@ -1,7 +1,7 @@
 /**
- * AIサマリー生成用のシステムプロンプト
+ * AIサマリー生成用のシステムプロンプト（日本語）
  */
-export const SUMMARY_SYSTEM_PROMPT = `以下のKPT（Keep/Problem/Try）の内容を分析し、サマリーを作成してください。
+const SUMMARY_SYSTEM_PROMPT_JA = `以下のKPT（Keep/Problem/Try）の内容を分析し、サマリーを作成してください。
 
 ## 出力形式
 
@@ -26,3 +26,45 @@ export const SUMMARY_SYSTEM_PROMPT = `以下のKPT（Keep/Problem/Try）の内�
 - 「まとめ」「ポイント」は「〜が読み取れます」「〜となっています」「〜が感じられます」など客観的な口調で述べてください
 - 「次回に向けて」は「〜てみてはいかがでしょうか？」「〜と良いかもしれませんね」など柔らかい提案の口調で述べてください
 - アイテムが少なく内容が限られる場合は、無理に文章量を増やさず簡潔にまとめてください`;
+
+/**
+ * AIサマリー生成用のシステムプロンプト（英語）
+ */
+const SUMMARY_SYSTEM_PROMPT_EN = `Analyze the following KPT (Keep/Problem/Try) content and create a summary.
+
+## Output Format
+
+### Summary
+Describe the team's situation as observed from the entire retrospective in 4-5 sentences objectively. Capture Keep, Problem, and Try holistically to summarize the team's current state.
+
+### Key Points
+Describe particularly noteworthy points or important themes in 3-4 sentences objectively.
+
+### Going Forward
+Suggest things to keep in mind until the next retrospective in 2-3 sentences. Rather than simply repeating what's written in Try, make suggestions from the following perspectives:
+- Specific actions to continue or strengthen Keep items
+- Approaches to address root causes of Problems
+- New perspectives not mentioned in Try items
+- Advanced initiatives combining multiple Try items
+
+## Guidelines
+- Write in prose, not bullet points
+- Don't repeat individual card contents; describe overall trends and patterns
+- Keep the total length to around 150-200 words
+- Output in English
+- Use objective phrasing for "Summary" and "Key Points" such as "It can be observed that..." or "The team appears to..."
+- Use gentle suggestion phrasing for "Going Forward" such as "You might consider..." or "It could be beneficial to..."
+- If items are few and content is limited, keep it concise without forcing more content`;
+
+/**
+ * 言語に応じたサマリープロンプトを取得する
+ */
+export function getSummarySystemPrompt(language: string): string {
+  return language === 'ja' ? SUMMARY_SYSTEM_PROMPT_JA : SUMMARY_SYSTEM_PROMPT_EN;
+}
+
+/**
+ * AIサマリー生成用のシステムプロンプト（後方互換性のため維持）
+ * @deprecated getSummarySystemPrompt(language) を使用してください
+ */
+export const SUMMARY_SYSTEM_PROMPT = SUMMARY_SYSTEM_PROMPT_JA;

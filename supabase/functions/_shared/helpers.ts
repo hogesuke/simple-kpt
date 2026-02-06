@@ -118,6 +118,15 @@ export function isValidUUID(value: string): boolean {
 }
 
 /**
+ * リクエストヘッダーから言語を検出する。
+ * Accept-Languageヘッダーを確認し、日本語が含まれていれば'ja'、それ以外は'en'を返す。
+ */
+export function getLanguage(req: Request): 'ja' | 'en' {
+  const acceptLanguage = req.headers.get('Accept-Language') || '';
+  return acceptLanguage.includes('ja') ? 'ja' : 'en';
+}
+
+/**
  * 認証付きSupabaseクライアントとユーザーを作成する。
  * 環境変数や認証ヘッダーが不正な場合はエラーレスポンスを返す。
  */

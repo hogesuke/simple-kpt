@@ -8,11 +8,12 @@ import {
   createServiceClient,
   generateErrorResponse,
   generateJsonResponse,
+  getLanguage,
   isValidUUID,
   parseRequestBody,
   requireMethod,
 } from '../_shared/helpers.ts';
-import { SUMMARY_SYSTEM_PROMPT } from '../_shared/prompts.ts';
+import { getSummarySystemPrompt } from '../_shared/prompts.ts';
 
 const DAILY_LIMIT = 5;
 const MIN_ITEMS_REQUIRED = 3;
@@ -34,6 +35,7 @@ Deno.serve(async (req) => {
   if (result instanceof Response) return result;
 
   const { user } = result;
+  const language = getLanguage(req);
   const client = createServiceClient();
 
   const body = await parseRequestBody<RequestBody>(req);
@@ -131,7 +133,7 @@ ${formatItems(tryItems)}`;
     const message = await anthropic.messages.create({
       model: 'claude-3-5-haiku-20241022',
       max_tokens: 1024,
-      system: SUMMARY_SYSTEM_PROMPT,
+      system: getSummarySystemPrompt(language),
       messages: [{ role: 'user', content: userMessage }],
     });
 

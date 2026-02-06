@@ -637,6 +637,9 @@ export async function generateSummary(boardId: string): Promise<GenerateSummaryR
   const { data, error } = await supabase.functions.invoke('generate-summary', {
     method: 'POST',
     body: { boardId },
+    headers: {
+      'Accept-Language': i18n.language,
+    },
   });
 
   if (error) {
@@ -661,6 +664,9 @@ export async function generateSummaryDemo(items: Array<{ column: string; text: s
   const { data, error } = await supabase.functions.invoke('generate-summary-demo', {
     method: 'POST',
     body: { items },
+    headers: {
+      'Accept-Language': i18n.language,
+    },
   });
 
   if (error) {

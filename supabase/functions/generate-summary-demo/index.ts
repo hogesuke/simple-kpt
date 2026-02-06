@@ -2,8 +2,8 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
 import Anthropic from 'npm:@anthropic-ai/sdk';
 
-import { generateErrorResponse, generateJsonResponse, handleCorsPreflightIfNeeded } from '../_shared/helpers.ts';
-import { SUMMARY_SYSTEM_PROMPT } from '../_shared/prompts.ts';
+import { generateErrorResponse, generateJsonResponse, getLanguage, handleCorsPreflightIfNeeded } from '../_shared/helpers.ts';
+import { getSummarySystemPrompt } from '../_shared/prompts.ts';
 
 const MIN_ITEMS_REQUIRED = 3;
 
@@ -24,6 +24,8 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') {
     return generateErrorResponse('Method Not Allowed', 405);
   }
+
+  const language = getLanguage(req);
 
   // リクエストボディをパース
   let body: RequestBody;
@@ -76,7 +78,7 @@ ${formatItems(tryItems)}`;
     const message = await anthropic.messages.create({
       model: 'claude-3-5-haiku-20241022',
       max_tokens: 1024,
-      system: SUMMARY_SYSTEM_PROMPT,
+      system: getSummarySystemPrompt(language),
       messages: [{ role: 'user', content: userMessage }],
     });
 
