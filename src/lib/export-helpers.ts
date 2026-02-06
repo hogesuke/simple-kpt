@@ -1,15 +1,8 @@
+import { TFunction } from 'i18next';
+
 import { getStatusLabels } from '@/types/kpt';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
-
-/**
- * カラム名のラベル定義
- */
-const COLUMN_LABELS: Record<KptColumnType, string> = {
-  keep: 'Keep',
-  problem: 'Problem',
-  try: 'Try',
-};
 
 /**
  * アイテムをカラム順（Keep, Problem, Try）とposition順でソートする
@@ -59,21 +52,51 @@ function escapeMarkdownCell(value: string): string {
 }
 
 /**
+ * カラム名のラベルを取得する
+ */
+function getColumnLabels(t: TFunction): Record<KptColumnType, string> {
+  return {
+    keep: t('board:Keep'),
+    problem: t('board:Problem'),
+    try: t('board:Try'),
+  };
+}
+
+/**
+ * エクスポート用ヘッダーを取得する
+ */
+function getExportHeaders(t: TFunction): string[] {
+  return [
+    t('board:カラム'),
+    t('board:テキスト'),
+    t('board:作成者'),
+    t('board:作成日時'),
+    t('board:更新日時'),
+    t('board:投票数'),
+    t('board:ステータス'),
+    t('board:担当者'),
+    t('board:期日'),
+  ];
+}
+
+/**
  * Markdown形式（テーブル）でエクスポートデータを生成する
  */
-export function generateMarkdown(boardName: string, items: KptItem[]): string {
+export function generateMarkdown(boardName: string, items: KptItem[], t: TFunction): string {
   const lines: string[] = [];
+  const columnLabels = getColumnLabels(t);
+  const headers = getExportHeaders(t);
 
   lines.push(`# ${boardName}`);
   lines.push('');
 
   // テーブルヘッダー
-  lines.push('| カラム | テキスト | 作成者 | 作成日時 | 更新日時 | 投票数 | ステータス | 担当者 | 期日 |');
+  lines.push(`| ${headers.join(' | ')} |`);
   lines.push('|--------|----------|--------|----------|----------|--------|------------|--------|------|');
 
   for (const item of sortItems(items)) {
     const row = [
-      COLUMN_LABELS[item.column],
+      columnLabels[item.column],
       escapeMarkdownCell(item.text),
       item.authorNickname ?? '',
       formatDateTime(item.createdAt),
@@ -102,15 +125,16 @@ function escapeCsvField(value: string): string {
 /**
  * CSV形式でエクスポートデータを生成する
  */
-export function generateCSV(items: KptItem[]): string {
-  const headers = ['カラム', 'テキスト', '作成者', '作成日時', '更新日時', '投票数', 'ステータス', '担当者', '期日'];
+export function generateCSV(items: KptItem[], t: TFunction): string {
+  const columnLabels = getColumnLabels(t);
+  const headers = getExportHeaders(t);
   const lines: string[] = [];
 
   lines.push(headers.join(','));
 
   for (const item of sortItems(items)) {
     const row = [
-      COLUMN_LABELS[item.column],
+      columnLabels[item.column],
       escapeCsvField(item.text),
       item.authorNickname ?? '',
       formatDateTime(item.createdAt),

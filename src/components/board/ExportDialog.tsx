@@ -43,9 +43,9 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
 
   const generateContent = () => {
     if (format === 'markdown') {
-      return generateMarkdown(boardName, items);
+      return generateMarkdown(boardName, items, t);
     }
-    return generateCSV(items);
+    return generateCSV(items, t);
   };
 
   const handleDownload = () => {

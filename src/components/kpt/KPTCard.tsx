@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/cn';
 import { isOverdue } from '@/lib/date-utils';
+import { getStatusLabels } from '@/types/kpt';
 
 import { VoteButton } from './VoteButton';
 
@@ -23,13 +24,6 @@ const statusBadge = cva('rounded-full px-2 py-0.5', {
     },
   },
 });
-
-const STATUS_KEYS: Record<TryStatus, string> = {
-  pending: '未対応',
-  in_progress: '対応中',
-  done: '完了',
-  wont_fix: '対応不要',
-};
 
 const cardStyles = 'rounded-md border border-border bg-card shadow-sm';
 
@@ -182,7 +176,7 @@ export function KPTCard({
         {/* Try専用フィールドの表示 */}
         {item.column === 'try' && (item.status || item.assigneeNickname || item.dueDate) && (
           <div className="border-border mt-3 flex flex-wrap items-center gap-3 border-t pt-3 text-sm">
-            {item.status && <span className={cn(statusBadge({ status: item.status }), 'text-xs')}>{t(STATUS_KEYS[item.status])}</span>}
+            {item.status && <span className={cn(statusBadge({ status: item.status }), 'text-xs')}>{getStatusLabels()[item.status]}</span>}
             {item.assigneeNickname && (
               <span className="text-muted-foreground">
                 {t('担当者')}: {item.assigneeNickname}

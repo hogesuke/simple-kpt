@@ -1,3 +1,4 @@
+import i18n from 'i18next';
 import { describe, expect, it } from 'vitest';
 
 import '@/i18n';
@@ -7,6 +8,9 @@ import { getStatusLabels } from '@/types/kpt';
 import { generateCSV, generateMarkdown } from './export-helpers';
 
 import type { KptItem } from '@/types/kpt';
+
+// テスト用の翻訳関数
+const t = i18n.t.bind(i18n);
 
 const createMockItem = (overrides: Partial<KptItem> = {}): KptItem => ({
   id: 'item-1',
@@ -23,21 +27,32 @@ const createMockItem = (overrides: Partial<KptItem> = {}): KptItem => ({
 
 describe('generateMarkdown', () => {
   it('ボード名がタイトルとして出力されること', () => {
-    const result = generateMarkdown('テストボード', []);
+    const result = generateMarkdown('テストボード', [], t);
 
     expect(result).toContain('# テストボード');
   });
 
   it('テーブルヘッダーが正しく出力されること', () => {
-    const result = generateMarkdown('テストボード', []);
+    const result = generateMarkdown('テストボード', [], t);
+    const expectedHeaders = [
+      t('board:カラム'),
+      t('board:テキスト'),
+      t('board:作成者'),
+      t('board:作成日時'),
+      t('board:更新日時'),
+      t('board:投票数'),
+      t('board:ステータス'),
+      t('board:担当者'),
+      t('board:期日'),
+    ];
 
-    expect(result).toContain('| カラム | テキスト | 作成者 | 作成日時 | 更新日時 | 投票数 | ステータス | 担当者 | 期日 |');
+    expect(result).toContain(`| ${expectedHeaders.join(' | ')} |`);
     expect(result).toContain('|--------|----------|--------|----------|----------|--------|------------|--------|------|');
   });
 
   it('アイテムがテーブル行として出力されること', () => {
     const items: KptItem[] = [createMockItem()];
-    const result = generateMarkdown('テストボード', items);
+    const result = generateMarkdown('テストボード', items, t);
 
     expect(result).toContain('| Keep | テストテキスト | テストユーザー |');
   });
@@ -48,7 +63,7 @@ describe('generateMarkdown', () => {
       createMockItem({ id: '2', column: 'keep', text: 'Keep' }),
       createMockItem({ id: '3', column: 'problem', text: 'Problem' }),
     ];
-    const result = generateMarkdown('テストボード', items);
+    const result = generateMarkdown('テストボード', items, t);
     const lines = result.split('\n');
     const dataLines = lines.filter((line) => line.startsWith('| Keep') || line.startsWith('| Problem') || line.startsWith('| Try'));
 
@@ -63,7 +78,7 @@ describe('generateMarkdown', () => {
       createMockItem({ id: '2', column: 'keep', text: 'First', position: 1000 }),
       createMockItem({ id: '3', column: 'keep', text: 'Second', position: 2000 }),
     ];
-    const result = generateMarkdown('テストボード', items);
+    const result = generateMarkdown('テストボード', items, t);
     const lines = result.split('\n');
     const dataLines = lines.filter((line) => line.startsWith('| Keep'));
 
@@ -74,14 +89,14 @@ describe('generateMarkdown', () => {
 
   it('パイプ文字がエスケープされること', () => {
     const items: KptItem[] = [createMockItem({ text: 'テスト|パイプ' })];
-    const result = generateMarkdown('テストボード', items);
+    const result = generateMarkdown('テストボード', items, t);
 
     expect(result).toContain('テスト\\|パイプ');
   });
 
   it('改行がスペースに置換されること', () => {
     const items: KptItem[] = [createMockItem({ text: 'テスト\n改行' })];
-    const result = generateMarkdown('テストボード', items);
+    const result = generateMarkdown('テストボード', items, t);
 
     expect(result).toContain('テスト 改行');
   });
@@ -96,7 +111,7 @@ describe('generateMarkdown', () => {
         dueDate: '2024-02-01',
       }),
     ];
-    const result = generateMarkdown('テストボード', items);
+    const result = generateMarkdown('テストボード', items, t);
 
     expect(result).toContain(getStatusLabels().in_progress);
     expect(result).toContain('担当者');
@@ -110,7 +125,7 @@ describe('generateMarkdown', () => {
         updatedAt: undefined,
       }),
     ];
-    const result = generateMarkdown('テストボード', items);
+    const result = generateMarkdown('テストボード', items, t);
 
     // エラーなく生成されることを確認
     expect(result).toContain('| Keep | テストテキスト |');
@@ -119,15 +134,26 @@ describe('generateMarkdown', () => {
 
 describe('generateCSV', () => {
   it('ヘッダー行が正しく出力されること', () => {
-    const result = generateCSV([]);
+    const result = generateCSV([], t);
     const lines = result.split('\n');
+    const expectedHeaders = [
+      t('board:カラム'),
+      t('board:テキスト'),
+      t('board:作成者'),
+      t('board:作成日時'),
+      t('board:更新日時'),
+      t('board:投票数'),
+      t('board:ステータス'),
+      t('board:担当者'),
+      t('board:期日'),
+    ];
 
-    expect(lines[0]).toBe('カラム,テキスト,作成者,作成日時,更新日時,投票数,ステータス,担当者,期日');
+    expect(lines[0]).toBe(expectedHeaders.join(','));
   });
 
   it('アイテムがCSV行として出力されること', () => {
     const items: KptItem[] = [createMockItem()];
-    const result = generateCSV(items);
+    const result = generateCSV(items, t);
     const lines = result.split('\n');
 
     expect(lines[1]).toContain('Keep,テストテキスト,テストユーザー');
@@ -139,7 +165,7 @@ describe('generateCSV', () => {
       createMockItem({ id: '2', column: 'keep', text: 'Keep' }),
       createMockItem({ id: '3', column: 'problem', text: 'Problem' }),
     ];
-    const result = generateCSV(items);
+    const result = generateCSV(items, t);
     const lines = result.split('\n');
 
     expect(lines[1]).toContain('Keep');
@@ -153,7 +179,7 @@ describe('generateCSV', () => {
       createMockItem({ id: '2', column: 'keep', text: 'First', position: 1000 }),
       createMockItem({ id: '3', column: 'keep', text: 'Second', position: 2000 }),
     ];
-    const result = generateCSV(items);
+    const result = generateCSV(items, t);
     const lines = result.split('\n');
 
     expect(lines[1]).toContain('First');
@@ -163,21 +189,21 @@ describe('generateCSV', () => {
 
   it('カンマを含むテキストがダブルクォートで囲まれること', () => {
     const items: KptItem[] = [createMockItem({ text: 'テスト,カンマ' })];
-    const result = generateCSV(items);
+    const result = generateCSV(items, t);
 
     expect(result).toContain('"テスト,カンマ"');
   });
 
   it('ダブルクォートを含むテキストがエスケープされること', () => {
     const items: KptItem[] = [createMockItem({ text: 'テスト"クォート' })];
-    const result = generateCSV(items);
+    const result = generateCSV(items, t);
 
     expect(result).toContain('"テスト""クォート"');
   });
 
   it('改行を含むテキストがダブルクォートで囲まれること', () => {
     const items: KptItem[] = [createMockItem({ text: 'テスト\n改行' })];
-    const result = generateCSV(items);
+    const result = generateCSV(items, t);
 
     expect(result).toContain('"テスト\n改行"');
   });
@@ -190,7 +216,7 @@ describe('generateCSV', () => {
         status: 'done',
       }),
     ];
-    const result = generateCSV(items);
+    const result = generateCSV(items, t);
 
     expect(result).toContain(getStatusLabels().done);
   });
@@ -206,7 +232,7 @@ describe('generateCSV', () => {
         dueDate: null,
       }),
     ];
-    const result = generateCSV(items);
+    const result = generateCSV(items, t);
     const lines = result.split('\n');
 
     // エラーなく生成されることを確認

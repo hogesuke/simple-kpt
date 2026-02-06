@@ -6,20 +6,13 @@ import { Link } from 'react-router';
 import { TryTableRowSkeleton } from '@/components/kpt/TryTableRowSkeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { isOverdue } from '@/lib/date-utils';
-import { TryItemWithBoard, TryStatus } from '@/types/kpt';
+import { getStatusLabels, TryItemWithBoard, TryStatus } from '@/types/kpt';
 
 interface TryItemsTableProps {
   items: TryItemWithBoard[];
   isLoading?: boolean;
   onAssigneeClick?: (assigneeId: string, assigneeNickname: string) => void;
 }
-
-const STATUS_KEYS: Record<TryStatus, string> = {
-  pending: '未対応',
-  in_progress: '対応中',
-  done: '完了',
-  wont_fix: '対応不要',
-};
 
 function StatusBadge({ status, t }: { status: TryStatus | null; t: (key: string) => string }): ReactElement {
   if (!status) {
@@ -35,7 +28,7 @@ function StatusBadge({ status, t }: { status: TryStatus | null; t: (key: string)
 
   return (
     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${colorClasses[status]}`}>
-      {t(STATUS_KEYS[status])}
+      {getStatusLabels()[status]}
     </span>
   );
 }

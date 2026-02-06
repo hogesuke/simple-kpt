@@ -120,5 +120,11 @@
   "デモProblem1": "Documentation is outdated #doc",
   "デモProblem2": "Test coverage is low",
   "デモTry1": "Set up a weekly documentation update day #doc",
-  "デモTry2": "Add test coverage check to CI #CI"
+  "デモTry2": "Add test coverage check to CI #CI",
+  "カラム": "Column",
+  "テキスト": "Text",
+  "投票数": "Votes",
+  "Keep": "Keep",
+  "Problem": "Problem",
+  "Try": "Try"
 }
