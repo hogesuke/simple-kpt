@@ -89,7 +89,7 @@ export function KPTBoardActions(): ReactElement {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="hover:bg-muted" aria-label={t('ボード設定')} disabled={isLoading || !board}>
-                <Settings className="text-muted-foreground h-4 w-4" />
+                <Settings className="h-4 w-4" />
                 {t('ボード設定')}
               </Button>
             </DropdownMenuTrigger>
