@@ -90,7 +90,7 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
         {/* メンバー一覧 */}
         <div className="space-y-2">
           <p className="text-sm font-medium">
-            {t('メンバー')} {!isLoading && `(${members.length})`}
+            {t('メンバーs')} {!isLoading && `(${members.length})`}
           </p>
           <div className="max-h-60 overflow-y-auto">
             <Table>
