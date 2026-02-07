@@ -87,6 +87,9 @@ function PrivacyJa(): ReactElement {
           <li>
             <strong>Vercel</strong>: ホスティングサービスとして利用
           </li>
+          <li>
+            <strong>Sentry</strong>: エラー監視サービスとして利用。個人を特定できる情報は収集しません。
+          </li>
         </ul>
       </section>
 
@@ -217,6 +220,11 @@ function PrivacyEn(): ReactElement {
           </li>
           <li>
             <strong>Vercel</strong>: Used for hosting services
+          </li>
+          <li>
+            <strong>Sentry</strong>: Used for error monitoring services. To improve service stability, we collect technical information when
+            errors occur (error messages, stack traces, browser information, etc.). We do not collect personally identifiable information
+            such as email addresses or IP addresses.
           </li>
         </ul>
       </section>
