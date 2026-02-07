@@ -1,5 +1,7 @@
 <div align="center">
-  <img height="48" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
+  <a href="https://simple-kpt.com" target="_blank" rel="noopener noreferrer">
+    <img height="48" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
+  </a>
   &nbsp;&nbsp;&nbsp;
   <a href="https://simple-kpt.com" target="_blank" rel="noopener noreferrer">
     <picture>
@@ -12,30 +14,50 @@
 
 <br>
 
-<p align="center">
-チームの振り返りをもっとシンプルに<br>
-準備も操作も最小限。振り返りに集中できるKPTツール
-</p>
+<div align="center">
+  <h2>
+    チームの振り返りをもっとシンプルに<br>
+    準備も操作も最小限。振り返りに集中できるKPTツール
+    <br>
+    <br>
+  </h2>
+</div>
 
-<p align="center">
-  <a href="https://simple-kpt.com">https://simple-kpt.com</a>
-</p>
+<br>
+
+<div align="center">
+  <a href="https://simple-kpt.com/demo">
+    <img src="https://img.shields.io/badge/⚡_Try_Demo-3f75ce?style=for-the-badge&logoColor=white" alt="Try Demo">
+</div>
 
 <br>
 
 <div align="center">
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/hogesuke/simple-kpt/blob/main/LICENSE)
 [![CI](https://github.com/hogesuke/simple-kpt/actions/workflows/ci.yml/badge.svg)](https://github.com/hogesuke/simple-kpt/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/hogesuke/simple-kpt/blob/main/LICENSE)
-[![Storybook](https://img.shields.io/badge/Storybook-deployed-ff4785?logo=storybook&logoColor=white)](https://hogesuke.github.io/simple-kpt/)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
 
-![Lighthouse](https://img.shields.io/badge/Lighthouse-scores-orange?logo=lighthouse)
+</div>
+
+<br>
+
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./docs/screenshots/bord-dark.webp">
+    <img src="./docs/screenshots/bord-light.webp" alt="Simple KPT">
+  </picture>
+</div>
+
+<br>
+
+## Lighthouseスコア
+
 ![Performance](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/hogesuke/simple-kpt/main/.github/badges/lighthouse-performance.json)
 ![Accessibility](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/hogesuke/simple-kpt/main/.github/badges/lighthouse-accessibility.json)
 ![Best Practices](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/hogesuke/simple-kpt/main/.github/badges/lighthouse-best-practices.json)
 ![SEO](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/hogesuke/simple-kpt/main/.github/badges/lighthouse-seo.json)
-
-</div>
 
 ## 機能
 
@@ -48,13 +70,6 @@
 - 🌓 ダークモード
 - 🌐 多言語対応（日本語 / English）
 
-## スクリーンショット
-
-<p>
-  <img src="./docs/screenshots/board.webp" width="49.5%" alt="ボード画面のスクリーンショット">
-  <img src="./docs/screenshots/try_list.webp" width="49.5%" alt="トライリスト画面のスクリーンショット">
-</p>
-
 ## 技術スタック
 
 - TypeScript
@@ -64,6 +79,7 @@
 - React Hook Form
 - Zod
 - shadcn/ui
+- i18next
 - Vite
 - Vitest
 - Playwright
