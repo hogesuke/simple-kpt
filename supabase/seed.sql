@@ -586,3 +586,164 @@ SELECT
     ELSE now() - ((n * 3) || ' days')::interval
   END
 FROM generate_series(1, 30) AS n;
+
+-- ============================================================
+-- 英語表示用データ
+-- ============================================================
+
+-- 英語ユーザー1: alex@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  'a1e10000-0000-0000-0000-000000000001'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'alex@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- 英語ユーザー2: jordan@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  'a1e10000-0000-0000-0000-000000000002'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'jordan@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- 英語ユーザー3: sam@example.com (パスワード: password)
+INSERT INTO auth.users (
+  id,
+  instance_id,
+  email,
+  encrypted_password,
+  email_confirmed_at,
+  created_at,
+  updated_at,
+  raw_app_meta_data,
+  raw_user_meta_data,
+  aud,
+  role,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change
+) VALUES (
+  'a1e10000-0000-0000-0000-000000000003'::uuid,
+  '00000000-0000-0000-0000-000000000000'::uuid,
+  'sam@example.com',
+  crypt('password', gen_salt('bf')),
+  now(),
+  now(),
+  now(),
+  '{"provider":"email","providers":["email"]}'::jsonb,
+  '{}'::jsonb,
+  'authenticated',
+  'authenticated',
+  '',
+  '',
+  '',
+  ''
+);
+
+-- 英語ユーザーのプロフィール
+INSERT INTO public.profiles (id, nickname, created_at, updated_at) VALUES
+  ('a1e10000-0000-0000-0000-000000000001'::uuid, 'Alex Chen', now(), now()),
+  ('a1e10000-0000-0000-0000-000000000002'::uuid, 'Jordan Lee', now(), now()),
+  ('a1e10000-0000-0000-0000-000000000003'::uuid, 'Sam Taylor', now(), now());
+
+-- 英語スクリーンショット用ボード
+INSERT INTO public.boards (id, name, owner_id, created_at) VALUES
+  ('a1e10000-1111-0000-0000-000000000000'::uuid, 'Sprint 24 Retrospective', 'a1e10000-0000-0000-0000-000000000001'::uuid, now());
+
+-- ボードメンバーシップ
+INSERT INTO public.board_members (board_id, user_id, role, created_at) VALUES
+  ('a1e10000-1111-0000-0000-000000000000'::uuid, 'a1e10000-0000-0000-0000-000000000001'::uuid, 'owner', now()),
+  ('a1e10000-1111-0000-0000-000000000000'::uuid, 'a1e10000-0000-0000-0000-000000000002'::uuid, 'member', now()),
+  ('a1e10000-1111-0000-0000-000000000000'::uuid, 'a1e10000-0000-0000-0000-000000000003'::uuid, 'member', now());
+
+-- Keep アイテム
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, created_at) VALUES
+  ('a1e10000-2222-0001-0000-000000000001'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'keep', 'Pair programming sessions helped catch bugs early and spread domain knowledge across the team', 1000, 'a1e10000-0000-0000-0000-000000000001'::uuid, now()),
+  ('a1e10000-2222-0001-0000-000000000002'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'keep', 'Moving to trunk-based development reduced merge conflicts significantly', 2000, 'a1e10000-0000-0000-0000-000000000002'::uuid, now()),
+  ('a1e10000-2222-0001-0000-000000000003'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'keep', 'Daily async standups in Slack worked well for our distributed team', 3000, 'a1e10000-0000-0000-0000-000000000003'::uuid, now()),
+  ('a1e10000-2222-0001-0000-000000000004'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'keep', 'Feature flags allowed us to deploy incomplete features safely to production', 4000, 'a1e10000-0000-0000-0000-000000000001'::uuid, now());
+
+-- Problem アイテム
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, created_at) VALUES
+  ('a1e10000-2222-0002-0000-000000000001'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'problem', 'CI pipeline takes 45+ minutes, blocking rapid iteration and code reviews', 1000, 'a1e10000-0000-0000-0000-000000000002'::uuid, now()),
+  ('a1e10000-2222-0002-0000-000000000002'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'problem', 'Flaky E2E tests causing false failures and eroding trust in the test suite', 2000, 'a1e10000-0000-0000-0000-000000000001'::uuid, now()),
+  ('a1e10000-2222-0002-0000-000000000003'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'problem', 'Technical debt in the authentication module making new features risky to implement', 3000, 'a1e10000-0000-0000-0000-000000000003'::uuid, now()),
+  ('a1e10000-2222-0002-0000-000000000004'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'problem', 'Unclear ownership of shared components leading to inconsistent patterns', 4000, 'a1e10000-0000-0000-0000-000000000002'::uuid, now());
+
+-- Try アイテム（様々なステータス）
+INSERT INTO public.items (id, board_id, column_name, text, position, author_id, status, assignee_id, due_date, created_at) VALUES
+  ('a1e10000-2222-0003-0000-000000000001'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'try', 'Set up test parallelization to reduce CI time to under 15 minutes', 1000, 'a1e10000-0000-0000-0000-000000000001'::uuid, 'in_progress', 'a1e10000-0000-0000-0000-000000000002'::uuid, (now() + interval '5 days')::date, now()),
+  ('a1e10000-2222-0003-0000-000000000002'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'try', 'Implement retry logic for flaky tests and add test stability dashboard', 2000, 'a1e10000-0000-0000-0000-000000000002'::uuid, 'pending', 'a1e10000-0000-0000-0000-000000000001'::uuid, (now() + interval '7 days')::date, now()),
+  ('a1e10000-2222-0003-0000-000000000003'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'try', 'Schedule 2-hour weekly refactoring sessions for auth module cleanup', 3000, 'a1e10000-0000-0000-0000-000000000003'::uuid, 'done', 'a1e10000-0000-0000-0000-000000000003'::uuid, NULL, now()),
+  ('a1e10000-2222-0003-0000-000000000004'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'try', 'Create CODEOWNERS file and document component ownership in wiki', 4000, 'a1e10000-0000-0000-0000-000000000001'::uuid, 'pending', NULL, NULL, now()),
+  ('a1e10000-2222-0003-0000-000000000005'::uuid, 'a1e10000-1111-0000-0000-000000000000'::uuid, 'try', 'Adopt conventional commits to improve changelog generation', 5000, 'a1e10000-0000-0000-0000-000000000002'::uuid, 'done', 'a1e10000-0000-0000-0000-000000000002'::uuid, NULL, now());
+
+-- 投票データ（一部のアイテムに投票）
+INSERT INTO public.item_votes (item_id, user_id, created_at) VALUES
+  ('a1e10000-2222-0001-0000-000000000001'::uuid, 'a1e10000-0000-0000-0000-000000000001'::uuid, now()),
+  ('a1e10000-2222-0001-0000-000000000001'::uuid, 'a1e10000-0000-0000-0000-000000000002'::uuid, now()),
+  ('a1e10000-2222-0001-0000-000000000001'::uuid, 'a1e10000-0000-0000-0000-000000000003'::uuid, now()),
+  ('a1e10000-2222-0001-0000-000000000002'::uuid, 'a1e10000-0000-0000-0000-000000000001'::uuid, now()),
+  ('a1e10000-2222-0001-0000-000000000002'::uuid, 'a1e10000-0000-0000-0000-000000000003'::uuid, now()),
+  ('a1e10000-2222-0002-0000-000000000001'::uuid, 'a1e10000-0000-0000-0000-000000000001'::uuid, now()),
+  ('a1e10000-2222-0002-0000-000000000001'::uuid, 'a1e10000-0000-0000-0000-000000000002'::uuid, now()),
+  ('a1e10000-2222-0002-0000-000000000001'::uuid, 'a1e10000-0000-0000-0000-000000000003'::uuid, now()),
+  ('a1e10000-2222-0002-0000-000000000002'::uuid, 'a1e10000-0000-0000-0000-000000000002'::uuid, now()),
+  ('a1e10000-2222-0003-0000-000000000001'::uuid, 'a1e10000-0000-0000-0000-000000000001'::uuid, now()),
+  ('a1e10000-2222-0003-0000-000000000001'::uuid, 'a1e10000-0000-0000-0000-000000000002'::uuid, now());
