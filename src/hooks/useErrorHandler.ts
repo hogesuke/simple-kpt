@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 
 import i18n from '@/i18n';
 import { APIError } from '@/lib/api-error';
+import { captureException } from '@/lib/sentry';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 /**
@@ -26,12 +27,14 @@ export function useErrorHandler() {
             navigate('/not-found', { replace: true });
             return;
           default:
+            // 予期しないAPIエラーをSentryに送信
+            captureException(error, { status: error.status, message: error.message });
             toast.error(error.message || message || i18n.t('error:エラーが発生しました'));
             return;
         }
       }
 
-      // APIError以外のエラー
+      captureException(error, { context: message });
       const displayMessage = message || (error instanceof Error ? error.message : i18n.t('error:エラーが発生しました'));
       toast.error(displayMessage);
     },
