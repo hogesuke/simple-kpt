@@ -1,9 +1,7 @@
 <div align="center">
-  <a href="https://simple-kpt.com" target="_blank" rel="noopener noreferrer">
-    <img height="48" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
-  </a>
+  <img height="48" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
   &nbsp;&nbsp;&nbsp;
-  <a href="https://simple-kpt.com" target="_blank" rel="noopener noreferrer">
+  <a href="https://simple-kpt.com" target="_blank" rel="noopener">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./public/logotype-dark.svg">
       <source media="(prefers-color-scheme: light)" srcset="./public/logotype.svg">
@@ -26,7 +24,7 @@
 <br>
 
 <div align="center">
-  <a href="https://simple-kpt.com/demo" target="_blank" rel="noopener noreferrer">
+  <a href="https://simple-kpt.com/demo" target="_blank" rel="noopener">
     <img src="https://img.shields.io/badge/⚡_Try_Demo-3f75ce?style=for-the-badge&logoColor=white" alt="Try Demo">
   </a>
 </div>
@@ -45,10 +43,12 @@
 <br>
 
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./docs/screenshots/bord-dark.webp">
-    <img src="./docs/screenshots/bord-light.webp" alt="Simple KPT">
-  </picture>
+  <a href="https://simple-kpt.com/demo" target="_blank" rel="noopener">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./docs/screenshots/bord-dark.webp">
+      <img src="./docs/screenshots/bord-light.webp" alt="Simple KPT">
+    </picture>
+  </a>
 </div>
 
 <br>
