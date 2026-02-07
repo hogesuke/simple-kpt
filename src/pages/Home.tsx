@@ -137,8 +137,12 @@ export function Home(): ReactElement {
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="mb-6 flex items-center justify-between">
             <TabsList>
-              <TabsTrigger value="boards">{t('ボードリスト')}</TabsTrigger>
-              <TabsTrigger value="try">{t('Tryリスト')}</TabsTrigger>
+              <TabsTrigger value="boards" className="w-28">
+                {t('ボードリスト')}
+              </TabsTrigger>
+              <TabsTrigger value="try" className="w-28">
+                {t('Tryリスト')}
+              </TabsTrigger>
             </TabsList>
             <BoardCreateDialog onBoardCreated={handleBoardCreated} />
           </div>
