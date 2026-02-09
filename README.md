@@ -45,8 +45,8 @@
 <div align="center">
   <a href="https://simple-kpt.com/demo" target="_blank" rel="noopener">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/screenshots/bord-dark.webp">
-      <img src="./docs/screenshots/bord-light.webp" alt="Simple KPT">
+      <source media="(prefers-color-scheme: dark)" srcset="./docs/screenshots/board-dark.webp">
+      <img src="./docs/screenshots/board-light.webp" alt="Simple KPT">
     </picture>
   </a>
 </div>
