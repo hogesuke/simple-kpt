@@ -1,4 +1,4 @@
-<p align="center">
+<p align="right">
   JA | <a href="./README.en.md">EN</a>
 </p>
 
