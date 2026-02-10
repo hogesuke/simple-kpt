@@ -3,11 +3,28 @@ import { fileURLToPath, URL } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react-swc';
 import license from 'rollup-plugin-license';
-import { defineConfig } from 'vite';
+import { defineConfig, Plugin } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+// Viteのビルドパイプラインを通さずにテーマ初期化スクリプトを注入するプラグイン
+// (index.htmlに直接記述するとビルド時にインライン化されCSP違反になるため)
+function injectThemeInitPlugin(): Plugin {
+  return {
+    name: 'inject-theme-init',
+    transformIndexHtml() {
+      return [
+        {
+          tag: 'script',
+          attrs: { src: '/theme-init.js' },
+          injectTo: 'body-prepend',
+        },
+      ];
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), tailwindcss(), tsconfigPaths()],
+  plugins: [react(), tailwindcss(), tsconfigPaths(), injectThemeInitPlugin()],
   build: {
     rollupOptions: {
       output: {
