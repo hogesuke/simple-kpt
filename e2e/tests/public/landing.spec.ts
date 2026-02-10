@@ -29,12 +29,12 @@ test.describe('ランディングページ', () => {
     await expect(page).toHaveURL('/demo');
   });
 
-  test('ヒーローセクションのログインボタンをクリックするとログインページに遷移すること', async ({ page }) => {
+  test('ヒーローセクションの今すぐ始めるボタンをクリックするとサインアップページに遷移すること', async ({ page }) => {
     const landingPage = new LandingPage(page);
     await landingPage.goto();
     await landingPage.clickStartLogin();
 
-    await expect(page).toHaveURL('/login');
+    await expect(page).toHaveURL('/signup');
   });
 
   test('ヘッダーのログインボタンをクリックするとログインページに遷移すること', async ({ page }) => {

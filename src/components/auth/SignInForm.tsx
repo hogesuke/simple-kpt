@@ -1,6 +1,7 @@
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
 import { FieldError } from '@/components/forms/FieldError';
 import { FormErrorAlert } from '@/components/forms/FormErrorAlert';
@@ -12,12 +13,7 @@ import { signInSchema, SignInFormData } from '@/lib/schemas';
 import { supabase } from '@/lib/supabase-client';
 import { zodResolverWithI18n } from '@/lib/zodResolverWithI18n';
 
-interface SignInFormProps {
-  onForgotPassword: () => void;
-  onSignUp: () => void;
-}
-
-export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps): ReactElement {
+export function SignInForm(): ReactElement {
   const { t } = useTranslation('auth');
   const [error, setError] = useState<string | null>(null);
 
@@ -73,14 +69,14 @@ export function SignInForm({ onForgotPassword, onSignUp }: SignInFormProps): Rea
       </LoadingButton>
 
       <div className="-mt-2 text-center text-sm">
-        <button type="button" onClick={onForgotPassword} className="text-muted-foreground hover:text-foreground rounded underline">
+        <Link to="/forgot-password" className="text-muted-foreground hover:text-foreground rounded underline">
           {t('パスワードをお忘れですか？')}
-        </button>
+        </Link>
       </div>
 
       <div className="pt-2">
-        <Button type="button" variant="outline" className="h-10 w-full" onClick={onSignUp}>
-          {t('新規登録')}
+        <Button type="button" variant="outline" className="h-10 w-full" asChild>
+          <Link to="/signup">{t('新規登録')}</Link>
         </Button>
       </div>
     </form>

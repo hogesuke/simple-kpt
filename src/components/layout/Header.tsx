@@ -77,7 +77,7 @@ export function Header(): ReactElement {
                 <LogIn className="h-4 w-4" />
                 {t('auth:ログイン')}
               </Button>
-              <Button variant="default" size="sm" onClick={() => navigate('/login', { state: { view: 'sign_up' } })}>
+              <Button variant="default" size="sm" onClick={() => navigate('/signup')}>
                 <UserPlus className="h-4 w-4" />
                 {t('auth:新規登録')}
               </Button>

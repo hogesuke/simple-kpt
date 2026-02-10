@@ -17,8 +17,8 @@ export class LoginPage {
     this.emailInput = page.getByLabel('メールアドレス');
     this.passwordInput = page.locator('input#password');
     this.loginButton = page.getByRole('main').getByRole('button', { name: 'ログイン' });
-    this.signUpButton = page.getByRole('main').getByRole('button', { name: '新規登録' });
-    this.forgotPasswordLink = page.getByRole('button', { name: 'パスワードをお忘れですか？' });
+    this.signUpButton = page.getByRole('main').getByRole('link', { name: '新規登録' });
+    this.forgotPasswordLink = page.getByRole('link', { name: 'パスワードをお忘れですか？' });
     this.errorAlert = page.getByRole('alert');
   }
 
