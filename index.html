@@ -24,15 +24,7 @@
     <title>Simple KPT</title>
   </head>
   <body>
-    <script>
-      // テーマの初期適用（ちらつき防止のためReact読み込み前に実行する）
-      (function () {
-        const stored = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const isDark = stored === 'dark' || (stored !== 'light' && prefersDark);
-        if (isDark) document.documentElement.classList.add('dark');
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
     <div id="root" class="h-screen"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

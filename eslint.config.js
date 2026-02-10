@@ -84,6 +84,14 @@ export default tseslint.config(
       ...vitest.configs.recommended.rules,
       'vitest/no-focused-tests': 'error',
     },
+  },
+  {
+    files: ['public/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+    },
   }, // Prettier（最後に配置して他のルールを上書き）
   prettier,
   storybook.configs['flat/recommended']
