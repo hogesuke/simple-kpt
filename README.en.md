@@ -1,5 +1,5 @@
 <p align="center">
-  JA | <a href="./README.en.md">EN</a>
+  <a href="./README.md">JA</a> | EN
 </p>
 
 <div align="center">
@@ -18,8 +18,9 @@
 
 <div align="center">
   <h2>
-    チームの振り返りをもっとシンプルに<br>
-    準備も操作も最小限。振り返りに集中できるKPTツール
+    Make team retrospectives refreshingly simple.<br>
+    Minimal preparation, minimal effort. <br>
+    Focus on your retrospectives with this KPT tool.
     <br>
     <br>
   </h2>
@@ -57,25 +58,25 @@
 
 <br>
 
-## Lighthouseスコア
+## Lighthouse Scores
 
 ![Performance](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/hogesuke/simple-kpt/main/.github/badges/lighthouse-performance.json)
 ![Accessibility](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/hogesuke/simple-kpt/main/.github/badges/lighthouse-accessibility.json)
 ![Best Practices](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/hogesuke/simple-kpt/main/.github/badges/lighthouse-best-practices.json)
 ![SEO](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/hogesuke/simple-kpt/main/.github/badges/lighthouse-seo.json)
 
-## 機能
+## Features
 
-- 🔄 KPTフレームワーク
-- ⏱️ タイマー
-- ✅ Tryの進捗管理
-- 📥 エクスポート
-- 🤖 AIサマリー
-- 📈 推移のグラフ表示
-- 🌓 ダークモード
-- 🌐 多言語対応（日本語 / English）
+- 🔄 KPT Framework
+- ⏱️ Timer
+- ✅ Try Progress Tracking
+- 📥 Export
+- 🤖 AI Summary
+- 📈 Trend Charts
+- 🌓 Dark Mode
+- 🌐 Multilingual Support (Japanese / English)
 
-## 技術スタック
+## Tech Stack
 
 - TypeScript
 - React 19
@@ -90,18 +91,18 @@
 - Playwright
 - Storybook
 
-## 実行環境
+## Infrastructure
 
 - Supabase
 - Vercel
 
-## 動作確認環境
+## Requirements
 
 - Node.js 24+
 
-## ローカル開発
+## Local Development
 
-### インストール
+### Installation
 
 ```bash
 pnpm install --frozen-lockfile
@@ -109,16 +110,16 @@ pnpm install --frozen-lockfile
 brew install supabase/tap/supabase
 ```
 
-### 環境変数の設定
+### Environment Variables
 
-`.env.local`を作成し、`supabase start`で表示される値を設定してください。
+Create `.env.local` and set the values displayed by `supabase start`.
 
 ```bash
 VITE_SUPABASE_URL=<Supabase URL> # e.g., http://127.0.0.1:54321
 VITE_SUPABASE_ANON_KEY=<Supabase Anon Key> # e.g., sb_publishable_xxxxxxxx...
 ```
 
-### 起動
+### Start
 
 ```bash
 supabase start
@@ -126,50 +127,50 @@ supabase start
 pnpm dev
 ```
 
-## テスト
+## Testing
 
 ```bash
-# ユニットテスト
+# Unit tests
 pnpm test
 
-# E2Eテスト
+# E2E tests
 pnpm e2e
 
-# E2Eテスト (UIモード)
+# E2E tests (UI mode)
 pnpm e2e:ui
 ```
 
 ## Storybook
 
-### ローカル起動
+### Local
 
 ```bash
 pnpm storybook
 ```
 
-### 公開URL
+### Public URL
 
 https://hogesuke.github.io/simple-kpt/
 
-## ディレクトリ構成
+## Directory Structure
 
 ```
 .
 ├── src/
-│   ├── components/   # UIコンポーネント
+│   ├── components/   # UI Components
 │   ├── contexts/     # React Context
-│   ├── hooks/        # カスタムフック
-│   ├── lib/          # ユーティリティ・API
-│   ├── pages/        # ページコンポーネント
-│   ├── stores/       # Zustandストア
-│   └── types/        # 型定義
+│   ├── hooks/        # Custom Hooks
+│   ├── lib/          # Utilities & API
+│   ├── pages/        # Page Components
+│   ├── stores/       # Zustand Stores
+│   └── types/        # Type Definitions
 │
 └── supabase/
     ├── functions/    # Edge Functions
-    ├── migrations/   # マイグレーション
-    └── seed.sql      # シードデータ
+    ├── migrations/   # Migrations
+    └── seed.sql      # Seed Data
 ```
 
-## ライセンス
+## License
 
 MIT License
