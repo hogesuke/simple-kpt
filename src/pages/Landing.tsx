@@ -56,9 +56,7 @@ export function Landing(): ReactElement {
                       </Link>
                     </Button>
                     <Button size="lg" variant="outline" className="min-w-40 rounded-full px-6" asChild>
-                      <Link to="/login" state={{ view: 'sign_up' }}>
-                        {t('今すぐ始める')}
-                      </Link>
+                      <Link to="/signup">{t('今すぐ始める')}</Link>
                     </Button>
                   </div>
                 </div>

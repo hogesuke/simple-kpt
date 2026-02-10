@@ -1,6 +1,7 @@
 import { ReactElement, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
 import { FieldError } from '@/components/forms/FieldError';
 import { FormErrorAlert } from '@/components/forms/FormErrorAlert';
@@ -11,11 +12,10 @@ import { supabase } from '@/lib/supabase-client';
 import { zodResolverWithI18n } from '@/lib/zodResolverWithI18n';
 
 interface ForgotPasswordFormProps {
-  onSignIn: () => void;
   onSuccess: () => void;
 }
 
-export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormProps): ReactElement {
+export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps): ReactElement {
   const { t } = useTranslation('auth');
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +31,7 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
   const onSubmit = async (data: ForgotPasswordFormData) => {
     setError(null);
     const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-      redirectTo: `${window.location.origin}/login`,
+      redirectTo: `${window.location.origin}/reset-password`,
     });
 
     if (error) {
@@ -65,9 +65,9 @@ export function ForgotPasswordForm({ onSignIn, onSuccess }: ForgotPasswordFormPr
       </LoadingButton>
 
       <div className="text-center text-sm">
-        <button type="button" onClick={onSignIn} className="text-muted-foreground hover:text-foreground rounded underline">
+        <Link to="/login" className="text-muted-foreground hover:text-foreground rounded underline">
           {t('ログインに戻る')}
-        </button>
+        </Link>
       </div>
     </form>
   );

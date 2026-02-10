@@ -2,7 +2,10 @@ User-agent: *
 Allow: /
 Allow: /demo
 Allow: /login
+Allow: /signup
 Disallow: /boards
 Disallow: /account
+Disallow: /forgot-password
+Disallow: /reset-password
 
 Sitemap: https://simple-kpt.com/sitemap.xml

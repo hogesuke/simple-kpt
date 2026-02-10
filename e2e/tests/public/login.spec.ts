@@ -31,19 +31,19 @@ test.describe('ログインページ', () => {
     await expect(page.getByText('メールアドレスを入力してください')).toBeVisible();
   });
 
-  test('パスワードをお忘れですかリンクが機能すること', async ({ page }) => {
+  test('パスワードをお忘れですかリンクをクリックするとパスワードリセットページに遷移すること', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.forgotPasswordLink.click();
 
-    await expect(page.getByText('パスワードリセット用のメールを送信')).toBeVisible();
+    await expect(page).toHaveURL('/forgot-password');
   });
 
-  test('新規登録ボタンが機能すること', async ({ page }) => {
+  test('新規登録ボタンをクリックするとサインアップページに遷移すること', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await loginPage.signUpButton.click();
 
-    await expect(page.getByText('アカウント作成')).toBeVisible();
+    await expect(page).toHaveURL('/signup');
   });
 });
