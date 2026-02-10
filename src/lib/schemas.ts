@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// CSP(script-src 'self')環境でZod v4のJITコンパイル(new Function)によるCSP違反を防止
+// https://github.com/colinhacks/zod/issues/4273
+z.config({ jitless: true });
+
 import {
   BOARD_NAME_MAX_LENGTH,
   EMAIL_MAX_LENGTH,
