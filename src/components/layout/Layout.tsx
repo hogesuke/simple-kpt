@@ -1,5 +1,5 @@
-import { ReactElement } from 'react';
-import { Outlet, ScrollRestoration, useLocation } from 'react-router';
+import { ReactElement, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router';
 
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { Header } from '@/components/layout/Header';
@@ -7,6 +7,12 @@ import { HeaderPortalProvider } from '@/contexts/HeaderPortalContext';
 
 export function Layout(): ReactElement {
   const location = useLocation();
+
+  // ページ遷移時にスクロール位置をトップに戻す
+  // (ScrollRestorationはインラインスクリプトを注入する仕様により、CSP違反となるため使用しない)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <HeaderPortalProvider>
@@ -18,8 +24,6 @@ export function Layout(): ReactElement {
             <Outlet />
           </ErrorBoundary>
         </main>
-
-        <ScrollRestoration />
       </div>
     </HeaderPortalProvider>
   );
