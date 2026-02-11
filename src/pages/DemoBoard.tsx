@@ -22,6 +22,9 @@ import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
 import { generateSummaryDemo } from '@/lib/kpt-api';
 import { DEMO_EXPLANATION_ITEM_IDS, getDemoMembers, useDemoStore } from '@/stores/useDemoStore';
+import { VALID_COLUMNS } from '@shared/constants';
+
+import type { KptColumnType, KptItem } from '@/types/kpt';
 
 const DEMO_SUMMARY_STORAGE_KEY = 'demo_summary_used_date';
 
@@ -31,10 +34,6 @@ const DEMO_SUMMARY_STORAGE_KEY = 'demo_summary_used_date';
 function getTodayInJST(): string {
   return formatInTimeZone(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
 }
-
-import type { KptColumnType, KptItem } from '@/types/kpt';
-
-const columns: KptColumnType[] = ['keep', 'problem', 'try'];
 
 // デモユーザーID（タイマーの「他の人のカードを隠す」機能用）
 const DEMO_USER_ID = 'demo-user-1';
@@ -140,7 +139,7 @@ export function DemoBoard(): ReactElement {
 
   const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy, displayItems } =
     useKPTCardDnD({
-      columns,
+      columns: VALID_COLUMNS,
       items,
       onItemsChange: handleItemsChange,
       onItemDrop: handleItemDrop,
@@ -165,7 +164,7 @@ export function DemoBoard(): ReactElement {
     return result;
   }, [displayItems, filter.tag, filter.memberId, timerState?.startedAt, localHideOthersCards]);
 
-  const itemsByColumn = useMemo(() => selectItemsByColumn(filteredItems, columns), [filteredItems]);
+  const itemsByColumn = useMemo(() => selectItemsByColumn(filteredItems, VALID_COLUMNS), [filteredItems]);
   const activeItem = useMemo(() => selectActiveItem(displayItems, activeId), [displayItems, activeId]);
 
   const handleAddCard = (text: string) => {
@@ -306,7 +305,7 @@ export function DemoBoard(): ReactElement {
 
               <div className="flex-none pt-4">
                 <ItemAddForm
-                  columns={columns}
+                  columns={VALID_COLUMNS}
                   selectedColumn={newItemColumn}
                   onColumnChange={setNewItemColumn}
                   onSubmit={handleAddCard}

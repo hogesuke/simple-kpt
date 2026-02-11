@@ -7,7 +7,7 @@ import { ItemInput } from '@/components/forms/ItemInput';
 import type { KptColumnType } from '@/types/kpt';
 
 interface ItemAddFormProps {
-  columns: KptColumnType[];
+  columns: readonly KptColumnType[];
   selectedColumn: KptColumnType;
   onColumnChange: (column: KptColumnType) => void;
   onSubmit: (text: string) => void | Promise<void>;

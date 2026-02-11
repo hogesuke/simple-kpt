@@ -1,6 +1,7 @@
+import { VALID_COLUMNS } from '@shared/constants';
+
 import { ItemAddForm } from './ItemAddForm';
 
-import type { KptColumnType } from '@/types/kpt';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof ItemAddForm> = {
@@ -12,12 +13,10 @@ const meta: Meta<typeof ItemAddForm> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const columns: KptColumnType[] = ['keep', 'problem', 'try'];
-
 export const Default: Story = {
   name: 'デフォルト',
   args: {
-    columns,
+    columns: VALID_COLUMNS,
     selectedColumn: 'keep',
     onColumnChange: () => {},
     onSubmit: (text) => console.log('Submit:', text),

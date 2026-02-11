@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { VALID_COLUMNS } from '@shared/constants';
+
 import { selectActiveItem, selectItemsByColumn } from './item-selectors';
 
 import type { KptItem } from '@/types/kpt';
@@ -45,7 +47,7 @@ describe('selectItemsByColumn', () => {
   ];
 
   it('アイテムがカラムごとにグループ化されること', () => {
-    const result = selectItemsByColumn(mockItems, ['keep', 'problem', 'try']);
+    const result = selectItemsByColumn(mockItems, VALID_COLUMNS);
 
     expect(result.keep).toHaveLength(2);
     expect(result.problem).toHaveLength(1);
@@ -57,7 +59,7 @@ describe('selectItemsByColumn', () => {
   });
 
   it('空の配列を渡した場合、すべてのカラムが空配列になること', () => {
-    const result = selectItemsByColumn([], ['keep', 'problem', 'try']);
+    const result = selectItemsByColumn([], VALID_COLUMNS);
 
     expect(result.keep).toEqual([]);
     expect(result.problem).toEqual([]);
@@ -86,7 +88,7 @@ describe('selectItemsByColumn', () => {
       },
     ];
 
-    const result = selectItemsByColumn(itemsWithoutProblem, ['keep', 'problem', 'try']);
+    const result = selectItemsByColumn(itemsWithoutProblem, VALID_COLUMNS);
 
     expect(result.keep).toHaveLength(1);
     expect(result.problem).toEqual([]);
@@ -124,7 +126,7 @@ describe('selectItemsByColumn', () => {
       },
     ];
 
-    const result = selectItemsByColumn(multipleKeepItems, ['keep', 'problem', 'try']);
+    const result = selectItemsByColumn(multipleKeepItems, VALID_COLUMNS);
 
     expect(result.keep).toHaveLength(3);
     expect(result.keep.map((item) => item.id)).toEqual(['1', '2', '3']);

@@ -40,7 +40,7 @@ export function calculateNewPosition(targetList: KptItem[], insertIndex: number)
 }
 
 type UseKptCardDndOptions = {
-  columns: KptColumnType[];
+  columns: readonly KptColumnType[];
   items: KptItem[];
   onItemsChange: (items: KptItem[]) => void;
   onItemDrop?: (item: KptItem) => void | Promise<void>;
