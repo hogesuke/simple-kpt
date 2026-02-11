@@ -3,7 +3,7 @@ import type { KptColumnType, KptItem } from '@/types/kpt';
 /**
  * アイテムをカラムごとにグループ化する
  */
-export function selectItemsByColumn(items: KptItem[], columns: KptColumnType[]): Record<KptColumnType, KptItem[]> {
+export function selectItemsByColumn(items: KptItem[], columns: readonly KptColumnType[]): Record<KptColumnType, KptItem[]> {
   return columns.reduce<Record<KptColumnType, KptItem[]>>(
     (result, col) => ({
       ...result,

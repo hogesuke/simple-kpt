@@ -20,10 +20,9 @@ import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useBoardStore } from '@/stores/useBoardStore';
+import { VALID_COLUMNS } from '@shared/constants';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
-
-const columns: KptColumnType[] = ['keep', 'problem', 'try'];
 
 export function KPTBoard(): ReactElement {
   const { t } = useTranslation();
@@ -126,7 +125,7 @@ export function KPTBoard(): ReactElement {
 
   const { activeId, sensors, handleDragStart, handleDragOver, handleDragEnd, handleDragCancel, collisionDetectionStrategy, displayItems } =
     useKPTCardDnD({
-      columns,
+      columns: VALID_COLUMNS,
       items,
       onItemsChange: handleItemsChange,
       onItemDrop: handleItemDrop,
@@ -151,7 +150,7 @@ export function KPTBoard(): ReactElement {
     return result;
   }, [displayItems, filter.tag, filter.memberId, timerState?.startedAt, localHideOthersCards, user?.id]);
 
-  const itemsByColumn = useMemo(() => selectItemsByColumn(filteredItems, columns), [filteredItems]);
+  const itemsByColumn = useMemo(() => selectItemsByColumn(filteredItems, VALID_COLUMNS), [filteredItems]);
   const activeItem = useMemo(() => selectActiveItem(displayItems, activeId), [displayItems, activeId]);
 
   const handleAddCard = useCallback(
@@ -220,7 +219,7 @@ export function KPTBoard(): ReactElement {
 
             <div className="flex-none pt-4">
               <ItemAddForm
-                columns={columns}
+                columns={VALID_COLUMNS}
                 selectedColumn={newItemColumn}
                 onColumnChange={setNewItemColumn}
                 onSubmit={handleAddCard}

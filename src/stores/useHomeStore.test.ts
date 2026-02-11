@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as kptApi from '@/lib/kpt-api';
+import { VALID_TRY_STATUSES } from '@shared/constants';
 
 import { useHomeStore } from './useHomeStore';
 
@@ -135,9 +136,8 @@ describe('useHomeStore', () => {
     });
 
     it('全てのステータスを設定できること', () => {
-      const allStatuses = ['pending', 'in_progress', 'done', 'wont_fix'] as const;
-      useHomeStore.getState().setFilterStatuses([...allStatuses]);
-      expect(useHomeStore.getState().filterStatuses).toEqual([...allStatuses]);
+      useHomeStore.getState().setFilterStatuses([...VALID_TRY_STATUSES]);
+      expect(useHomeStore.getState().filterStatuses).toEqual([...VALID_TRY_STATUSES]);
     });
   });
 

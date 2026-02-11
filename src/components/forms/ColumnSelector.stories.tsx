@@ -1,6 +1,7 @@
+import { VALID_COLUMNS } from '@shared/constants';
+
 import { ColumnSelector } from './ColumnSelector';
 
-import type { KptColumnType } from '@/types/kpt';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof ColumnSelector> = {
@@ -12,12 +13,10 @@ const meta: Meta<typeof ColumnSelector> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const columns: KptColumnType[] = ['keep', 'problem', 'try'];
-
 export const KeepSelected: Story = {
   name: 'Keep選択',
   args: {
-    columns,
+    columns: VALID_COLUMNS,
     selectedColumn: 'keep',
     onColumnChange: () => {},
   },
@@ -26,7 +25,7 @@ export const KeepSelected: Story = {
 export const ProblemSelected: Story = {
   name: 'Problem選択',
   args: {
-    columns,
+    columns: VALID_COLUMNS,
     selectedColumn: 'problem',
     onColumnChange: () => {},
   },
@@ -35,7 +34,7 @@ export const ProblemSelected: Story = {
 export const TrySelected: Story = {
   name: 'Try選択',
   args: {
-    columns,
+    columns: VALID_COLUMNS,
     selectedColumn: 'try',
     onColumnChange: () => {},
   },

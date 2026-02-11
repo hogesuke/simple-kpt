@@ -8,7 +8,7 @@ import { columnButton, columnDot, columnLabels } from '@/lib/column-styles';
 import type { KptColumnType } from '@/types/kpt';
 
 interface ColumnSelectorProps {
-  columns: KptColumnType[];
+  columns: readonly KptColumnType[];
   selectedColumn: KptColumnType;
   onColumnChange: (column: KptColumnType) => void;
 }
