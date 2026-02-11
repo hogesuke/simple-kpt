@@ -11,7 +11,7 @@ import { SortableKPTCard } from './KPTCard';
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
 const columnStyles =
-  'p-4 flex-1 lg:basis-0 lg:min-w-0 rounded-md border border-slate-200 bg-slate-50 dark:border-neutral-700 dark:bg-neutral-800';
+  'p-4 flex-1 min-h-96 lg:min-h-0 lg:basis-0 lg:min-w-0 rounded-md border border-slate-200 bg-slate-50 dark:border-neutral-700 dark:bg-neutral-800';
 
 export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement> {
   column: KptColumnType;
