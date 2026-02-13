@@ -67,7 +67,7 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
   const [activeId, setActiveId] = useState<string | null>(null);
   const [dragPreviewItems, setDragPreviewItems] = useState<KptItem[]>([]);
   const lastDraggedItemRef = useRef<KptItem | null>(null);
-  const lastOverIdRef = useRef<string | null>(null);
+  const dragOverReqAniFrameRef = useRef<number>(0);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -80,82 +80,82 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
     setDragPreviewItems(items);
   };
 
+  // NOTE: requestAnimationFrameで1フレームに1回だけ処理する。
+  //       カラム境界付近でドラッグするとonDragOverのover対象が高速に振動し、setStateが繰り返されて更新深度の上限に達してしまう問題を回避するため。
+  //       https://github.com/clauderic/dnd-kit/issues/1678
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
 
-    const activeId = String(active.id);
+    const activeIdStr = String(active.id);
     const overId = String(over.id);
-    if (activeId === overId) return;
+    if (activeIdStr === overId) return;
 
-    // NOTE: 同じover対象への連続呼び出しをスキップする。
-    //       カラム境界付近でドラッグするとonDragOverのover対象が高速に切り替わり、setStateが繰り返されて更新深度の上限に達してしまう問題を回避するため。
-    //       https://github.com/clauderic/dnd-kit/issues/1678
-    if (overId === lastOverIdRef.current) return;
-    lastOverIdRef.current = overId;
+    cancelAnimationFrame(dragOverReqAniFrameRef.current);
+    dragOverReqAniFrameRef.current = requestAnimationFrame(() => {
+      setDragPreviewItems((prev) => {
+        const dragged = prev.find((item) => item.id === activeIdStr);
+        if (!dragged) return prev;
 
-    setDragPreviewItems((prev) => {
-      const dragged = prev.find((item) => item.id === activeId);
-      if (!dragged) return prev;
+        const isOverColumn = columns.includes(overId as KptColumnType);
+        const overItem = isOverColumn ? undefined : prev.find((item) => item.id === overId);
 
-      const isOverColumn = columns.includes(overId as KptColumnType);
-      const overItem = isOverColumn ? undefined : prev.find((item) => item.id === overId);
+        const targetColumn: KptColumnType | undefined = isOverColumn ? (overId as KptColumnType) : overItem?.column;
+        if (!targetColumn) return prev;
 
-      const targetColumn: KptColumnType | undefined = isOverColumn ? (overId as KptColumnType) : overItem?.column;
-      if (!targetColumn) return prev;
+        const itemsByColumn = columns.reduce<Record<KptColumnType, KptItem[]>>(
+          (result, col) => ({ ...result, [col]: [] }),
+          {} as Record<KptColumnType, KptItem[]>
+        );
 
-      const itemsByColumn = columns.reduce<Record<KptColumnType, KptItem[]>>(
-        (result, col) => ({ ...result, [col]: [] }),
-        {} as Record<KptColumnType, KptItem[]>
-      );
-
-      // ドラッグ中のカード以外を各カラムに振り分け
-      for (const item of prev) {
-        if (item.id === activeId) continue;
-        itemsByColumn[item.column].push(item);
-      }
-
-      const targetList = itemsByColumn[targetColumn];
-      let insertIndex: number;
-
-      if (isOverColumn) {
-        // カラムの何もない場所にドラッグしているときは末尾に配置する
-        insertIndex = targetList.length;
-      } else {
-        const overIndexInTarget = targetList.findIndex((item) => item.id === overId);
-
-        if (dragged.column === targetColumn) {
-          // 同一カラム内の並び替え
-          const originalColumnItems = prev.filter((item) => item.column === targetColumn);
-          const activeIndexOriginal = originalColumnItems.findIndex((item) => item.id === activeId);
-          const overIndexOriginal = originalColumnItems.findIndex((item) => item.id === overId);
-
-          const movingDown = activeIndexOriginal !== -1 && overIndexOriginal !== -1 && activeIndexOriginal < overIndexOriginal;
-
-          if (overIndexInTarget === -1) {
-            insertIndex = targetList.length;
-          } else {
-            // 下方向にドラッグしているときは、overのカードの下に配置する
-            insertIndex = movingDown ? overIndexInTarget + 1 : overIndexInTarget;
-          }
-        } else {
-          // 別カラムから移動してきた場合はoverの位置に配置する
-          insertIndex = overIndexInTarget === -1 ? targetList.length : overIndexInTarget;
+        // ドラッグ中のカード以外を各カラムに振り分け
+        for (const item of prev) {
+          if (item.id === activeIdStr) continue;
+          itemsByColumn[item.column].push(item);
         }
-      }
 
-      // 新しいpositionを計算
-      const newPosition = calculateNewPosition(targetList, insertIndex);
-      // Tryカラムに移動した場合、statusが未設定ならpendingを設定
-      const status = targetColumn === 'try' ? (dragged.status ?? 'pending') : dragged.status;
-      const updated: KptItem = { ...dragged, column: targetColumn, position: newPosition, status };
+        const targetList = itemsByColumn[targetColumn];
+        let insertIndex: number;
 
-      // 最後にドラッグした位置のカードを保持しておき、ドロップ時のサーバー更新に利用する
-      lastDraggedItemRef.current = updated;
+        if (isOverColumn) {
+          // カラムの何もない場所にドラッグしているときは末尾に配置する
+          insertIndex = targetList.length;
+        } else {
+          const overIndexInTarget = targetList.findIndex((item) => item.id === overId);
 
-      targetList.splice(insertIndex, 0, updated);
+          if (dragged.column === targetColumn) {
+            // 同一カラム内の並び替え
+            const originalColumnItems = prev.filter((item) => item.column === targetColumn);
+            const activeIndexOriginal = originalColumnItems.findIndex((item) => item.id === activeIdStr);
+            const overIndexOriginal = originalColumnItems.findIndex((item) => item.id === overId);
 
-      return [...itemsByColumn.keep, ...itemsByColumn.problem, ...itemsByColumn.try];
+            const movingDown = activeIndexOriginal !== -1 && overIndexOriginal !== -1 && activeIndexOriginal < overIndexOriginal;
+
+            if (overIndexInTarget === -1) {
+              insertIndex = targetList.length;
+            } else {
+              // 下方向にドラッグしているときは、overのカードの下に配置する
+              insertIndex = movingDown ? overIndexInTarget + 1 : overIndexInTarget;
+            }
+          } else {
+            // 別カラムから移動してきた場合はoverの位置に配置する
+            insertIndex = overIndexInTarget === -1 ? targetList.length : overIndexInTarget;
+          }
+        }
+
+        // 新しいpositionを計算
+        const newPosition = calculateNewPosition(targetList, insertIndex);
+        // Tryカラムに移動した場合、statusが未設定ならpendingを設定
+        const status = targetColumn === 'try' ? (dragged.status ?? 'pending') : dragged.status;
+        const updated: KptItem = { ...dragged, column: targetColumn, position: newPosition, status };
+
+        // 最後にドラッグした位置のカードを保持しておき、ドロップ時のサーバー更新に利用する
+        lastDraggedItemRef.current = updated;
+
+        targetList.splice(insertIndex, 0, updated);
+
+        return [...itemsByColumn.keep, ...itemsByColumn.problem, ...itemsByColumn.try];
+      });
     });
   };
 
@@ -170,14 +170,14 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
     }
 
     lastDraggedItemRef.current = null;
-    lastOverIdRef.current = null;
+    cancelAnimationFrame(dragOverReqAniFrameRef.current);
     setActiveId(null);
     setDragPreviewItems([]);
   };
 
   const handleDragCancel = () => {
     lastDraggedItemRef.current = null;
-    lastOverIdRef.current = null;
+    cancelAnimationFrame(dragOverReqAniFrameRef.current);
     setActiveId(null);
     setDragPreviewItems([]);
   };
