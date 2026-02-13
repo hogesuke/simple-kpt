@@ -133,6 +133,7 @@ export function Home(): ReactElement {
     <>
       <title>{t('ボード一覧 - Simple KPT')}</title>
       <section className="mx-auto max-w-7xl px-4 py-8">
+        <h1 className="sr-only">{t('ダッシュボード')}</h1>
         <StatsSummary />
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="mb-6 flex items-center justify-between">

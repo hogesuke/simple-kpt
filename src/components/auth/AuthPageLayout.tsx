@@ -10,7 +10,7 @@ export function AuthPageLayout({ title, children }: AuthPageLayoutProps): ReactE
     <div className="bg-muted flex h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div>
-          <h2 className="text-center text-2xl font-bold">{title}</h2>
+          <h1 className="text-center text-2xl font-bold">{title}</h1>
         </div>
         <div className="bg-card rounded-lg px-8 py-8 shadow">{children}</div>
       </div>
