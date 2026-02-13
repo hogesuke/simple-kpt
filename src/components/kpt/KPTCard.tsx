@@ -135,9 +135,14 @@ export function KPTCard({
 
   return (
     <article
-      className={cn(cardStyles, 'relative pointer-coarse:pl-6', className)}
+      className={cn(cardStyles, 'relative pointer-coarse:pl-5', className)}
       aria-label={t('KPTカード: {{text}}', { text: item.text })}
     >
+      {/* タッチデバイスでのドラッグハンドルアイコン (pointer: coarse のときのみ可視化) */}
+      <GripVertical
+        className="text-muted-foreground absolute top-1/2 left-1 hidden h-4 w-4 -translate-y-1/2 pointer-coarse:block"
+        aria-hidden="true"
+      />
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- キーボードアクセシビリティは別途「詳細を開く」ボタンで提供している */}
       <div
         className={cn('p-4', onClick && 'cursor-pointer transition-shadow hover:shadow-md')}
@@ -299,16 +304,8 @@ export const SortableKPTCard = React.memo(function SortableKPTCard({
       onKeyDown={handleKeyDown}
       {...props}
     >
-      {/* タッチデバイスのみ表示するドラッグハンドル */}
-      {isCoarsePointer && (
-        <div
-          className="text-muted-foreground absolute top-0 bottom-0 left-0 z-10 flex w-6 touch-none items-center justify-center"
-          aria-hidden="true"
-          {...listeners}
-        >
-          <GripVertical className="h-4 w-4" />
-        </div>
-      )}
+      {/* タッチデバイスのみ表示するドラッグハンドル領域（アイコンはKPTCard内で表示） */}
+      {isCoarsePointer && <div className="absolute top-0 bottom-0 left-0 z-10 w-10 touch-none" aria-hidden="true" {...listeners} />}
       <KPTCard
         item={item}
         isSelected={isSelected}
