@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { AlertTriangle, X } from 'lucide-react';
+import { AlertTriangle, GripVertical, X } from 'lucide-react';
 import * as React from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -134,7 +134,10 @@ export function KPTCard({
   };
 
   return (
-    <article className={cn(cardStyles, 'relative', className)} aria-label={t('KPTカード: {{text}}', { text: item.text })}>
+    <article
+      className={cn(cardStyles, 'relative pointer-coarse:pl-6', className)}
+      aria-label={t('KPTカード: {{text}}', { text: item.text })}
+    >
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- キーボードアクセシビリティは別途「詳細を開く」ボタンで提供している */}
       <div
         className={cn('p-4', onClick && 'cursor-pointer transition-shadow hover:shadow-md')}
@@ -270,6 +273,7 @@ export const SortableKPTCard = React.memo(function SortableKPTCard({
       ref={setNodeRef}
       style={style}
       className={cn(
+        'relative',
         // ドラッグ中に元の位置のカードを薄く表示する
         isDragging && 'opacity-30',
         'focus-visible:ring-ring focus-visible:ring-offset-background rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
@@ -280,6 +284,13 @@ export const SortableKPTCard = React.memo(function SortableKPTCard({
       onKeyDown={handleKeyDown}
       {...props}
     >
+      {/* タッチデバイスの場合に表示するドラッグハンドル */}
+      <div
+        className="text-muted-foreground absolute top-0 bottom-0 left-0 z-10 hidden w-6 touch-none items-center justify-center pointer-coarse:flex"
+        aria-hidden="true"
+      >
+        <GripVertical className="h-4 w-4" />
+      </div>
       <KPTCard
         item={item}
         isSelected={isSelected}
