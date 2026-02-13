@@ -67,6 +67,7 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
   const [activeId, setActiveId] = useState<string | null>(null);
   const [dragPreviewItems, setDragPreviewItems] = useState<KptItem[]>([]);
   const lastDraggedItemRef = useRef<KptItem | null>(null);
+  const lastOverIdRef = useRef<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -86,6 +87,12 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
     const activeId = String(active.id);
     const overId = String(over.id);
     if (activeId === overId) return;
+
+    // NOTE: 同じover対象への連続呼び出しをスキップする。
+    //       カラム境界付近でドラッグするとonDragOverのover対象が高速に切り替わり、setStateが繰り返されて更新深度の上限に達してしまう問題を回避するため。
+    //       https://github.com/clauderic/dnd-kit/issues/1678
+    if (overId === lastOverIdRef.current) return;
+    lastOverIdRef.current = overId;
 
     setDragPreviewItems((prev) => {
       const dragged = prev.find((item) => item.id === activeId);
@@ -163,12 +170,14 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
     }
 
     lastDraggedItemRef.current = null;
+    lastOverIdRef.current = null;
     setActiveId(null);
     setDragPreviewItems([]);
   };
 
   const handleDragCancel = () => {
     lastDraggedItemRef.current = null;
+    lastOverIdRef.current = null;
     setActiveId(null);
     setDragPreviewItems([]);
   };
