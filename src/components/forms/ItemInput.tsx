@@ -69,6 +69,7 @@ export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemI
         {...registerProps}
         onKeyDown={handleKeyDown}
         disabled={disabled}
+        aria-label={props.placeholder}
         className={cn('text-md px-4 py-5 pr-12', className)}
         {...props}
       />
