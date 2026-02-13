@@ -223,7 +223,12 @@ export function Timer({ disabled }: TimerProps) {
                       : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
                   }`}
                 >
-                  <RadioGroupItem value={String(preset.seconds / 60)} id={`preset-${preset.seconds}`} className="sr-only" />
+                  <RadioGroupItem
+                    value={String(preset.seconds / 60)}
+                    id={`preset-${preset.seconds}`}
+                    className="sr-only"
+                    aria-label={preset.label}
+                  />
                   {preset.label}
                 </Label>
               ))}
@@ -253,6 +258,7 @@ export function Timer({ disabled }: TimerProps) {
               checked={hideOthersCards}
               onCheckedChange={(checked) => setHideOthersCards(checked === true)}
               disabled={isProcessing}
+              aria-label={t('タイマー中は他の人のカードを隠す')}
             />
             <label htmlFor="hide-others-cards" className="cursor-pointer text-sm">
               {t('タイマー中は他の人のカードを隠す')}
