@@ -6,6 +6,7 @@ import {
   type DragStartEvent,
   PointerSensor,
   pointerWithin,
+  TouchSensor,
   useSensor,
   useSensors,
   type SensorDescriptor,
@@ -71,6 +72,9 @@ export function useKPTCardDnD({ columns, items, onItemsChange, onItemDrop }: Use
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 4 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 5 },
     })
   );
 
