@@ -95,7 +95,7 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
                   format === 'markdown' ? 'border-primary bg-primary/5' : 'border-input hover:border-muted-foreground/50 hover:bg-muted/50'
                 }`}
               >
-                <RadioGroupItem value="markdown" id="format-markdown" className="sr-only" />
+                <RadioGroupItem value="markdown" id="format-markdown" className="sr-only" aria-label="Markdown" />
                 <span className="block text-sm font-medium">Markdown</span>
                 <span className="text-muted-foreground block text-xs">{t('.md形式')}</span>
               </Label>
@@ -105,7 +105,7 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
                   format === 'csv' ? 'border-primary bg-primary/5' : 'border-input hover:border-muted-foreground/50 hover:bg-muted/50'
                 }`}
               >
-                <RadioGroupItem value="csv" id="format-csv" className="sr-only" />
+                <RadioGroupItem value="csv" id="format-csv" className="sr-only" aria-label="CSV" />
                 <span className="block text-sm font-medium">CSV</span>
                 <span className="text-muted-foreground block text-xs">{t('表形式')}</span>
               </Label>

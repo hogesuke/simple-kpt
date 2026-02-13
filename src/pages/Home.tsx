@@ -133,6 +133,7 @@ export function Home(): ReactElement {
     <>
       <title>{t('ボード一覧 - Simple KPT')}</title>
       <section className="mx-auto max-w-7xl px-4 py-8">
+        <h1 className="sr-only">{t('ダッシュボード')}</h1>
         <StatsSummary />
         <Tabs value={activeTab} onValueChange={handleTabChange}>
           <div className="mb-6 flex items-center justify-between">
@@ -167,7 +168,9 @@ export function Home(): ReactElement {
                     <TableHead>{t('ボード名')}</TableHead>
                     <TableHead className="w-24">{t('ロール')}</TableHead>
                     <TableHead className="w-28">{t('作成日')}</TableHead>
-                    <TableHead className="w-12"></TableHead>
+                    <TableHead className="w-12">
+                      <span className="sr-only">{t('操作')}</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -197,7 +200,9 @@ export function Home(): ReactElement {
                       <TableHead>{t('ボード名')}</TableHead>
                       <TableHead className="w-24">{t('ロール')}</TableHead>
                       <TableHead className="w-28">{t('作成日')}</TableHead>
-                      <TableHead className="w-12"></TableHead>
+                      <TableHead className="w-12">
+                        <span className="sr-only">{t('操作')}</span>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

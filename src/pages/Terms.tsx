@@ -337,7 +337,7 @@ export function Terms(): ReactElement {
 
   return (
     <>
-      <title>{t('利用規約')} - Simple KPT</title>
+      <title>{t('利用規約 - Simple KPT')}</title>
       <div className="mx-auto max-w-3xl px-4 py-12">
         <nav className="mb-8">
           <Link

@@ -79,22 +79,23 @@ export function SignUpForm({ onSuccess }: SignUpFormProps): ReactElement {
       </div>
 
       <div className="space-y-1">
-        <div className="flex items-start gap-2">
+        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- Radix Checkboxの隠しinputにラベルを関連付けるため */}
+        <label className="flex items-start gap-2 text-sm leading-tight">
           <Controller
             name="agreeToTerms"
             control={control}
             render={({ field }) => (
               <Checkbox
-                id="agreeToTerms"
                 checked={field.value}
                 onCheckedChange={field.onChange}
                 aria-invalid={!!errors.agreeToTerms}
                 aria-describedby={errors.agreeToTerms ? 'agreeToTerms-error' : undefined}
+                aria-label={t('利用規約とプライバシーポリシーに同意する')}
                 className="mt-0.5"
               />
             )}
           />
-          <label htmlFor="agreeToTerms" className="text-sm leading-tight">
+          <span>
             <Trans
               i18nKey="<termsLink>利用規約</termsLink>と<privacyLink>プライバシーポリシー</privacyLink>に同意する"
               ns="auth"
@@ -109,8 +110,8 @@ export function SignUpForm({ onSuccess }: SignUpFormProps): ReactElement {
                 ),
               }}
             />
-          </label>
-        </div>
+          </span>
+        </label>
         <FieldError id="agreeToTerms-error" message={errors.agreeToTerms?.message} />
       </div>
 

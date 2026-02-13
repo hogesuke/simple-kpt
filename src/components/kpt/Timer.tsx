@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
 import { Checkbox } from '@/components/shadcn/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
@@ -198,6 +198,7 @@ export function Timer({ disabled }: TimerProps) {
       <DialogContent className="sm:max-w-80">
         <DialogHeader>
           <DialogTitle>{t('タイマー設定')}</DialogTitle>
+          <DialogDescription className="sr-only">{t('タイマーの時間を設定して開始します')}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 pt-2">
           <div className="flex flex-col gap-2">
@@ -223,7 +224,12 @@ export function Timer({ disabled }: TimerProps) {
                       : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
                   }`}
                 >
-                  <RadioGroupItem value={String(preset.seconds / 60)} id={`preset-${preset.seconds}`} className="sr-only" />
+                  <RadioGroupItem
+                    value={String(preset.seconds / 60)}
+                    id={`preset-${preset.seconds}`}
+                    className="sr-only"
+                    aria-label={preset.label}
+                  />
                   {preset.label}
                 </Label>
               ))}
@@ -253,6 +259,7 @@ export function Timer({ disabled }: TimerProps) {
               checked={hideOthersCards}
               onCheckedChange={(checked) => setHideOthersCards(checked === true)}
               disabled={isProcessing}
+              aria-label={t('タイマー中は他の人のカードを隠す')}
             />
             <label htmlFor="hide-others-cards" className="cursor-pointer text-sm">
               {t('タイマー中は他の人のカードを隠す')}

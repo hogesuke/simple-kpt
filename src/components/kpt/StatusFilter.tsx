@@ -39,6 +39,7 @@ export function StatusFilter({ selectedStatuses, onStatusChange }: StatusFilterP
         return (
           <label
             key={status}
+            htmlFor={`status-filter-${status}`}
             className={cn(
               'flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1 text-sm transition-colors',
               isSelected
@@ -47,8 +48,10 @@ export function StatusFilter({ selectedStatuses, onStatusChange }: StatusFilterP
             )}
           >
             <Checkbox
+              id={`status-filter-${status}`}
               checked={isSelected}
               onCheckedChange={(checked) => toggleStatus(status, checked === true)}
+              aria-label={getStatusLabels()[status]}
               className="data-[state=unchecked]:border-muted-foreground/50 data-[state=checked]:text-foreground dark:data-[state=checked]:bg-primary dark:data-[state=checked]:text-primary-foreground dark:data-[state=checked]:border-primary h-4 w-4 rounded-full shadow-none data-[state=checked]:border-transparent data-[state=checked]:bg-white"
             />
             <span className="select-none">{getStatusLabels()[status]}</span>
