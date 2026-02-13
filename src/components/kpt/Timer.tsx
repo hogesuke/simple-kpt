@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/shadcn/button';
 import { Checkbox } from '@/components/shadcn/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
 import { Input } from '@/components/shadcn/input';
 import { Label } from '@/components/shadcn/label';
 import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
@@ -198,6 +198,7 @@ export function Timer({ disabled }: TimerProps) {
       <DialogContent className="sm:max-w-80">
         <DialogHeader>
           <DialogTitle>{t('タイマー設定')}</DialogTitle>
+          <DialogDescription className="sr-only">{t('タイマーの時間を設定して開始します')}</DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 pt-2">
           <div className="flex flex-col gap-2">
