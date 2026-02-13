@@ -234,6 +234,9 @@ export interface SortableKPTCardProps extends React.LiHTMLAttributes<HTMLLIEleme
   totalMemberCount?: number;
 }
 
+// タッチデバイス判定
+const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+
 export const SortableKPTCard = React.memo(function SortableKPTCard({
   item,
   isSelected,
@@ -280,17 +283,20 @@ export const SortableKPTCard = React.memo(function SortableKPTCard({
         className
       )}
       {...restAttributes}
-      {...listeners}
+      {...(isCoarsePointer ? {} : listeners)}
       onKeyDown={handleKeyDown}
       {...props}
     >
-      {/* タッチデバイスの場合に表示するドラッグハンドル */}
-      <div
-        className="text-muted-foreground absolute top-0 bottom-0 left-0 z-10 hidden w-6 touch-none items-center justify-center pointer-coarse:flex"
-        aria-hidden="true"
-      >
-        <GripVertical className="h-4 w-4" />
-      </div>
+      {/* タッチデバイスのみ表示するドラッグハンドル */}
+      {isCoarsePointer && (
+        <div
+          className="text-muted-foreground absolute top-0 bottom-0 left-0 z-10 flex w-6 touch-none items-center justify-center"
+          aria-hidden="true"
+          {...listeners}
+        >
+          <GripVertical className="h-4 w-4" />
+        </div>
+      )}
       <KPTCard
         item={item}
         isSelected={isSelected}
