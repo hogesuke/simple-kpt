@@ -168,7 +168,9 @@ export function Home(): ReactElement {
                     <TableHead>{t('ボード名')}</TableHead>
                     <TableHead className="w-24">{t('ロール')}</TableHead>
                     <TableHead className="w-28">{t('作成日')}</TableHead>
-                    <TableHead className="w-12"></TableHead>
+                    <TableHead className="w-12">
+                      <span className="sr-only">{t('操作')}</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -198,7 +200,9 @@ export function Home(): ReactElement {
                       <TableHead>{t('ボード名')}</TableHead>
                       <TableHead className="w-24">{t('ロール')}</TableHead>
                       <TableHead className="w-28">{t('作成日')}</TableHead>
-                      <TableHead className="w-12"></TableHead>
+                      <TableHead className="w-12">
+                        <span className="sr-only">{t('操作')}</span>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
