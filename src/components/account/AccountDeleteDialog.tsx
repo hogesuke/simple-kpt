@@ -265,11 +265,14 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
 
             {boardsToDelete.length > 0 && (
               <div className="bg-muted rounded-md p-3">
-                <p className="text-muted-foreground text-sm">
-                  {t('以下のボードは他にメンバーがいないため、削除されます:')}
-                  <br />
-                  {boardsToDelete.map((b) => b.name).join('、')}
-                </p>
+                <p className="text-muted-foreground text-sm">{t('以下のボードは他にメンバーがいないため、削除されます。')}</p>
+                <ul className="mt-2 list-disc space-y-1 pl-5">
+                  {boardsToDelete.map((b) => (
+                    <li key={b.id} className="text-foreground text-sm font-medium">
+                      {b.name}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
@@ -282,7 +285,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
 
             {boardsNeedingTransfer.length > 0 && (
               <div className="flex flex-col gap-2">
-                <p className="text-muted-foreground text-sm">{t('以下のボードは所有権が譲渡されます:')}</p>
+                <p className="text-muted-foreground text-sm">{t('以下のボードは所有権が譲渡されます。')}</p>
                 <div className="max-h-40 overflow-y-auto rounded-md border">
                   <Table>
                     <TableHeader>
@@ -338,7 +341,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
               </Button>
               {boardsNeedingTransfer.length > 0 && (
                 <Button variant="outline" onClick={handleGoBack}>
-                  {t('戻る')}
+                  {t('ui:戻る')}
                 </Button>
               )}
               <LoadingButton variant="destructive" onClick={handleDelete} loading={isProcessing}>
