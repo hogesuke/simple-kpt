@@ -119,6 +119,33 @@ export function KPTBoard(): ReactElement {
     }
   }, [searchParams, isLoading, items, selectedItem, setSelectedItem]);
 
+  // スリープ復帰時にRealtimeチャンネルを再接続する
+  useEffect(() => {
+    if (!boardId) return;
+
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState !== 'visible') return;
+
+      const { itemEventsChannel, timerEventsChannel } = useBoardStore.getState();
+      const isItemDisconnected = itemEventsChannel && itemEventsChannel.state !== 'joined';
+      const isTimerDisconnected = timerEventsChannel && timerEventsChannel.state !== 'joined';
+
+      if (isItemDisconnected || isTimerDisconnected) {
+        console.info('[Realtime] スリープ復帰を検知しました。再接続します。');
+        try {
+          await loadBoard(boardId);
+        } catch {
+          // loadErrorはuseBoardStore内で設定されるため、ここでは何もしない
+        }
+        subscribeToItemEvents(boardId);
+        subscribeToTimerEvents(boardId);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [boardId, loadBoard, subscribeToItemEvents, subscribeToTimerEvents]);
+
   const handleItemsChange = useCallback((newItems: KptItem[]) => {
     useBoardStore.setState({ items: newItems });
   }, []);
