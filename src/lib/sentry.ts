@@ -1,5 +1,14 @@
 import * as Sentry from '@sentry/react';
 
+const UUID_REGEX = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+
+/**
+ * URLパス中のUUIDを[Filtered]に置換する
+ */
+export function filterUUIDsFromUrl(url: string): string {
+  return url.replace(UUID_REGEX, '[Filtered]');
+}
+
 /**
  * Sentryの初期化処理
  */
@@ -36,7 +45,7 @@ export function initSentry(): void {
         try {
           const url = new URL(event.request.url);
           url.search = '';
-          event.request.url = url.toString();
+          event.request.url = filterUUIDsFromUrl(url.toString());
         } catch {
           // NOOP
         }
@@ -62,7 +71,7 @@ export function initSentry(): void {
           try {
             const url = new URL(breadcrumb.data.url);
             url.search = '';
-            breadcrumb.data.url = url.toString();
+            breadcrumb.data.url = filterUUIDsFromUrl(url.toString());
           } catch {
             // NOOP
           }
