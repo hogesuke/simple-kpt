@@ -123,15 +123,13 @@ export function KPTBoard(): ReactElement {
   useEffect(() => {
     if (!boardId) return;
 
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState !== 'visible') return;
-
+    const handleFocus = async () => {
       const { itemEventsChannel, timerEventsChannel } = useBoardStore.getState();
       const isItemDisconnected = itemEventsChannel && itemEventsChannel.state !== 'joined';
       const isTimerDisconnected = timerEventsChannel && timerEventsChannel.state !== 'joined';
 
       if (isItemDisconnected || isTimerDisconnected) {
-        console.info('[Realtime] スリープ復帰を検知しました。再接続します。');
+        console.info('[Realtime] チャンネル切断を検知しました。再接続します。');
         try {
           await loadBoard(boardId);
         } catch {
@@ -142,8 +140,8 @@ export function KPTBoard(): ReactElement {
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, [boardId, loadBoard, subscribeToItemEvents, subscribeToTimerEvents]);
 
   const handleItemsChange = useCallback((newItems: KptItem[]) => {
