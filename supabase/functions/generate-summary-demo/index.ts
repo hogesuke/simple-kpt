@@ -2,6 +2,7 @@ import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
 import Anthropic from 'npm:@anthropic-ai/sdk';
 
+import { ITEM_TEXT_MAX_LENGTH, MAX_ITEMS_PER_BOARD } from '../../../shared/constants.ts';
 import { generateErrorResponse, generateJsonResponse, getLanguage, handleCorsPreflightIfNeeded } from '../_shared/helpers.ts';
 import { getSummarySystemPrompt } from '../_shared/prompts.ts';
 
@@ -46,6 +47,14 @@ Deno.serve(async (req) => {
       `サマリーを生成するには${MIN_ITEMS_REQUIRED}個以上のアイテムが必要です。アイテムを追加してください。`,
       400
     );
+  }
+
+  if (items.length > MAX_ITEMS_PER_BOARD) {
+    return generateErrorResponse(`アイテムは${MAX_ITEMS_PER_BOARD}個以内にしてください`, 400);
+  }
+
+  if (items.some((i) => typeof i.text !== 'string' || i.text.length > ITEM_TEXT_MAX_LENGTH)) {
+    return generateErrorResponse(`各アイテムのテキストは${ITEM_TEXT_MAX_LENGTH}文字以内にしてください`, 400);
   }
 
   // KPTアイテムをフォーマット
