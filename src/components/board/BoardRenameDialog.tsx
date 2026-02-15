@@ -44,7 +44,7 @@ export function BoardRenameDialog({ boardName, isUpdating, onRename, isOpen, onO
     handleSubmit,
     control,
     reset,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<BoardNameFormData>({
     resolver: zodResolverWithI18n(boardNameSchema),
     defaultValues: { name: boardName },
@@ -93,9 +93,16 @@ export function BoardRenameDialog({ boardName, isUpdating, onRename, isOpen, onO
               // NOTE: 本来はautoFocusの使用は極力避けるべきだが、モーダルを開いた際の利便性を重視し例外として許容する
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? 'new-boardname-error' : undefined}
               {...register('name')}
               disabled={isUpdating}
             />
+            {errors.name?.message && (
+              <span id="new-boardname-error" role="alert" className="sr-only">
+                {errors.name.message}
+              </span>
+            )}
           </div>
 
           <DialogFooter>

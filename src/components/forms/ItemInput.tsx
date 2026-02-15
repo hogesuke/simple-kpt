@@ -24,7 +24,7 @@ export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemI
     handleSubmit,
     control,
     reset,
-    formState: { isValid },
+    formState: { isValid, errors },
   } = useForm<ItemTextFormData>({
     resolver: zodResolverWithI18n(itemTextSchema),
     defaultValues: { text: '' },
@@ -69,10 +69,17 @@ export function ItemInput({ onSubmitText, className, disabled, ...props }: ItemI
         {...registerProps}
         onKeyDown={handleKeyDown}
         disabled={disabled}
+        aria-invalid={!!errors.text}
+        aria-describedby={errors.text ? 'item-text-error' : undefined}
         aria-label={props.placeholder}
         className={cn('text-md px-4 py-5 pr-12', className)}
         {...props}
       />
+      {errors.text?.message && (
+        <span id="item-text-error" role="alert" className="sr-only">
+          {errors.text.message}
+        </span>
+      )}
       <button
         type="button"
         onClick={handleButtonClick}

@@ -42,7 +42,7 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
     handleSubmit,
     control,
     reset,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<BoardNameFormData>({
     resolver: zodResolverWithI18n(boardNameSchema),
     defaultValues: { name: '' },
@@ -98,9 +98,16 @@ export function BoardCreateDialog({ onBoardCreated, trigger }: BoardCreateDialog
               // NOTE: 本来はautoFocusの使用は極力避けるべきだが、モーダルを開いた際の利便性を重視し例外として許容する
               // eslint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
+              aria-invalid={!!errors.name}
+              aria-describedby={errors.name ? 'boardname-error' : undefined}
               {...register('name')}
               placeholder={t('アルファチーム振り返り')}
             />
+            {errors.name?.message && (
+              <span id="boardname-error" role="alert" className="sr-only">
+                {errors.name.message}
+              </span>
+            )}
           </div>
 
           <DialogFooter>

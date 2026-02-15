@@ -99,6 +99,8 @@ export function AccountSettings(): ReactElement {
                       type="text"
                       autoComplete="off"
                       {...register('nickname')}
+                      aria-invalid={!!errors.nickname}
+                      aria-describedby={errors.nickname ? 'nickname-error' : undefined}
                       className="border-input bg-background placeholder-muted-foreground block w-full appearance-none rounded-md border px-3 py-2 shadow-sm sm:text-sm"
                       placeholder={t('ふりかえり太郎')}
                       disabled={isSubmitting}
@@ -159,6 +161,8 @@ export function AccountSettings(): ReactElement {
                     type="text"
                     autoComplete="off"
                     {...register('nickname')}
+                    aria-invalid={!!errors.nickname}
+                    aria-describedby={errors.nickname ? 'nickname-error' : undefined}
                     className="border-input bg-background placeholder-muted-foreground mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm"
                     placeholder={t('ふりかえり太郎')}
                     disabled={isSubmitting}

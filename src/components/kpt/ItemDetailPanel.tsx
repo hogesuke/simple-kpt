@@ -243,6 +243,8 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       ref={textareaRef}
                       value={editingText}
                       onChange={(e) => setEditingText(e.target.value)}
+                      aria-invalid={editingText.length > ITEM_TEXT_MAX_LENGTH}
+                      aria-describedby={editingText.length > ITEM_TEXT_MAX_LENGTH ? 'edit-text-error' : undefined}
                       onKeyDown={(e) => {
                         if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
                           e.preventDefault();
@@ -261,6 +263,11 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       disabled={isSaving}
                       placeholder={t('テキストを入力してください')}
                     />
+                    {editingText.length > ITEM_TEXT_MAX_LENGTH && (
+                      <span id="edit-text-error" role="alert" className="sr-only">
+                        {t('validation:{{max}}文字以内で入力してください', { max: ITEM_TEXT_MAX_LENGTH })}
+                      </span>
+                    )}
                   </div>
                   <div className="flex justify-end gap-2">
                     <button
