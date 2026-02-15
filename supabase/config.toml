@@ -479,6 +479,11 @@ entrypoint = "./functions/get-board-members/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/get-board-members/*.html" ]
 
+[functions.join-board]
+enabled = true
+verify_jwt = true
+entrypoint = "./functions/join-board/index.ts"
+
 [functions.get-try-items]
 enabled = true
 verify_jwt = true
