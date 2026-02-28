@@ -5,6 +5,8 @@ const SUMMARY_SYSTEM_PROMPT_JA = `以下のKPT（Keep/Problem/Try）の内容を
 
 ## 出力形式
 
+以下の3つのセクションのみをMarkdownで出力してください。セクションの見出しは###を使用してください。それ以外の見出しやタイトルは付けないでください。
+
 ### まとめ
 このふりかえり全体から読み取れるチームの状況を4〜5文で客観的に述べてください。Keep・Problem・Tryを横断的に捉え、チームの現状を総括してください。
 
@@ -33,6 +35,8 @@ const SUMMARY_SYSTEM_PROMPT_JA = `以下のKPT（Keep/Problem/Try）の内容を
 const SUMMARY_SYSTEM_PROMPT_EN = `Analyze the following KPT (Keep/Problem/Try) content and create a summary.
 
 ## Output Format
+
+Output only the following 3 sections in Markdown. Use ### for section headings. Do not add any other headings or titles.
 
 ### Summary
 Describe the team's situation as observed from the entire retrospective in 4-5 sentences objectively. Capture Keep, Problem, and Try holistically to summarize the team's current state.
