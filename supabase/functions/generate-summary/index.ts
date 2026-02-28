@@ -131,7 +131,7 @@ ${formatItems(tryItems)}`;
     const anthropic = new Anthropic({ apiKey: anthropicApiKey });
 
     const message = await anthropic.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 1024,
       system: getSummarySystemPrompt(language),
       messages: [{ role: 'user', content: userMessage }],
