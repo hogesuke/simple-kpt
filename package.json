@@ -54,7 +54,7 @@
     "immer": "^11.1.4",
     "lucide-react": "^0.563.0",
     "react": "^19.2.4",
-    "react-day-picker": "^9.13.1",
+    "react-day-picker": "^9.13.2",
     "react-dom": "^19.2.4",
     "react-hook-form": "^7.71.1",
     "react-i18next": "^16.5.4",
