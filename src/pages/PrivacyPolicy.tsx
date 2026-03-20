@@ -90,13 +90,31 @@ function PrivacyJa(): ReactElement {
           <li>
             <strong>Sentry</strong>: エラー監視サービスとして利用。個人を特定できる情報は収集しません。
           </li>
+          <li>
+            <strong>Google Analytics</strong>:
+            アクセス解析サービスとして利用。ユーザーのサービス利用状況を匿名で収集し、サービスの改善に活用します。 Google
+            Analyticsは、データ収集のためにCookieを使用します。詳細はGoogleの
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              プライバシーポリシー
+            </a>
+            をご確認ください。
+          </li>
         </ul>
       </section>
 
       <section className="mb-8">
         <h2 className="mb-4 text-xl font-semibold">第5条（Cookieの使用）</h2>
-        <p className="text-muted-foreground leading-relaxed">
-          本サービスは、ユーザー認証およびサービス提供のためにCookieを使用します。
+        <p className="text-muted-foreground mb-4 leading-relaxed">本サービスは、以下の目的でCookieを使用します。</p>
+        <ul className="text-muted-foreground list-disc space-y-2 pl-6 leading-relaxed">
+          <li>ユーザー認証およびサービス提供</li>
+          <li>Google Analyticsによるアクセス解析</li>
+        </ul>
+        <p className="text-muted-foreground mt-4 leading-relaxed">
           ユーザーはブラウザの設定によりCookieを無効にすることができますが、その場合、本サービスの一部機能が利用できなくなる可能性があります。
         </p>
       </section>
@@ -226,14 +244,32 @@ function PrivacyEn(): ReactElement {
             errors occur (error messages, stack traces, browser information, etc.). We do not collect personally identifiable information
             such as email addresses or IP addresses.
           </li>
+          <li>
+            <strong>Google Analytics</strong>: Used for web analytics services. We anonymously collect information about how users interact
+            with the Service (page views, devices used, geographic region, etc.) to improve the Service. Google Analytics uses cookies for
+            data collection. For details, please refer to Google&apos;s{' '}
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              Privacy Policy
+            </a>
+            .
+          </li>
         </ul>
       </section>
 
       <section className="mb-8">
         <h2 className="mb-4 text-xl font-semibold">Article 5 (Use of Cookies)</h2>
-        <p className="text-muted-foreground leading-relaxed">
-          The Service uses cookies for user authentication and service provision. Users can disable cookies through browser settings, but
-          doing so may limit access to some features of the Service.
+        <p className="text-muted-foreground mb-4 leading-relaxed">The Service uses cookies for the following purposes:</p>
+        <ul className="text-muted-foreground list-disc space-y-2 pl-6 leading-relaxed">
+          <li>User authentication and service provision</li>
+          <li>Web analytics via Google Analytics</li>
+        </ul>
+        <p className="text-muted-foreground mt-4 leading-relaxed">
+          Users can disable cookies through browser settings, but doing so may limit access to some features of the Service.
         </p>
       </section>
 
@@ -293,7 +329,7 @@ export function Privacy(): ReactElement {
         <h1 className="mb-8 text-3xl font-semibold">{t('プライバシーポリシー')}</h1>
 
         <div className="prose prose-gray max-w-none">
-          <p className="text-muted-foreground mb-8">{t('最終更新日: {{date}}', { date: '2026-01-17' })}</p>
+          <p className="text-muted-foreground mb-8">{t('最終更新日: {{date}}', { date: '2026-03-20' })}</p>
           {isJapanese ? <PrivacyJa /> : <PrivacyEn />}
         </div>
       </div>
