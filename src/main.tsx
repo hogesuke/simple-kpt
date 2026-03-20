@@ -6,12 +6,14 @@ import { RouterProvider } from 'react-router';
 import { Toaster } from '@/components/shadcn/sonner';
 import { TooltipProvider } from '@/components/shadcn/tooltip';
 import i18n from '@/i18n';
+import { initGA } from '@/lib/gtag';
 import { initSentry } from '@/lib/sentry';
 import { router } from '@/router';
 import { initializeAuth } from '@/stores/useAuthStore';
 import './index.css';
 
 initSentry();
+initGA();
 
 function App() {
   useEffect(() => {

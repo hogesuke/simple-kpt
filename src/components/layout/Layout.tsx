@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router';
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { Header } from '@/components/layout/Header';
 import { HeaderPortalProvider } from '@/contexts/HeaderPortalContext';
+import { trackPageView } from '@/lib/gtag';
 
 export function Layout(): ReactElement {
   const location = useLocation();
@@ -12,6 +13,11 @@ export function Layout(): ReactElement {
   // (ScrollRestorationはインラインスクリプトを注入する仕様により、CSP違反となるため使用しない)
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  // GA4ページビュートラッキング
+  useEffect(() => {
+    trackPageView(location.pathname);
   }, [location.pathname]);
 
   return (
