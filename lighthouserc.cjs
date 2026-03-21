@@ -11,6 +11,7 @@ module.exports = {
       numberOfRuns: 1,
       settings: {
         preset: 'desktop',
+        blockedUrlPatterns: ['*googletagmanager.com*'],
       },
     },
     assert: {
