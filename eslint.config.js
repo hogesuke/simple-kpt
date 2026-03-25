@@ -1,5 +1,6 @@
 import storybook from 'eslint-plugin-storybook';
 
+import { fixupPluginRules } from '@eslint/compat';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import react from 'eslint-plugin-react';
@@ -29,9 +30,9 @@ export default tseslint.config(
   {
     files: ['**/*.{ts,tsx}'],
     plugins: {
-      react,
-      'react-hooks': reactHooks,
-      'jsx-a11y': jsxA11y,
+      react: fixupPluginRules(react),
+      'react-hooks': fixupPluginRules(reactHooks),
+      'jsx-a11y': fixupPluginRules(jsxA11y),
       'import-x': importX,
     },
     languageOptions: {
