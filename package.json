@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.0.1",
-    "@eslint/compat": "^2.0.3",
+    "@eslint/compat": "^2.0.4",
     "@eslint/js": "^10.0.1",
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.58.2",
@@ -94,7 +94,7 @@
     "eslint-plugin-jsx-a11y": "^6",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-storybook": "^10.2.8",
+    "eslint-plugin-storybook": "^10.3.3",
     "globals": "^17.4.0",
     "husky": "^9.1.7",
     "jsdom": "^28.1.0",
