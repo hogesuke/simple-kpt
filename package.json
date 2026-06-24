@@ -103,7 +103,7 @@
     "postcss": "^8.5.10",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.1",
-    "rollup-plugin-license": "^3.7.0",
+    "rollup-plugin-license": "^3.7.1",
     "storybook": "^10.3.5",
     "tailwindcss": "^4.2.2",
     "tailwindcss-animate": "^1.0.7",
