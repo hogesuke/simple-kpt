@@ -167,17 +167,19 @@ const ChartTooltipContent = React.forwardRef<HTMLDivElement, ChartTooltipContent
               const itemConfig = getPayloadConfigFromPayload(config, item, key);
               const itemPayload = item.payload as Record<string, unknown> | undefined;
               const indicatorColor = color || itemPayload?.fill || item.color;
+              // recharts 3.9でvalueが配列も取りうる型になったため、単一値のときだけformatterに渡す
+              const singleValue = typeof item.value === 'string' || typeof item.value === 'number' ? item.value : undefined;
 
               return (
                 <div
-                  key={item.dataKey}
+                  key={key}
                   className={cn(
                     '[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5',
                     indicator === 'dot' && 'items-center'
                   )}
                 >
-                  {formatter && item?.value !== undefined && item.name ? (
-                    formatter(item.value, item.name, item, index, item.payload)
+                  {formatter && singleValue !== undefined && item.name ? (
+                    formatter(singleValue, item.name, item, index, item.payload)
                   ) : (
                     <>
                       {itemConfig?.icon ? (
