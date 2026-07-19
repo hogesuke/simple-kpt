@@ -384,7 +384,8 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         selected={item.dueDate ? new Date(item.dueDate) : undefined}
                         onSelect={handleDueDateChange}
                         locale={dateLocale}
-                        initialFocus
+                        // eslint-disable-next-line jsx-a11y/no-autofocus -- ポップオーバーを開いた直後にカレンダーへフォーカスを移すため（react-day-picker v9のinitialFocus相当）
+                        autoFocus
                       />
                       {item.dueDate && (
                         <div className="border-t p-2">
