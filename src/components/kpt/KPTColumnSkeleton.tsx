@@ -19,7 +19,7 @@ function KPTCardSkeleton(): ReactElement {
  */
 export function KPTColumnSkeleton(): ReactElement {
   return (
-    <div className="flex min-h-96 flex-1 flex-col rounded-md border border-slate-200 bg-slate-50 p-4 lg:min-h-0 lg:min-w-0 lg:basis-0 dark:border-neutral-700 dark:bg-neutral-800">
+    <div className="border-border-subtle bg-card rounded-column shadow-card flex min-h-96 flex-1 flex-col border p-5 lg:min-h-0 lg:min-w-0 lg:basis-0">
       {/* ヘッダー */}
       <div className="flex flex-none items-center gap-2 p-2">
         <Skeleton className="h-2 w-2 rounded-full" />

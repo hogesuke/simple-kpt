@@ -136,16 +136,15 @@ export function Home(): ReactElement {
         <h1 className="sr-only">{t('ダッシュボード')}</h1>
         <StatsSummary />
         <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <div className="mb-6 flex items-center justify-between">
+          {/* タブ行の下端に区切り線を敷き、アクティブタブの下線と揃える */}
+          <div className="border-border mb-5 flex items-end justify-between border-b">
             <TabsList>
-              <TabsTrigger value="boards" className="w-28">
-                {t('ボードリスト')}
-              </TabsTrigger>
-              <TabsTrigger value="try" className="w-28">
-                {t('Tryリスト')}
-              </TabsTrigger>
+              <TabsTrigger value="boards">{t('ボードリスト')}</TabsTrigger>
+              <TabsTrigger value="try">{t('Tryリスト')}</TabsTrigger>
             </TabsList>
-            <BoardCreateDialog onBoardCreated={handleBoardCreated} />
+            <div className="mb-2">
+              <BoardCreateDialog onBoardCreated={handleBoardCreated} />
+            </div>
           </div>
 
           <TabsContent value="boards">
@@ -166,9 +165,9 @@ export function Home(): ReactElement {
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('ボード名')}</TableHead>
-                    <TableHead className="w-24">{t('ロール')}</TableHead>
-                    <TableHead className="w-28">{t('作成日')}</TableHead>
-                    <TableHead className="w-12">
+                    <TableHead className="w-[130px]">{t('ロール')}</TableHead>
+                    <TableHead className="w-[130px]">{t('作成日')}</TableHead>
+                    <TableHead className="w-[68px]">
                       <span className="sr-only">{t('操作')}</span>
                     </TableHead>
                   </TableRow>
@@ -198,9 +197,9 @@ export function Home(): ReactElement {
                   <TableHeader>
                     <TableRow>
                       <TableHead>{t('ボード名')}</TableHead>
-                      <TableHead className="w-24">{t('ロール')}</TableHead>
-                      <TableHead className="w-28">{t('作成日')}</TableHead>
-                      <TableHead className="w-12">
+                      <TableHead className="w-[130px]">{t('ロール')}</TableHead>
+                      <TableHead className="w-[130px]">{t('作成日')}</TableHead>
+                      <TableHead className="w-[68px]">
                         <span className="sr-only">{t('操作')}</span>
                       </TableHead>
                     </TableRow>
@@ -228,7 +227,15 @@ export function Home(): ReactElement {
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <StatusFilter selectedStatuses={filterStatuses} onStatusChange={handleStatusChange} />
               {filterAssignee && (
-                <FilterChip icon={<User className="h-3 w-3" />} label={filterAssignee.nickname} onRemove={handleClearAssigneeFilter} />
+                <>
+                  {/* ステータスフィルターと担当者フィルターの区切り */}
+                  <span className="bg-input mx-0.5 h-[22px] w-px" aria-hidden="true" />
+                  <FilterChip
+                    icon={<User className="h-3.5 w-3.5" />}
+                    label={filterAssignee.nickname}
+                    onRemove={handleClearAssigneeFilter}
+                  />
+                </>
               )}
             </div>
 

@@ -75,20 +75,20 @@ export function AccountSettings(): ReactElement {
     return (
       <>
         <title>{t('アカウント設定 - Simple KPT')}</title>
-        <div className="bg-muted flex h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-          <div className="w-full max-w-md space-y-8">
-            <div>
-              <h2 className="text-center text-2xl font-bold tracking-tight">{t('ニックネームの設定')}</h2>
-              <p className="text-muted-foreground mt-2 text-center text-sm">{t('アプリで表示される名前を設定してください')}</p>
+        <div className="flex h-full items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+          <div className="w-full max-w-[528px]">
+            <div className="mb-7 text-center">
+              <h2 className="text-2xl font-black tracking-tight">{t('ニックネームの設定')}</h2>
+              <p className="text-muted-foreground mt-2 text-sm">{t('アプリで表示される名前を設定してください')}</p>
             </div>
 
-            <div className="bg-card rounded-lg px-8 py-8 shadow">
+            <div className="border-border-subtle bg-card rounded-column shadow-card border px-[30px] pt-[30px] pb-8">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {errors.root && <FormErrorAlert>{errors.root.message}</FormErrorAlert>}
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <label htmlFor="nickname" className="block text-sm font-medium">
+                    <label htmlFor="nickname" className="block text-[13.5px] font-bold">
                       {t('board:ニックネーム')}
                     </label>
                     <CharacterCounter current={nickname.length} max={NICKNAME_MAX_LENGTH} />
@@ -101,7 +101,7 @@ export function AccountSettings(): ReactElement {
                       {...register('nickname')}
                       aria-invalid={!!errors.nickname}
                       aria-describedby={errors.nickname ? 'nickname-error' : undefined}
-                      className="border-input bg-background placeholder-muted-foreground block w-full appearance-none rounded-md border px-3 py-2 shadow-sm sm:text-sm"
+                      className="border-input bg-card placeholder:text-placeholder block w-full appearance-none rounded-lg border px-3 py-2 shadow-sm sm:text-sm"
                       placeholder={t('ふりかえり太郎')}
                       disabled={isSubmitting}
                     />
@@ -126,32 +126,32 @@ export function AccountSettings(): ReactElement {
   return (
     <>
       <title>{t('アカウント設定 - Simple KPT')}</title>
-      <div className="bg-muted min-h-full py-8">
-        <div className="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
+      <div className="min-h-full py-8">
+        <div className="mx-auto max-w-[648px] px-4 sm:px-6 lg:px-8">
           <button
             type="button"
             onClick={() => navigate(returnTo, { replace: true })}
-            className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1 rounded text-sm transition-colors"
+            className="text-muted-foreground hover:text-foreground mb-3.5 inline-flex items-center gap-1.5 rounded text-[13px] font-medium transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             {t('ui:戻る')}
           </button>
 
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold">{t('ui:アカウント設定')}</h1>
-            <p className="text-muted-foreground mt-1 text-sm">{t('プロフィールやアカウントの管理ができます')}</p>
+          <div className="mb-9">
+            <h1 className="mb-1.5 text-[26px] font-black">{t('ui:アカウント設定')}</h1>
+            <p className="text-muted-foreground text-sm">{t('プロフィールやアカウントの管理ができます')}</p>
           </div>
 
           {/* ニックネーム */}
-          <section className="mb-8">
-            <h2 className="mb-4 text-lg font-medium">{t('ニックネームの変更')}</h2>
-            <div className="border-border bg-card rounded-lg border p-6">
+          <section className="mb-10">
+            <h2 className="mb-3.5 text-base font-black">{t('ニックネームの変更')}</h2>
+            <div className="border-border-subtle bg-card rounded-column shadow-card border px-7 py-[26px]">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {errors.root && <FormErrorAlert>{errors.root.message}</FormErrorAlert>}
 
                 <div>
                   <div className="flex items-center justify-between">
-                    <label htmlFor="nickname" className="block text-sm font-medium">
+                    <label htmlFor="nickname" className="block text-[13.5px] font-bold">
                       {t('board:ニックネーム')}
                     </label>
                     <CharacterCounter current={nickname.length} max={NICKNAME_MAX_LENGTH} />
@@ -163,15 +163,15 @@ export function AccountSettings(): ReactElement {
                     {...register('nickname')}
                     aria-invalid={!!errors.nickname}
                     aria-describedby={errors.nickname ? 'nickname-error' : undefined}
-                    className="border-input bg-background placeholder-muted-foreground mt-1 block w-full rounded-md border px-3 py-2 text-sm shadow-sm"
+                    className="border-input bg-card placeholder:text-placeholder mt-2 block w-full rounded-[11px] border px-3.5 py-3 text-[14.5px] shadow-sm"
                     placeholder={t('ふりかえり太郎')}
                     disabled={isSubmitting}
                   />
                   <FieldError id="nickname-error" message={errors.nickname?.message} />
                 </div>
 
-                <div className="flex justify-end">
-                  <LoadingButton type="submit" loading={isSubmitting}>
+                <div className="flex justify-end pt-1.5">
+                  <LoadingButton type="submit" loading={isSubmitting} className="h-auto px-7 py-[11px]">
                     {t('ui:変更')}
                   </LoadingButton>
                 </div>
@@ -180,27 +180,28 @@ export function AccountSettings(): ReactElement {
           </section>
 
           {/* パスワード変更 */}
-          <section className="mb-8">
-            <h2 className="mb-4 text-lg font-medium">{t('パスワードの変更')}</h2>
-            <div className="border-border bg-card rounded-lg border p-6">
+          <section className="mb-10">
+            <h2 className="mb-3.5 text-base font-black">{t('パスワードの変更')}</h2>
+            <div className="border-border-subtle bg-card rounded-column shadow-card border px-7 py-[26px]">
               <ChangePasswordForm onSuccess={() => toast.success(t('パスワードを変更しました'))} />
             </div>
           </section>
 
           {/* アカウント削除 */}
           <section>
-            <h2 className="mb-4 text-lg font-medium">{t('アカウントの削除')}</h2>
-            <div className="border-destructive bg-card rounded-lg border p-6">
-              <p className="text-muted-foreground mb-4 text-sm">
+            <h2 className="mb-3.5 text-base font-black">{t('アカウントの削除')}</h2>
+            <div className="border-destructive-border bg-destructive-surface rounded-column flex flex-col gap-4 border px-7 py-6 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+              <p className="text-destructive-text text-[13.5px] leading-[1.75]">
                 {t('アカウントを削除すると、すべてのデータが完全に削除されます。')}
-                <br />
                 {t('この操作は取り消すことができません。')}
               </p>
-              <div className="flex justify-end">
-                <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
-                  {t('アカウントを削除')}
-                </Button>
-              </div>
+              <Button
+                variant="destructive"
+                onClick={() => setDeleteDialogOpen(true)}
+                className="h-auto shrink-0 px-6 py-3 shadow-[0_12px_24px_-12px_rgb(214_58_82_/_0.8)]"
+              >
+                {t('アカウントを削除')}
+              </Button>
             </div>
           </section>
         </div>

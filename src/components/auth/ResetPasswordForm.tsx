@@ -44,14 +44,14 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps): ReactE
       {error && <FormErrorAlert>{error}</FormErrorAlert>}
 
       <div className="space-y-1">
-        <label htmlFor="password" className="block text-sm font-medium">
+        <label htmlFor="password" className="block text-[13.5px] font-bold">
           {t('新しいパスワード')}
         </label>
         <PasswordInput id="password" placeholder={t('8文字以上で入力')} error={errors.password?.message} {...register('password')} />
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="confirmPassword" className="block text-sm font-medium">
+        <label htmlFor="confirmPassword" className="block text-[13.5px] font-bold">
           {t('新しいパスワード（確認）')}
         </label>
         <PasswordInput
@@ -62,7 +62,7 @@ export function ResetPasswordForm({ onSuccess }: ResetPasswordFormProps): ReactE
         />
       </div>
 
-      <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
+      <LoadingButton type="submit" className="h-12 w-full text-[15px]" loading={isSubmitting}>
         {t('パスワードを変更')}
       </LoadingButton>
     </form>

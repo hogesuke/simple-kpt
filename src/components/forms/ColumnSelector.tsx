@@ -29,7 +29,7 @@ export function ColumnSelector({ columns, selectedColumn, onColumnChange }: Colu
           className={`has-focus-visible:ring-ring cursor-pointer has-focus-visible:ring-2 has-focus-visible:ring-offset-1 ${columnButton({ selected: selectedColumn === col, column: col })}`}
         >
           <RadioGroupItem value={col} id={`column-${col}`} className="sr-only" />
-          <span className={columnDot({ column: col, selected: selectedColumn === col })} aria-hidden="true" />
+          <span className={columnDot({ column: col, size: 'sm' })} aria-hidden="true" />
           {columnLabels[col]}
         </Label>
       ))}

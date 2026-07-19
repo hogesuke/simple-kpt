@@ -29,9 +29,14 @@ export function LanguageSelector(): ReactElement {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" aria-label={i18n.t('ui:言語を選択')} className="h-9 gap-1 px-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={i18n.t('ui:言語を選択')}
+          className="hover:text-foreground h-auto gap-1.5 p-0 hover:bg-transparent"
+        >
           <Globe className="h-4 w-4" aria-hidden="true" />
-          <span className="text-xs font-medium uppercase">{currentLanguage}</span>
+          <span className="text-sm font-medium uppercase">{currentLanguage}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/shadcn/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { fetchBoardMembers } from '@/lib/kpt-api';
+import { rolePill } from '@/lib/role-styles';
 
 import type { BoardMember } from '@/types/kpt';
 
@@ -62,42 +63,50 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
           {t('参加メンバー')}
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[520px]">
         <DialogHeader>
-          <DialogTitle>{t('参加メンバー')}</DialogTitle>
-          <DialogDescription>{t('URLを共有して、ボードにメンバーを招待できます。')}</DialogDescription>
+          <DialogTitle className="flex items-center gap-2.5">
+            <Users className="text-primary h-5 w-5" />
+            {t('参加メンバー')}
+          </DialogTitle>
+          <DialogDescription className="text-[13.5px]">{t('URLを共有して、ボードにメンバーを招待できます。')}</DialogDescription>
         </DialogHeader>
 
         {/* 共有URL */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">{t('共有URL')}</p>
-          <div className="flex items-center gap-2">
+          <p className="text-[13.5px] font-bold">{t('共有URL')}</p>
+          <div className="flex items-center gap-2.5">
             <input
               readOnly
               aria-readonly="true"
               value={shareUrl}
-              className="bg-muted flex-1 rounded-md border px-3 py-2 text-sm"
+              className="bg-surface-muted border-primary/20 text-primary-dark flex-1 overflow-hidden rounded-[11px] border px-3.5 py-3 text-[13px] text-ellipsis whitespace-nowrap"
               onClick={(e) => e.currentTarget.select()}
               aria-label={t('共有URL（クリックで選択）')}
             />
-            <Button size="sm" variant="outline" onClick={handleCopyUrl} aria-label={copied ? t('コピー済み') : t('URLをコピー')}>
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+            <Button
+              variant="outline"
+              onClick={handleCopyUrl}
+              aria-label={copied ? t('コピー済み') : t('URLをコピー')}
+              className="h-auto w-[46px] shrink-0 self-stretch rounded-[11px] px-0"
+            >
+              {copied ? <Check className="h-[17px] w-[17px]" /> : <Copy className="h-[17px] w-[17px]" />}
             </Button>
           </div>
-          <p className="text-muted-foreground text-xs">{t('このURLを知っている人はボードに参加できます。')}</p>
+          <p className="text-muted-foreground-subtle text-[12.5px]">{t('このURLを知っている人はボードに参加できます。')}</p>
         </div>
 
         {/* メンバー一覧 */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">
-            {t('メンバーs')} {!isLoading && `(${members.length})`}
+          <p className="mb-2.5 text-sm font-black">
+            {t('メンバーs')} {!isLoading && <span className="text-muted-foreground-subtle font-bold">({members.length})</span>}
           </p>
           <div className="max-h-60 overflow-y-auto">
-            <Table>
+            <Table containerClassName="rounded-[12px] shadow-none">
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t('ニックネーム')}</TableHead>
-                  <TableHead className="w-24">{t('ロール')}</TableHead>
+                  <TableHead className="px-4 py-[11px]">{t('ニックネーム')}</TableHead>
+                  <TableHead className="w-[120px] px-4 py-[11px]">{t('ロール')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -105,11 +114,11 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
                   <>
                     {[...Array(3)].map((_, i) => (
                       <TableRow key={i}>
-                        <TableCell>
-                          <Skeleton className="h-4 w-24" />
+                        <TableCell className="px-4 py-3.5">
+                          <Skeleton className="h-5 w-32" />
                         </TableCell>
-                        <TableCell>
-                          <Skeleton className="h-4 w-16" />
+                        <TableCell className="px-4 py-3.5">
+                          <Skeleton className="h-6 w-16" />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -117,8 +126,10 @@ export function BoardMembersDialog({ boardId, disabled = false }: BoardMembersDi
                 ) : (
                   members.map((member) => (
                     <TableRow key={member.id}>
-                      <TableCell>{member.nickname ?? 'Unknown User'}</TableCell>
-                      <TableCell className="text-muted-foreground">{member.role === 'owner' ? t('オーナー') : t('メンバー')}</TableCell>
+                      <TableCell className="px-4 py-3.5 text-sm font-bold">{member.nickname ?? 'Unknown User'}</TableCell>
+                      <TableCell className="px-4 py-3.5">
+                        <span className={rolePill}>{member.role === 'owner' ? t('オーナー') : t('メンバー')}</span>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}

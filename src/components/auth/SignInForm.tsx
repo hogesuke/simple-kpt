@@ -43,7 +43,7 @@ export function SignInForm(): ReactElement {
       {error && <FormErrorAlert>{error}</FormErrorAlert>}
 
       <div className="space-y-1">
-        <label htmlFor="email" className="block text-sm font-medium">
+        <label htmlFor="email" className="block text-[13.5px] font-bold">
           {t('メールアドレス')}
         </label>
         <Input
@@ -58,27 +58,28 @@ export function SignInForm(): ReactElement {
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="password" className="block text-sm font-medium">
+        <label htmlFor="password" className="block text-[13.5px] font-bold">
           {t('パスワード')}
         </label>
         <PasswordInput id="password" placeholder={t('パスワードを入力')} error={errors.password?.message} {...register('password')} />
       </div>
 
-      <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
+      <LoadingButton type="submit" className="h-12 w-full text-[15px]" loading={isSubmitting}>
         {t('ログイン')}
       </LoadingButton>
 
-      <div className="-mt-2 text-center text-sm">
+      <div className="text-center text-sm">
         <Link to="/forgot-password" className="text-muted-foreground hover:text-foreground rounded underline">
           {t('パスワードをお忘れですか？')}
         </Link>
       </div>
 
-      <div className="pt-2">
-        <Button type="button" variant="outline" className="h-10 w-full" asChild>
-          <Link to="/signup">{t('新規登録')}</Link>
-        </Button>
-      </div>
+      {/* 新規登録への導線はログインと区切る */}
+      <hr className="border-border-subtle" />
+
+      <Button type="button" variant="outline" className="h-12 w-full text-[15px]" asChild>
+        <Link to="/signup">{t('新規登録')}</Link>
+      </Button>
     </form>
   );
 }

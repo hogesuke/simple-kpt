@@ -12,6 +12,20 @@
 
   --radius-xl: calc(var(--radius) + 4px);
 
+  /* カード / モーダルの角丸18px、KPTカラム・中カードの角丸16px */
+  --radius-card: var(--radius-card-value);
+
+  --radius-column: var(--radius-column-value);
+
+  /* デザイントークンの影（モーダル / カード / 青CTA / 小チップ） */
+  --shadow-modal: 0 30px 70px -28px rgb(30 50 90 / 0.5);
+
+  --shadow-card: 0 12px 30px -22px rgb(40 60 110 / 0.5);
+
+  --shadow-cta: 0 12px 24px -12px rgb(61 111 212 / 0.85);
+
+  --shadow-chip: 0 6px 16px -12px rgb(40 60 110 / 0.6);
+
   --color-background: var(--background);
 
   --color-foreground: var(--foreground);
@@ -77,144 +91,330 @@
   --color-sidebar-border: var(--sidebar-border);
 
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* 淡い青サーフェス（情報枠・選択状態の背景） */
+  --color-surface-subtle: var(--surface-subtle);
+
+  --color-surface-muted: var(--surface-muted);
+
+  /* 淡いボーダー（カード内の区切り線など） */
+  --color-border-subtle: var(--border-subtle);
+
+  /* ヘッダーのユーティリティ群を区切る縦線 */
+  --color-divider: var(--divider);
+
+  /* 補足テキスト・アイコンの色 */
+  --color-muted-foreground-subtle: var(--muted-foreground-subtle);
+
+  --color-icon: var(--icon);
+
+  /* 入力欄のプレースホルダ */
+  --color-placeholder: var(--placeholder);
+
+  /* KPT3色 */
+  --color-kpt-keep: var(--kpt-keep);
+
+  --color-kpt-problem: var(--kpt-problem);
+
+  --color-kpt-try: var(--kpt-try);
+
+  /* Tryのステータスバッジ */
+  --color-status-pending: var(--status-pending);
+
+  --color-status-pending-foreground: var(--status-pending-foreground);
+
+  --color-status-progress: var(--status-progress);
+
+  --color-status-progress-foreground: var(--status-progress-foreground);
+
+  --color-status-done: var(--status-done);
+
+  --color-status-done-foreground: var(--status-done-foreground);
+
+  /* 期日超過・全員投票などの注意喚起色 */
+  --color-alert: var(--alert);
+
+  --color-alert-surface: var(--alert-surface);
+
+  /* 破壊的操作（アカウント削除など）の淡い面とテキスト */
+  --color-destructive-surface: var(--destructive-surface);
+
+  --color-destructive-border: var(--destructive-border);
+
+  --color-destructive-text: var(--destructive-text);
+
+  /* KPT3色のテキスト用（コントラストAAを満たす濃度） */
+  --color-kpt-keep-strong: var(--kpt-keep-strong);
+
+  --color-kpt-problem-strong: var(--kpt-problem-strong);
+
+  --color-kpt-try-strong: var(--kpt-try-strong);
 }
 
 :root {
+  /* ボタン / 入力欄の角丸10px */
   --radius: 0.625rem;
 
-  --background: oklch(1 0 0);
+  --radius-card-value: 1.125rem;
 
-  --foreground: oklch(0.145 0 0);
+  --radius-column-value: 1rem;
 
+  /* ページ背景 #e9edf3 */
+  --background: oklch(0.9448 0.0092 258.3);
+
+  /* テキスト（主）#1b2536 */
+  --foreground: oklch(0.2635 0.0351 260.8);
+
+  /* カード / サーフェス背景 #ffffff */
   --card: oklch(1 0 0);
 
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.2635 0.0351 260.8);
 
   --popover: oklch(1 0 0);
 
-  --popover-foreground: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.2635 0.0351 260.8);
 
-  --primary: oklch(0.57 0.15 260);
+  /* プライマリ #3d6fd4 */
+  --primary: oklch(0.561 0.1648 262.5);
 
-  --primary-dark: oklch(0.4 0.12 260);
+  /* プライマリhover #2f5cbb */
+  --primary-dark: oklch(0.4974 0.1582 262.9);
 
   --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.97 0 0);
+  /* 淡い青サーフェス #f5f8fd */
+  --secondary: oklch(0.9783 0.0074 260.7);
 
-  --secondary-foreground: oklch(0.205 0 0);
+  --secondary-foreground: oklch(0.2635 0.0351 260.8);
 
-  --muted: oklch(0.97 0 0);
+  /* 淡い青サーフェス（選択状態）#eef3fc */
+  --muted: oklch(0.963 0.0132 262.4);
 
-  --muted-foreground: oklch(0.5 0 0);
+  /* テキスト（副）#5c667e */
+  --muted-foreground: oklch(0.5109 0.0401 267.2);
 
-  --accent: oklch(0.97 0 0);
+  --accent: oklch(0.963 0.0132 262.4);
 
-  --accent-foreground: oklch(0.205 0 0);
+  --accent-foreground: oklch(0.4974 0.1582 262.9);
 
-  --destructive: oklch(0.577 0.245 27.325);
+  /* 破壊的操作 #d63a52 */
+  --destructive: oklch(0.5879 0.1915 17);
 
   --destructive-foreground: oklch(0.985 0 0);
 
-  --border: oklch(0.922 0 0);
+  /* 淡い赤の面 #fef6f7 / 枠線 #f3c9d1 / 本文 #8a4351 */
+  --destructive-surface: oklch(0.9796 0.0087 8.5);
 
-  --input: oklch(0.922 0 0);
+  --destructive-border: oklch(0.8743 0.0486 5.3);
 
-  --ring: oklch(0.58 0.15 260);
+  --destructive-text: oklch(0.4767 0.0975 9);
 
-  --chart-1: oklch(0.646 0.222 41.116);
+  /* ボーダー（標準）#d3dcea */
+  --border: oklch(0.8918 0.0215 259.2);
 
-  --chart-2: oklch(0.6 0.118 184.704);
+  --input: oklch(0.8918 0.0215 259.2);
 
-  --chart-3: oklch(0.398 0.07 227.392);
+  --ring: oklch(0.561 0.1648 262.5);
+
+  --surface-subtle: oklch(0.9783 0.0074 260.7);
+
+  --surface-muted: oklch(0.963 0.0132 262.4);
+
+  /* ボーダー（淡）#e7ecf4 */
+  --border-subtle: oklch(0.9416 0.0121 259.8);
+
+  /* 区切り縦線 #c4ccda */
+  --divider: oklch(0.8433 0.0214 261.8);
+
+  /* テキスト（3次・補足）#6b7690 */
+  --muted-foreground-subtle: oklch(0.5663 0.0424 267);
+
+  /* アイコン #7c869a */
+  --icon: oklch(0.6188 0.0325 264.3);
+
+  /* プレースホルダ #8892a6 */
+  --placeholder: oklch(0.6586 0.0319 264.3);
+
+  /* KPT — Keep #17a06e */
+  --kpt-keep: oklch(0.6258 0.133 161.6);
+
+  /* KPT — Problem #eb6a80 */
+  --kpt-problem: oklch(0.6861 0.1602 11.7);
+
+  /* KPT — Try #3d6fd4 */
+  --kpt-try: oklch(0.561 0.1648 262.5);
+
+  /* ステータスバッジ 未対応 #fdf3d9 / #8a6a12 */
+  --status-pending: oklch(0.9652 0.0357 89.4);
+
+  --status-pending-foreground: oklch(0.5418 0.105 86.3);
+
+  /* 対応中 #e4eefb / #2f5cbb */
+  --status-progress: oklch(0.9454 0.0206 254.9);
+
+  --status-progress-foreground: oklch(0.4974 0.1582 262.9);
+
+  /* 完了 #e4f6ee / #0f7d54 */
+  --status-done: oklch(0.9576 0.0217 167.5);
+
+  --status-done-foreground: oklch(0.5226 0.1122 161);
+
+  /* 注意喚起 #c73f58。淡い面(#fdeef1)の上でもAAを満たすよう明度を少し下げている */
+  --alert: oklch(0.555 0.175 13.8);
+
+  --alert-surface: oklch(0.9618 0.0167 3.6);
+
+  /* テキストに使う際は白背景でコントラスト比4.5:1以上を確保するため濃度を上げる */
+  --kpt-keep-strong: oklch(0.52 0.115 161.6);
+
+  --kpt-problem-strong: oklch(0.53 0.175 15);
+
+  --kpt-try-strong: oklch(0.561 0.1648 262.5);
+
+  --chart-1: oklch(0.561 0.1648 262.5);
+
+  --chart-2: oklch(0.6258 0.133 161.6);
+
+  --chart-3: oklch(0.6861 0.1602 11.7);
 
   --chart-4: oklch(0.828 0.189 84.429);
 
   --chart-5: oklch(0.769 0.188 70.08);
 
-  --sidebar: oklch(0.985 0 0);
+  --sidebar: oklch(1 0 0);
 
-  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-foreground: oklch(0.2635 0.0351 260.8);
 
-  --sidebar-primary: oklch(0.57 0.15 260);
+  --sidebar-primary: oklch(0.561 0.1648 262.5);
 
   --sidebar-primary-foreground: oklch(1 0 0);
 
-  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent: oklch(0.963 0.0132 262.4);
 
-  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-accent-foreground: oklch(0.4974 0.1582 262.9);
 
-  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-border: oklch(0.9416 0.0121 259.8);
 
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-ring: oklch(0.561 0.1648 262.5);
 }
 
+/* ダークモードはライトのソフトブルーを反転させた青みのあるスレート基調 */
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: oklch(0.228 0.018 262);
 
-  --foreground: oklch(0.985 0 0);
+  --foreground: oklch(0.95 0.008 260);
 
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.276 0.02 262);
 
-  --card-foreground: oklch(0.985 0 0);
+  --card-foreground: oklch(0.95 0.008 260);
 
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.276 0.02 262);
 
-  --popover-foreground: oklch(0.985 0 0);
+  --popover-foreground: oklch(0.95 0.008 260);
 
-  --primary: oklch(0.922 0 0);
+  --primary: oklch(0.69 0.135 262);
 
-  --primary-dark: oklch(0.75 0.12 260);
+  --primary-dark: oklch(0.79 0.105 262);
 
-  --primary-foreground: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.2 0.02 262);
 
-  --secondary: oklch(0.269 0 0);
+  --secondary: oklch(0.32 0.019 262);
 
-  --secondary-foreground: oklch(0.985 0 0);
+  --secondary-foreground: oklch(0.95 0.008 260);
 
-  --muted: oklch(0.269 0 0);
+  --muted: oklch(0.32 0.019 262);
 
-  --muted-foreground: oklch(0.708 0 0);
+  --muted-foreground: oklch(0.74 0.022 264);
 
-  --accent: oklch(0.269 0 0);
+  --accent: oklch(0.345 0.03 262);
 
-  --accent-foreground: oklch(0.985 0 0);
+  --accent-foreground: oklch(0.9 0.05 262);
 
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: oklch(0.66 0.19 17);
 
   --destructive-foreground: oklch(0.985 0 0);
 
-  --border: oklch(1 0 0 / 10%);
+  --destructive-surface: oklch(0.3 0.06 12);
 
-  --input: oklch(1 0 0 / 15%);
+  --destructive-border: oklch(0.42 0.09 10);
 
-  --ring: oklch(0.556 0 0);
+  --destructive-text: oklch(0.85 0.07 10);
 
-  --chart-1: oklch(0.488 0.243 264.376);
+  --border: oklch(0.375 0.02 262);
 
-  --chart-2: oklch(0.696 0.17 162.48);
+  --input: oklch(0.375 0.02 262);
 
-  --chart-3: oklch(0.769 0.188 70.08);
+  --ring: oklch(0.69 0.135 262);
 
-  --chart-4: oklch(0.627 0.265 303.9);
+  --surface-subtle: oklch(0.3 0.02 262);
 
-  --chart-5: oklch(0.645 0.246 16.439);
+  --surface-muted: oklch(0.345 0.03 262);
 
-  --sidebar: oklch(0.205 0 0);
+  --border-subtle: oklch(0.325 0.017 262);
 
-  --sidebar-foreground: oklch(0.985 0 0);
+  --divider: oklch(0.42 0.02 262);
 
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --muted-foreground-subtle: oklch(0.69 0.023 264);
 
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --icon: oklch(0.68 0.025 264);
 
-  --sidebar-accent: oklch(0.269 0 0);
+  --placeholder: oklch(0.6 0.022 264);
 
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --kpt-keep: oklch(0.76 0.16 161);
 
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --kpt-problem: oklch(0.75 0.145 12);
 
-  --sidebar-ring: oklch(0.556 0 0);
+  --kpt-try: oklch(0.73 0.13 262);
+
+  /* ステータスバッジ（暗い面に明るい文字へ反転） */
+  --status-pending: oklch(0.42 0.06 86);
+
+  --status-pending-foreground: oklch(0.86 0.11 88);
+
+  --status-progress: oklch(0.38 0.07 262);
+
+  --status-progress-foreground: oklch(0.83 0.09 262);
+
+  --status-done: oklch(0.38 0.06 161);
+
+  --status-done-foreground: oklch(0.84 0.12 161);
+
+  --alert: oklch(0.75 0.15 13.8);
+
+  --alert-surface: oklch(0.36 0.07 13.8);
+
+  /* ダークでは通常のKPT3色でコントラストが足りるため同値 */
+  --kpt-keep-strong: oklch(0.76 0.16 161);
+
+  --kpt-problem-strong: oklch(0.75 0.145 12);
+
+  --kpt-try-strong: oklch(0.73 0.13 262);
+
+  --chart-1: oklch(0.69 0.135 262);
+
+  --chart-2: oklch(0.76 0.16 161);
+
+  --chart-3: oklch(0.75 0.145 12);
+
+  --chart-4: oklch(0.828 0.189 84.429);
+
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  --sidebar: oklch(0.276 0.02 262);
+
+  --sidebar-foreground: oklch(0.95 0.008 260);
+
+  --sidebar-primary: oklch(0.69 0.135 262);
+
+  --sidebar-primary-foreground: oklch(0.2 0.02 262);
+
+  --sidebar-accent: oklch(0.345 0.03 262);
+
+  --sidebar-accent-foreground: oklch(0.9 0.05 262);
+
+  --sidebar-border: oklch(0.325 0.017 262);
+
+  --sidebar-ring: oklch(0.69 0.135 262);
 }
 
 @layer base {
@@ -237,7 +437,16 @@
     @apply border-ring! outline-none;
   }
   body {
-    @apply bg-background text-foreground dark:bg-neutral-900;
+    @apply bg-background text-foreground;
+    /* ソフトブルーのグラデーションはbodyに敷く。
+       ビューポート高の要素に敷くと、スクロールで外に出た領域だけ地の色が見えてしまうため、
+       background-attachment: fixed で常に画面全体を覆う */
+    background-image: linear-gradient(to bottom, var(--surface-subtle), var(--surface-muted));
+    background-attachment: fixed;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--placeholder);
   }
   button {
     cursor: pointer;
@@ -288,10 +497,10 @@ a[href='#auth-forgot_password'] {
 @keyframes wave {
   0%,
   100% {
-    height: 1.5rem;
+    height: 25px;
   }
   50% {
-    height: 2.25rem;
+    height: 32px;
   }
 }
 

@@ -27,7 +27,7 @@ function AlertDialogContent({ className, ref, ...props }: React.ComponentProps<t
       <AlertDialogPrimitive.Content
         ref={ref}
         className={cn(
-          'bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg sm:rounded-lg',
+          'bg-card border-border-subtle shadow-modal rounded-card fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6',
           className
         )}
         {...props}
@@ -41,7 +41,7 @@ function AlertDialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDiv
 }
 
 function AlertDialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)} {...props} />;
+  return <div className={cn('flex flex-col-reverse gap-2.5 sm:flex-row sm:items-center sm:justify-end', className)} {...props} />;
 }
 
 function AlertDialogTitle({ className, ref, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {

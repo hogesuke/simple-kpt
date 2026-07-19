@@ -2,14 +2,17 @@ import { cva } from 'class-variance-authority';
 
 /**
  * ステータスバッジのスタイル定義
+ *
+ * デザイン仕様: 12px / weight 700 / padding 3px 10px / 角丸6px
  */
-export const statusBadge = cva('inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium', {
+export const statusBadge = cva('inline-flex items-center rounded-md px-2.5 py-[3px] text-xs font-bold', {
   variants: {
     status: {
-      pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
-      in_progress: 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300',
-      done: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
-      wont_fix: 'bg-slate-100 text-slate-700 dark:bg-slate-700/40 dark:text-slate-300',
+      pending: 'bg-status-pending text-status-pending-foreground',
+      in_progress: 'bg-status-progress text-status-progress-foreground',
+      done: 'bg-status-done text-status-done-foreground',
+      // デザインに指定がないため、無彩色のサーフェスで他と区別する
+      wont_fix: 'bg-secondary text-muted-foreground',
     },
   },
 });

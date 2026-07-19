@@ -1,9 +1,14 @@
 import { cn } from '@/lib/cn';
 
-function Table({ className, ref, ...props }: React.HTMLAttributes<HTMLTableElement> & { ref?: React.Ref<HTMLTableElement> }) {
+function Table({
+  className,
+  containerClassName,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLTableElement> & { ref?: React.Ref<HTMLTableElement>; containerClassName?: string }) {
   return (
-    <div className="relative w-full overflow-auto">
-      <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
+    <div className={cn('border-border-subtle bg-card shadow-card relative w-full overflow-auto rounded-[14px] border', containerClassName)}>
+      <table ref={ref} className={cn('w-full table-fixed caption-bottom text-sm', className)} {...props} />
     </div>
   );
 }
@@ -13,7 +18,7 @@ function TableHeader({
   ref,
   ...props
 }: React.HTMLAttributes<HTMLTableSectionElement> & { ref?: React.Ref<HTMLTableSectionElement> }) {
-  return <thead ref={ref} className={cn('[&_tr]:border-b', className)} {...props} />;
+  return <thead ref={ref} className={cn('bg-surface-subtle [&_tr]:border-border-subtle [&_tr]:border-b', className)} {...props} />;
 }
 
 function TableBody({
@@ -34,7 +39,11 @@ function TableFooter({
 
 function TableRow({ className, ref, ...props }: React.HTMLAttributes<HTMLTableRowElement> & { ref?: React.Ref<HTMLTableRowElement> }) {
   return (
-    <tr ref={ref} className={cn('hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors', className)} {...props} />
+    <tr
+      ref={ref}
+      className={cn('hover:bg-surface-subtle data-[state=selected]:bg-muted border-border-subtle border-b transition-colors', className)}
+      {...props}
+    />
   );
 }
 
@@ -49,7 +58,7 @@ function TableHead({
       ref={ref}
       scope={scope}
       className={cn(
-        'text-muted-foreground h-10 px-2 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5',
+        'text-muted-foreground px-5 py-3.5 text-left align-middle text-[12.5px] font-bold [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5',
         className
       )}
       {...props}
@@ -61,7 +70,7 @@ function TableCell({ className, ref, ...props }: React.TdHTMLAttributes<HTMLTabl
   return (
     <td
       ref={ref}
-      className={cn('p-2 align-middle [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5', className)}
+      className={cn('px-5 py-[18px] align-middle [&:has([role=checkbox])]:pr-0 *:[[role=checkbox]]:translate-y-0.5', className)}
       {...props}
     />
   );

@@ -1,10 +1,11 @@
-import { Bot, Check, Copy, Info } from 'lucide-react';
+import { Check, ChevronDown, Copy, Info, Sparkle } from 'lucide-react';
 import { ReactElement, useCallback, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/shadcn/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/shadcn/dialog';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
+import { cn } from '@/lib/cn';
 
 interface SummaryDialogProps {
   isOpen: boolean;
@@ -18,6 +19,9 @@ interface SummaryDialogProps {
 
 /**
  * AIサマリー表示ダイアログ
+ *
+ * 確認 → 生成中 → 結果 の3ステートを持つ。
+ * 生成中に出すアクションはキャンセルのみで、コピーは結果表示後にのみ表示する。
  */
 export function SummaryDialog({
   isOpen,
@@ -30,6 +34,7 @@ export function SummaryDialog({
 }: SummaryDialogProps): ReactElement {
   const { t } = useTranslation('board');
   const [copied, setCopied] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
   const { handleError } = useErrorHandler();
 
   const fullSummary = boardName ? `## ${boardName}\n\n${summary}` : summary;
@@ -45,88 +50,109 @@ export function SummaryDialog({
     }
   }, [handleError, fullSummary, t]);
 
+  const remainingLabel = (
+    <p className="text-muted-foreground-subtle mr-auto text-[12.5px]">{t('本日の残り利用回数: {{count}}回', { count: remainingCount })}</p>
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[80vh] max-w-2xl flex-col">
         <DialogHeader className="flex-none">
-          <DialogTitle className="flex items-center gap-2">
-            <Bot className="text-primary h-5 w-5" />
+          <DialogTitle className="flex items-center gap-2.5">
+            <Sparkle className="text-primary h-[22px] w-[22px]" />
             {t('AIサマリー')}
           </DialogTitle>
-          <DialogDescription>{t('AIによりKPTのサマリーを生成します。')}</DialogDescription>
+          <DialogDescription className="text-[13.5px]">{t('AIによりKPTのサマリーを生成します。')}</DialogDescription>
         </DialogHeader>
 
-        {!hasResult && !isLoading ? (
+        {!hasResult && !isLoading && (
           <>
-            <div className="flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-neutral-700 dark:bg-neutral-800">
-              <Info className="mt-0.5 h-5 w-5 shrink-0 text-neutral-600 dark:text-neutral-400" />
-              <div className="space-y-2 text-sm text-neutral-700 dark:text-neutral-300">
+            {/* 確認ステート: 1行目は常時表示し、詳細はトグルで開閉する */}
+            <div className="bg-surface-subtle border-border-subtle flex gap-3 rounded-[14px] border px-5 py-[18px]">
+              <Info className="text-primary mt-px h-5 w-5 shrink-0" />
+              <div className="text-muted-foreground flex-1 text-[13px] leading-[1.85]">
                 <p>{t('Anthropic社のClaude APIにボードのデータを送信し、サマリーを生成します。')}</p>
-                <p>
-                  <Trans
-                    i18nKey="Anthropic社の<consumerTerms>Consumer Terms</consumerTerms>および<commercialTerms>Commercial Terms</commercialTerms>によると、2025年1月時点においては、API経由で送信されたデータはAIの学習に使用されないと記載されています。"
-                    ns="board"
-                    components={{
-                      consumerTerms: (
-                        // eslint-disable-next-line jsx-a11y/anchor-has-content -- 翻訳テキストにリンクを挿入するため
-                        <a
-                          href="https://www.anthropic.com/legal/consumer-terms"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline dark:text-blue-400"
-                        />
-                      ),
-                      commercialTerms: (
-                        // eslint-disable-next-line jsx-a11y/anchor-has-content -- 翻訳テキストにリンクを挿入するため
-                        <a
-                          href="https://www.anthropic.com/legal/commercial-terms"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline dark:text-blue-400"
-                        />
-                      ),
-                    }}
+                <button
+                  type="button"
+                  onClick={() => setIsTermsOpen((open) => !open)}
+                  aria-expanded={isTermsOpen}
+                  aria-controls="summary-terms-detail"
+                  className="text-primary mt-2.5 inline-flex items-center gap-1.5 rounded text-[12.5px] font-bold"
+                >
+                  {t('データの取り扱いについて')}
+                  <ChevronDown
+                    className={cn('h-3.5 w-3.5 transition-transform duration-200', isTermsOpen && 'rotate-180')}
+                    aria-hidden="true"
                   />
-                </p>
-                <p>{t('上記をご確認のうえ、AIサマリー機能をご利用ください。')}</p>
+                </button>
+                {isTermsOpen && (
+                  <div id="summary-terms-detail" className="border-border-subtle mt-3 border-t pt-3">
+                    <p>
+                      <Trans
+                        i18nKey="Anthropic社の<commercialTerms>Commercial Terms</commercialTerms>によると、本機能提供時点においては、API経由で送信されたデータはAIの学習に使用されないと記載されています。"
+                        ns="board"
+                        components={{
+                          commercialTerms: (
+                            // eslint-disable-next-line jsx-a11y/anchor-has-content -- 翻訳テキストにリンクを挿入するため
+                            <a
+                              href="https://www.anthropic.com/legal/commercial-terms"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline"
+                            />
+                          ),
+                        }}
+                      />
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
             <DialogFooter className="flex-none">
-              <p className="text-muted-foreground mr-auto text-xs">{t('本日の残り利用回数: {{count}}回', { count: remainingCount })}</p>
-              <Button size="sm" variant="outline" onClick={() => onOpenChange(false)}>
+              {remainingLabel}
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
                 {t('ui:キャンセル')}
               </Button>
-              <Button size="sm" onClick={onGenerate}>
-                {t('生成する')}
+              <Button onClick={onGenerate}>{t('生成する')}</Button>
+            </DialogFooter>
+          </>
+        )}
+
+        {isLoading && (
+          <>
+            {/* 生成中ステート: アクションはキャンセルのみ */}
+            <div
+              className="bg-secondary border-border-subtle text-muted-foreground flex items-center justify-center gap-3 rounded-[14px] border px-5 py-10 text-sm font-medium"
+              role="status"
+            >
+              <span
+                className="border-border border-t-primary h-[18px] w-[18px] animate-spin rounded-full border-[2.5px]"
+                aria-hidden="true"
+              />
+              {t('サマリーを生成中...')}
+            </div>
+            <DialogFooter className="flex-none">
+              {remainingLabel}
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                {t('ui:キャンセル')}
               </Button>
             </DialogFooter>
           </>
-        ) : (
-          <>
-            <div className="border-input min-h-0 flex-1 overflow-y-auto rounded-md border p-4">
-              {isLoading ? (
-                <div className="flex items-center justify-center py-4">
-                  <div className="flex items-center gap-2">
-                    <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
-                    <span className="text-muted-foreground text-sm">{t('サマリーを生成中...')}</span>
-                  </div>
-                </div>
-              ) : (
-                <pre className="font-sans text-sm leading-relaxed whitespace-pre-wrap">{fullSummary}</pre>
-              )}
-            </div>
+        )}
 
-            <DialogFooter className="flex-none flex-col gap-2 sm:flex-row sm:justify-between">
-              <p className="text-muted-foreground text-xs">{t('本日の残り利用回数: {{count}}回', { count: remainingCount })}</p>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={handleCopy} disabled={isLoading || !summary}>
-                  {copied ? <Check className="mr-1 h-4 w-4" /> : <Copy className="mr-1 h-4 w-4" />}
-                  {t('ui:コピー')}
-                </Button>
-                <Button size="sm" onClick={() => onOpenChange(false)}>
-                  {t('ui:閉じる')}
-                </Button>
-              </div>
+        {hasResult && !isLoading && (
+          <>
+            {/* 結果ステート */}
+            <div className="border-border-subtle bg-secondary min-h-0 flex-1 overflow-y-auto rounded-[14px] border p-5">
+              <pre className="font-sans text-[13.5px] leading-relaxed whitespace-pre-wrap">{fullSummary}</pre>
+            </div>
+            <DialogFooter className="flex-none">
+              {remainingLabel}
+              <Button variant="outline" onClick={handleCopy}>
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {t('ui:コピー')}
+              </Button>
+              <Button onClick={() => onOpenChange(false)}>{t('ui:閉じる')}</Button>
             </DialogFooter>
           </>
         )}

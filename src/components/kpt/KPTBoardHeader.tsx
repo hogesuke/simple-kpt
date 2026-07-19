@@ -53,16 +53,20 @@ export function KPTBoardHeader(): ReactElement {
       <nav className="mb-2">
         <Link
           to="/boards"
-          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded text-sm transition-colors hover:underline"
+          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 rounded text-[13px] font-medium transition-colors hover:underline"
         >
           <ArrowLeft className="h-4 w-4" />
           {fromTry ? t('Tryリストに戻る') : t('ボードリストに戻る')}
         </Link>
       </nav>
       <div className="flex items-center justify-between gap-4">
-        {isLoading ? <Skeleton className="h-8 w-48" /> : <h1 className="text-2xl font-semibold">{boardName ?? 'KPT Board'}</h1>}
+        {isLoading ? (
+          <Skeleton className="h-8 w-48" />
+        ) : (
+          <h1 className="text-[28px] font-black tracking-tight">{boardName ?? 'KPT Board'}</h1>
+        )}
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {/* AIサマリー生成ボタン */}
           {!isLoading && boardName && <SummaryButton onClick={handleOpenSummaryDialog} />}
 

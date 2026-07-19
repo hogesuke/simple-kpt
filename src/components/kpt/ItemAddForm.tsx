@@ -17,9 +17,11 @@ interface ItemAddFormProps {
 export function ItemAddForm({ columns, selectedColumn, onColumnChange, onSubmit, disabled = false }: ItemAddFormProps): ReactElement {
   const { t } = useTranslation('board');
   return (
-    <div className="flex flex-col gap-3">
-      <ColumnSelector columns={columns} selectedColumn={selectedColumn} onColumnChange={onColumnChange} />
-      <ItemInput onSubmitText={onSubmit} disabled={disabled} placeholder={t('アイテムを追加')} />
-    </div>
+    <ItemInput
+      onSubmitText={onSubmit}
+      disabled={disabled}
+      placeholder={t('アイテムを追加')}
+      headerLeft={<ColumnSelector columns={columns} selectedColumn={selectedColumn} onColumnChange={onColumnChange} />}
+    />
   );
 }

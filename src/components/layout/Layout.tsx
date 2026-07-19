@@ -22,10 +22,11 @@ export function Layout(): ReactElement {
 
   return (
     <HeaderPortalProvider>
+      {/* 背景のグラデーションはbody側に敷いてある（ヘッダーはその上に透過して乗る） */}
       <div className="flex h-screen flex-col">
         <Header />
 
-        <main id="main-content" className="min-h-0 flex-1 dark:bg-neutral-900">
+        <main id="main-content" className="min-h-0 flex-1">
           <ErrorBoundary key={location.pathname}>
             <Outlet />
           </ErrorBoundary>

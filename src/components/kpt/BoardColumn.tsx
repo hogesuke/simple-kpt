@@ -10,8 +10,7 @@ import { SortableKPTCard } from './KPTCard';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
 
-const columnStyles =
-  'p-4 flex-1 min-h-96 lg:min-h-0 lg:basis-0 lg:min-w-0 rounded-md border border-slate-200 bg-slate-50 dark:border-neutral-700 dark:bg-neutral-800';
+const columnStyles = 'p-5 flex-1 min-h-96 lg:min-h-0 lg:basis-0 lg:min-w-0 rounded-column border border-border-subtle bg-card shadow-card';
 
 export interface BoardColumnProps extends React.HTMLAttributes<HTMLElement> {
   column: KptColumnType;
@@ -83,18 +82,19 @@ export function BoardColumn({
 
   return (
     <section ref={setNodeRef} className={cn(columnStyles, 'relative flex flex-col overflow-hidden', className)} {...props}>
-      <h2 className="flex flex-none items-center gap-2 p-2 text-lg font-semibold tracking-wider">
-        <span className={columnDot({ column, selected: true })} aria-hidden="true" />
+      <h2 className="flex flex-none items-center gap-2 pb-3 text-base font-black">
+        <span className={columnDot({ column })} aria-hidden="true" />
         {columnLabels[column]}
+        <span className="text-muted-foreground-subtle ml-auto text-xs font-bold tabular-nums">{items.length}</span>
       </h2>
 
       {/* 上部のグラデーションフェードインジケーター */}
       {canScrollUp && (
-        <div className="pointer-events-none absolute top-13 right-0 left-0 z-10 h-8 bg-linear-to-b from-slate-50 to-transparent dark:from-neutral-800" />
+        <div className="from-card pointer-events-none absolute top-12 right-0 left-0 z-10 h-8 bg-linear-to-b to-transparent" />
       )}
 
       <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
-        <ul ref={scrollContainerRef} className="flex flex-1 flex-col gap-2 overflow-y-auto px-2 py-1">
+        <ul ref={scrollContainerRef} className="flex flex-1 flex-col gap-3 overflow-y-auto py-1">
           {items.map((item) => (
             <SortableKPTCard
               key={item.id}
@@ -113,7 +113,7 @@ export function BoardColumn({
 
       {/* 下部のグラデーションフェードインジケーター */}
       {canScrollDown && (
-        <div className="pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-8 bg-linear-to-t from-slate-50 to-transparent dark:from-neutral-800" />
+        <div className="from-card pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-8 bg-linear-to-t to-transparent" />
       )}
     </section>
   );

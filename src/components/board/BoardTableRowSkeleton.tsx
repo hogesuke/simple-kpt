@@ -18,7 +18,7 @@ export function BoardTableRowSkeleton(): ReactElement {
       <TableCell>
         <Skeleton className="h-5 w-24" />
       </TableCell>
-      <TableCell className="w-12">
+      <TableCell className="w-[68px] pr-5 pl-0">
         <Skeleton className="h-8 w-8" />
       </TableCell>
     </TableRow>

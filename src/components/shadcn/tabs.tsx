@@ -5,9 +5,7 @@ import { cn } from '@/lib/cn';
 const Tabs = TabsPrimitive.Root;
 
 function TabsList({ className, ref, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
-  return (
-    <TabsPrimitive.List ref={ref} className={cn('border-border inline-flex h-10 items-center gap-1 border-b', className)} {...props} />
-  );
+  return <TabsPrimitive.List ref={ref} className={cn('inline-flex items-end gap-6', className)} {...props} />;
 }
 
 function TabsTrigger({ className, ref, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
@@ -15,7 +13,7 @@ function TabsTrigger({ className, ref, ...props }: React.ComponentProps<typeof T
     <TabsPrimitive.Trigger
       ref={ref}
       className={cn(
-        'text-muted-foreground hover:text-foreground data-[state=active]:border-primary data-[state=active]:text-primary relative -mb-0.5 inline-flex items-center justify-center border-b-2 border-transparent px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-50 data-[state=active]:font-bold',
+        'text-muted-foreground hover:text-foreground data-[state=active]:border-primary-dark data-[state=active]:text-primary-dark relative -mb-px inline-flex items-center justify-center border-b-[2.5px] border-transparent px-0.5 pb-3 text-[15px] font-semibold whitespace-nowrap transition-colors disabled:pointer-events-none disabled:opacity-50 data-[state=active]:font-black',
         className
       )}
       {...props}

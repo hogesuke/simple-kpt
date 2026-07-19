@@ -156,27 +156,27 @@ export function Timer({ disabled }: TimerProps) {
   const isRunning = remainingSeconds !== null && remainingSeconds > 0;
   const isProcessing = isStarting || isStopping;
 
-  // タイマー起動中
+  // タイマー起動中: 白地の丸型ピルに、通知音アイコン・残り時間・停止アイコンを並べる
   if (isRunning) {
     return (
-      <div className="border-primary flex h-9 w-fit items-center gap-2 rounded-full border pr-1 pl-1">
+      <div className="border-primary/25 bg-card shadow-chip flex h-9 w-fit items-center gap-3 rounded-lg border px-4">
         <button
           type="button"
           onClick={() => setIsSoundEnabled(!isSoundEnabled)}
-          className="hover:bg-muted-foreground/10 flex h-7 w-7 items-center justify-center rounded-full transition-colors"
+          className="text-primary hover:text-primary-dark flex items-center transition-colors"
           aria-label={isSoundEnabled ? t('通知音をオフにする') : t('通知音をオンにする')}
         >
-          {isSoundEnabled ? <Volume2 className="text-primary h-4 w-4" /> : <VolumeX className="text-muted-foreground h-4 w-4" />}
+          {isSoundEnabled ? <Volume2 className="size-[18px]" /> : <VolumeX className="text-icon size-[18px]" />}
         </button>
-        <span className="font-mono text-lg font-semibold tabular-nums">{formatTime(remainingSeconds)}</span>
+        <span className="text-xl font-black tabular-nums">{formatTime(remainingSeconds)}</span>
         <button
           type="button"
           onClick={handleStop}
           disabled={disabled || isProcessing}
-          className="bg-background hover:bg-muted-foreground/10 flex h-7 w-7 items-center justify-center rounded-full transition-colors disabled:opacity-50"
+          className="text-primary hover:text-primary-dark flex items-center transition-colors disabled:opacity-50"
           aria-label={t('タイマーを停止')}
         >
-          <Pause className="text-muted-foreground h-4 w-4" />
+          <Pause className="size-4 fill-current" />
         </button>
       </div>
     );
@@ -189,85 +189,91 @@ export function Timer({ disabled }: TimerProps) {
         <button
           type="button"
           disabled={disabled}
-          className="border-input hover:bg-muted flex h-9 items-center gap-2 rounded-full border px-3 text-sm transition-colors disabled:opacity-50"
+          className="border-input bg-card shadow-chip hover:bg-accent flex h-9 items-center gap-[7px] rounded-lg border px-4 text-[13.5px] font-bold transition-colors disabled:opacity-50"
         >
           <TimerIcon className="h-4 w-4" />
           {t('タイマー')}
         </button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-80">
+      <DialogContent className="sm:max-w-[440px]">
         <DialogHeader>
-          <DialogTitle>{t('タイマー設定')}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2.5 text-lg">
+            <TimerIcon className="text-primary h-5 w-5" />
+            {t('タイマー設定')}
+          </DialogTitle>
           <DialogDescription className="sr-only">{t('タイマーの時間を設定して開始します')}</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-col gap-4 pt-2">
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium">{t('時間')}</span>
+        <div className="flex flex-col pt-2">
+          <span className="mb-2.5 text-[13.5px] font-bold">{t('時間')}</span>
 
-            {/* プリセットボタン */}
-            <RadioGroup
+          {/* プリセットボタン */}
+          <RadioGroup
+            value={minutes}
+            onValueChange={setMinutes}
+            disabled={isProcessing}
+            className="bg-secondary border-border-subtle mb-4 flex gap-0.5 rounded-[11px] border p-[3px]"
+            aria-label={t('プリセット時間')}
+          >
+            {TIMER_PRESETS.map((preset) => (
+              <Label
+                key={preset.seconds}
+                htmlFor={`preset-${preset.seconds}`}
+                className={`has-[:focus-visible]:ring-ring flex-1 cursor-pointer rounded-lg py-[9px] text-center text-[13.5px] transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-offset-1 ${
+                  isProcessing ? 'opacity-50' : ''
+                } ${
+                  minutes === String(preset.seconds / 60)
+                    ? 'bg-card text-primary-dark font-bold shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground font-semibold'
+                }`}
+              >
+                <RadioGroupItem
+                  value={String(preset.seconds / 60)}
+                  id={`preset-${preset.seconds}`}
+                  className="sr-only"
+                  aria-label={preset.label}
+                />
+                {preset.label}
+              </Label>
+            ))}
+          </RadioGroup>
+
+          {/* 自由入力 */}
+          <div className="mb-5 flex items-center gap-3">
+            <Input
+              type="number"
+              min="1"
+              max="60"
               value={minutes}
-              onValueChange={setMinutes}
+              onChange={(e) => setMinutes(e.target.value)}
+              className="h-auto rounded-[11px] px-4 py-3 text-center text-[15px] font-bold"
               disabled={isProcessing}
-              className="flex rounded-lg bg-slate-50 p-0.5 dark:bg-slate-900"
-              aria-label={t('プリセット時間')}
-            >
-              {TIMER_PRESETS.map((preset) => (
-                <Label
-                  key={preset.seconds}
-                  htmlFor={`preset-${preset.seconds}`}
-                  className={`has-[:focus-visible]:ring-ring flex-1 cursor-pointer rounded-md px-2.5 py-1 text-center text-sm font-medium transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-offset-1 ${
-                    isProcessing ? 'opacity-50' : ''
-                  } ${
-                    minutes === String(preset.seconds / 60)
-                      ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-100 dark:text-blue-600'
-                      : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
-                  }`}
-                >
-                  <RadioGroupItem
-                    value={String(preset.seconds / 60)}
-                    id={`preset-${preset.seconds}`}
-                    className="sr-only"
-                    aria-label={preset.label}
-                  />
-                  {preset.label}
-                </Label>
-              ))}
-            </RadioGroup>
-
-            {/* 自由入力 */}
-            <div className="flex items-center gap-2">
-              <Input
-                type="number"
-                min="1"
-                max="60"
-                value={minutes}
-                onChange={(e) => setMinutes(e.target.value)}
-                className="text-center"
-                disabled={isProcessing}
-                aria-label={t('タイマー時間（分）')}
-              />
-              <span className="text-sm" aria-hidden="true">
-                {t('分')}
-              </span>
-            </div>
+              aria-label={t('タイマー時間（分）')}
+            />
+            <span className="text-muted-foreground text-sm" aria-hidden="true">
+              {t('分')}
+            </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="mb-6 flex items-center gap-2.5">
             <Checkbox
               id="hide-others-cards"
               checked={hideOthersCards}
               onCheckedChange={(checked) => setHideOthersCards(checked === true)}
               disabled={isProcessing}
               aria-label={t('タイマー中は他の人のカードを隠す')}
+              className="size-5 rounded-md"
             />
-            <label htmlFor="hide-others-cards" className="cursor-pointer text-sm">
+            <label htmlFor="hide-others-cards" className="cursor-pointer text-[13.5px]">
               {t('タイマー中は他の人のカードを隠す')}
             </label>
           </div>
 
-          <Button onClick={handleStart} disabled={isProcessing || !minutes || Number(minutes) < 1} className="w-full">
-            <Play className="mr-1 h-4 w-4" />
+          <Button
+            onClick={handleStart}
+            disabled={isProcessing || !minutes || Number(minutes) < 1}
+            className="h-auto w-full py-3.5 text-[15px]"
+          >
+            <Play className="h-[17px] w-[17px] fill-current" />
             {t('開始')}
           </Button>
         </div>
