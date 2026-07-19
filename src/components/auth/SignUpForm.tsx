@@ -57,7 +57,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps): ReactElement {
       {error && <FormErrorAlert>{error}</FormErrorAlert>}
 
       <div className="space-y-1">
-        <label htmlFor="email" className="block text-sm font-medium">
+        <label htmlFor="email" className="block text-[13.5px] font-bold">
           {t('メールアドレス')}
         </label>
         <Input
@@ -72,7 +72,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps): ReactElement {
       </div>
 
       <div className="space-y-1">
-        <label htmlFor="password" className="block text-sm font-medium">
+        <label htmlFor="password" className="block text-[13.5px] font-bold">
           {t('パスワード')}
         </label>
         <PasswordInput id="password" placeholder={t('8文字以上で入力')} error={errors.password?.message} {...register('password')} />
@@ -115,7 +115,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps): ReactElement {
         <FieldError id="agreeToTerms-error" message={errors.agreeToTerms?.message} />
       </div>
 
-      <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
+      <LoadingButton type="submit" className="h-12 w-full text-[15px]" loading={isSubmitting}>
         {t('アカウントを作成')}
       </LoadingButton>
 

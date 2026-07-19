@@ -14,7 +14,7 @@ function SelectTrigger({ className, children, ref, ...props }: React.ComponentPr
     <SelectPrimitive.Trigger
       ref={ref}
       className={cn(
-        'border-input data-placeholder:text-muted-foreground flex h-9 w-full items-center justify-between rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-sm disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+        'border-input data-placeholder:text-placeholder bg-card flex h-9 w-full items-center justify-between rounded-lg border px-3.5 py-2 text-[13.5px] font-semibold whitespace-nowrap shadow-sm disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
         className
       )}
       {...props}

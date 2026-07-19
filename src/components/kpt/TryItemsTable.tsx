@@ -40,7 +40,7 @@ function DueDateCell({ dueDate, status }: { dueDate: string | null; status: TryS
 
   if (overdue) {
     return (
-      <span className="inline-flex items-center gap-1 text-red-600">
+      <span className="text-alert inline-flex items-center gap-1 font-bold">
         <AlertTriangle className="h-4 w-4" />
         {formattedDate}
       </span>
@@ -63,11 +63,11 @@ export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTab
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[40%]">{t('内容')}</TableHead>
-            <TableHead className="w-[20%]">{t('board:ボード')}</TableHead>
-            <TableHead className="w-[12%]">{t('ステータス')}</TableHead>
-            <TableHead className="w-[12%]">{t('期日')}</TableHead>
-            <TableHead className="w-[16%]">{t('担当者')}</TableHead>
+            <TableHead className="min-w-[240px]">{t('内容')}</TableHead>
+            <TableHead className="w-[200px]">{t('board:ボード')}</TableHead>
+            <TableHead className="w-[130px]">{t('ステータス')}</TableHead>
+            <TableHead className="w-[130px]">{t('期日')}</TableHead>
+            <TableHead className="w-[150px]">{t('担当者')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -91,47 +91,44 @@ export function TryItemsTable({ items, isLoading, onAssigneeClick }: TryItemsTab
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[40%]">{t('内容')}</TableHead>
-          <TableHead className="w-[20%]">{t('board:ボード')}</TableHead>
-          <TableHead className="w-[12%]">{t('ステータス')}</TableHead>
-          <TableHead className="w-[12%]">{t('期日')}</TableHead>
-          <TableHead className="w-[16%]">{t('担当者')}</TableHead>
+          <TableHead className="min-w-[240px]">{t('内容')}</TableHead>
+          <TableHead className="w-[200px]">{t('board:ボード')}</TableHead>
+          <TableHead className="w-[130px]">{t('ステータス')}</TableHead>
+          <TableHead className="w-[130px]">{t('期日')}</TableHead>
+          <TableHead className="w-[150px]">{t('担当者')}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {items.map((item) => (
-          <TableRow key={item.id} className="h-12">
-            <TableCell className="p-0">
-              <Link
-                to={`/boards/${item.boardId}?itemId=${item.id}`}
-                className="flex h-full items-center rounded p-2 font-medium hover:underline"
-              >
+          <TableRow key={item.id}>
+            <TableCell>
+              <Link to={`/boards/${item.boardId}?itemId=${item.id}`} className="rounded text-[15px] font-bold hover:underline">
                 {truncateText(item.text, 50)}
               </Link>
             </TableCell>
-            <TableCell className="p-0">
-              <Link to={`/boards/${item.boardId}`} className="flex h-full items-center rounded p-2 hover:underline">
+            <TableCell className="text-muted-foreground-subtle text-[13.5px]">
+              <Link to={`/boards/${item.boardId}`} className="rounded hover:underline">
                 {item.boardName || '-'}
               </Link>
             </TableCell>
-            <TableCell className="py-0">
+            <TableCell>
               <StatusBadge status={item.status} />
             </TableCell>
-            <TableCell className="py-0">
+            <TableCell className="text-muted-foreground-subtle text-[13.5px]">
               <DueDateCell dueDate={item.dueDate} status={item.status} />
             </TableCell>
-            <TableCell className="p-0">
+            <TableCell className="text-muted-foreground-subtle text-[13.5px]">
               {item.assigneeId && item.assigneeNickname ? (
                 <button
                   type="button"
                   onClick={() => onAssigneeClick?.(item.assigneeId!, item.assigneeNickname!)}
-                  className="flex h-full w-full items-center rounded p-2 hover:underline"
+                  className="hover:text-foreground rounded hover:underline"
                   aria-label={t('{{name}}でフィルター', { name: item.assigneeNickname })}
                 >
                   {item.assigneeNickname}
                 </button>
               ) : (
-                <span className="flex h-full items-center p-2">-</span>
+                <span>-</span>
               )}
             </TableCell>
           </TableRow>

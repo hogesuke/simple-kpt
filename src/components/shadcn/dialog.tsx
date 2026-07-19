@@ -28,13 +28,13 @@ function DialogContent({ className, children, ref, ...props }: React.ComponentPr
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          'bg-background fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg sm:rounded-lg',
+          'bg-card border-border-subtle shadow-modal rounded-card fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-7',
           className
         )}
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="text-muted-foreground hover:text-foreground data-[state=open]:bg-accent absolute top-4 right-4 rounded-sm transition-colors disabled:pointer-events-none">
+        <DialogPrimitive.Close className="text-icon hover:text-foreground absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-md bg-transparent transition-colors disabled:pointer-events-none">
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </DialogPrimitive.Close>
@@ -48,11 +48,11 @@ function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
 }
 
 function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)} {...props} />;
+  return <div className={cn('flex flex-col-reverse gap-2.5 sm:flex-row sm:items-center sm:justify-end', className)} {...props} />;
 }
 
 function DialogTitle({ className, ref, ...props }: React.ComponentProps<typeof DialogPrimitive.Title>) {
-  return <DialogPrimitive.Title ref={ref} className={cn('text-lg leading-none font-semibold tracking-tight', className)} {...props} />;
+  return <DialogPrimitive.Title ref={ref} className={cn('text-[19px] leading-tight font-black tracking-tight', className)} {...props} />;
 }
 
 function DialogDescription({ className, ref, ...props }: React.ComponentProps<typeof DialogPrimitive.Description>) {

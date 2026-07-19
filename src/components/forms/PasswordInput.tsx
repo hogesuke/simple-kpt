@@ -21,7 +21,7 @@ export function PasswordInput({ error, ref, id, ...props }: PasswordInputProps) 
           ref={ref}
           id={id}
           type={showPassword ? 'text' : 'password'}
-          className="pr-10"
+          className="h-auto rounded-[11px] px-3.5 py-3 pr-10 text-[14.5px]"
           aria-invalid={!!error}
           aria-describedby={error && errorId ? errorId : undefined}
           {...props}

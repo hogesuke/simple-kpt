@@ -1,4 +1,4 @@
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import { ReactElement, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -8,6 +8,7 @@ import { BoardRenameDialog } from '@/components/board/BoardRenameDialog';
 import { Button } from '@/components/shadcn/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu';
 import { TableCell, TableRow } from '@/components/shadcn/table';
+import { rolePill } from '@/lib/role-styles';
 
 import type { KptBoard } from '@/types/kpt';
 
@@ -41,20 +42,28 @@ export function BoardTableRow({ board, isOwner, isDeleting, isRenaming, onDelete
 
   return (
     <>
-      <TableRow className="h-12">
-        <TableCell className="p-0">
-          <Link to={`/boards/${board.id}`} className="flex h-full items-center rounded p-2 font-medium hover:underline">
+      <TableRow>
+        <TableCell>
+          <Link to={`/boards/${board.id}`} className="flex h-full items-center rounded text-[15px] font-bold hover:underline">
             {board.name}
           </Link>
         </TableCell>
-        <TableCell className="py-0">{isOwner ? t('オーナー') : t('メンバー')}</TableCell>
-        <TableCell className="py-0">{formattedDate}</TableCell>
-        <TableCell className="w-12 py-0">
+        <TableCell>
+          {/* ロールは淡い青のピルで表示する */}
+          <span className={rolePill}>{isOwner ? t('オーナー') : t('メンバー')}</span>
+        </TableCell>
+        <TableCell className="text-muted-foreground-subtle text-[13.5px]">{formattedDate}</TableCell>
+        <TableCell className="w-[68px] pr-5 pl-0">
           {isOwner && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="hover:bg-muted h-8 w-8" aria-label={t('ボード操作メニュー')}>
-                  <MoreHorizontal className="text-muted-foreground h-4 w-4" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-icon hover:text-foreground h-8 w-8 hover:bg-transparent"
+                  aria-label={t('ボード操作メニュー')}
+                >
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

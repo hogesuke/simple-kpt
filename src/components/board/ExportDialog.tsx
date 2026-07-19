@@ -78,54 +78,61 @@ export function ExportDialog({ boardName, items, isOpen, onOpenChange }: ExportD
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
-          <DialogTitle>{t('エクスポート')}</DialogTitle>
-          <DialogDescription>{t('ボードのカードをエクスポートします。')}</DialogDescription>
+          <DialogTitle className="flex items-center gap-2.5">
+            <Download className="text-primary h-5 w-5" />
+            {t('エクスポート')}
+          </DialogTitle>
+          <DialogDescription className="text-[13.5px]">{t('ボードのカードをエクスポートします。')}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4 pt-2">
           {/* 形式選択 */}
           <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium">{t('形式')}</span>
-            <RadioGroup value={format} onValueChange={(value) => setFormat(value as ExportFormat)} className="grid grid-cols-2 gap-3">
+            <span className="text-[13.5px] font-bold">{t('形式')}</span>
+            <RadioGroup
+              value={format}
+              onValueChange={(value) => setFormat(value as ExportFormat)}
+              className="mb-[18px] grid grid-cols-2 gap-3"
+            >
               <Label
                 htmlFor="format-markdown"
-                className={`has-focus-visible:ring-ring cursor-pointer rounded-lg border-2 p-3 transition-colors has-focus-visible:ring-2 has-focus-visible:ring-offset-1 ${
-                  format === 'markdown' ? 'border-primary bg-primary/5' : 'border-input hover:border-muted-foreground/50 hover:bg-muted/50'
+                className={`has-focus-visible:ring-ring cursor-pointer rounded-xl px-[18px] py-4 transition-colors has-focus-visible:ring-2 has-focus-visible:ring-offset-1 ${
+                  format === 'markdown' ? 'border-primary bg-surface-subtle border-2' : 'border-border hover:border-input border'
                 }`}
               >
                 <RadioGroupItem value="markdown" id="format-markdown" className="sr-only" aria-label="Markdown" />
-                <span className="block text-sm font-medium">Markdown</span>
-                <span className="text-muted-foreground block text-xs">{t('.md形式')}</span>
+                <span className="block text-[14.5px] font-bold">Markdown</span>
+                <span className="text-muted-foreground-subtle mt-0.5 block text-xs">{t('.md形式')}</span>
               </Label>
               <Label
                 htmlFor="format-csv"
-                className={`has-focus-visible:ring-ring cursor-pointer rounded-lg border-2 p-3 transition-colors has-focus-visible:ring-2 has-focus-visible:ring-offset-1 ${
-                  format === 'csv' ? 'border-primary bg-primary/5' : 'border-input hover:border-muted-foreground/50 hover:bg-muted/50'
+                className={`has-focus-visible:ring-ring cursor-pointer rounded-xl px-[18px] py-4 transition-colors has-focus-visible:ring-2 has-focus-visible:ring-offset-1 ${
+                  format === 'csv' ? 'border-primary bg-surface-subtle border-2' : 'border-border hover:border-input border'
                 }`}
               >
                 <RadioGroupItem value="csv" id="format-csv" className="sr-only" aria-label="CSV" />
-                <span className="block text-sm font-medium">CSV</span>
-                <span className="text-muted-foreground block text-xs">{t('表形式')}</span>
+                <span className="block text-[14.5px] font-bold">CSV</span>
+                <span className="text-muted-foreground-subtle mt-0.5 block text-xs">{t('表形式')}</span>
               </Label>
             </RadioGroup>
           </div>
 
           {/* アクションボタン */}
-          <div className="flex flex-col gap-2">
-            <Button onClick={handleDownload} className="w-full">
+          <div className="flex flex-col gap-2.5">
+            <Button onClick={handleDownload} className="h-11 w-full text-[14.5px]">
               <Download className="h-4 w-4" />
               {t('ダウンロード')}
             </Button>
-            <Button variant="outline" onClick={handleCopyToClipboard} className="w-full">
+            <Button variant="outline" onClick={handleCopyToClipboard} className="h-11 w-full text-[14.5px]">
               <Clipboard className="h-4 w-4" />
               {t('クリップボードにコピー')}
             </Button>
           </div>
 
           {/* カード数表示 */}
-          <p className="text-muted-foreground text-center text-sm">
+          <p className="text-muted-foreground-subtle mt-4 text-center text-[12.5px]">
             {t('{{count}}件のカードをエクスポートします', { count: items.length })}
           </p>
         </div>

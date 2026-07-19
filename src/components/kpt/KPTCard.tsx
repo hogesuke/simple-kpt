@@ -14,7 +14,7 @@ import { VoteButton } from './VoteButton';
 
 import type { KptItem } from '@/types/kpt';
 
-const cardStyles = 'rounded-md border border-border bg-card shadow-sm';
+const cardStyles = 'rounded-xl border border-border-subtle bg-card shadow-chip';
 
 // ハッシュタグを検出する正規表現（日本語、英数字、アンダースコアを許容している）
 const HASHTAG_PATTERN = '#[\\w\\u3040-\\u309F\\u30A0-\\u30FF\\u4E00-\\u9FFF]+';
@@ -83,7 +83,7 @@ export function TextWithHashtags({ text, onTagClick }: TextWithHashtagsProps) {
                 e.stopPropagation();
                 onTagClick?.(part.text);
               }}
-              className="rounded text-[0.96em] text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-300"
+              className="text-primary hover:text-primary-dark rounded text-[0.96em] hover:underline"
             >
               {part.text}
             </button>
@@ -133,6 +133,21 @@ export function KPTCard({
     void onVote?.(item.id);
   };
 
+  const hasTryMeta = item.column === 'try' && Boolean(item.status || item.assigneeNickname || item.dueDate);
+
+  const voteButton = onVote ? (
+    <VoteButton
+      voteCount={item.voteCount ?? 0}
+      hasVoted={item.hasVoted ?? false}
+      voters={item.voters ?? []}
+      onVote={handleVoteClick}
+      size="sm"
+      itemText={item.text}
+      stopPropagation
+      totalMemberCount={totalMemberCount}
+    />
+  ) : null;
+
   return (
     <article
       className={cn(cardStyles, 'relative pointer-coarse:pl-5', className)}
@@ -145,70 +160,69 @@ export function KPTCard({
       />
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- キーボードアクセシビリティは別途「詳細を開く」ボタンで提供している */}
       <div
-        className={cn('p-4', onClick && 'cursor-pointer transition-shadow hover:shadow-md')}
+        className={cn('px-4 py-3.5', onClick && 'hover:shadow-card cursor-pointer transition-shadow')}
         onClick={onClick ? handleCardClick : undefined}
       >
-        <p className="text-md pr-8 wrap-break-word">
+        <p className="mb-2.5 pr-5 text-[13.5px] leading-relaxed wrap-break-word">
           <TextWithHashtags text={item.text} onTagClick={onTagClick} />
         </p>
-        {item.authorNickname && (
-          <p className="mt-2 text-xs">
-            {onMemberClick && item.authorId ? (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMemberClick(item.authorId!, item.authorNickname!);
-                }}
-                className="text-muted-foreground hover:text-foreground rounded hover:underline"
-                aria-label={t('{{name}}でフィルター', { name: item.authorNickname })}
-              >
-                {item.authorNickname}
-              </button>
-            ) : (
-              <span className="text-muted-foreground">{item.authorNickname}</span>
-            )}
-          </p>
-        )}
+
+        {/* Keep / Problem は「作成者 + 投票」を1行に、Tryは作成者の下に対応状況の行を置く */}
+        <div className={cn('flex items-center justify-between gap-2', hasTryMeta && 'mb-2.5')}>
+          {item.authorNickname ? (
+            <p className="text-xs">
+              {onMemberClick && item.authorId ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMemberClick(item.authorId!, item.authorNickname!);
+                  }}
+                  className="text-muted-foreground-subtle hover:text-foreground rounded hover:underline"
+                  aria-label={t('{{name}}でフィルター', { name: item.authorNickname })}
+                >
+                  {item.authorNickname}
+                </button>
+              ) : (
+                <span className="text-muted-foreground-subtle">{item.authorNickname}</span>
+              )}
+            </p>
+          ) : (
+            <span />
+          )}
+          {voteButton && !hasTryMeta && voteButton}
+        </div>
+
         {/* Try専用フィールドの表示 */}
-        {item.column === 'try' && (item.status || item.assigneeNickname || item.dueDate) && (
-          <div className="border-border mt-3 flex flex-wrap items-center gap-3 border-t pt-3 text-sm">
-            {item.status && <span className={cn(statusBadge({ status: item.status }), 'text-xs')}>{getStatusLabels()[item.status]}</span>}
+        {hasTryMeta && (
+          <div className="flex flex-wrap items-center gap-2.5 text-xs">
+            {item.status && <span className={statusBadge({ status: item.status })}>{getStatusLabels()[item.status]}</span>}
             {item.assigneeNickname && (
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground-subtle">
                 {t('担当者')}: {item.assigneeNickname}
               </span>
             )}
             {item.dueDate && (
               <span
-                className={isOverdue(item.dueDate, item.status) ? 'inline-flex items-center gap-1 text-red-600' : 'text-muted-foreground'}
+                className={
+                  isOverdue(item.dueDate, item.status)
+                    ? 'text-alert inline-flex items-center gap-1 font-bold'
+                    : 'text-muted-foreground-subtle'
+                }
               >
                 {isOverdue(item.dueDate, item.status) && <AlertTriangle className="h-3.5 w-3.5" />}
                 {t('期日')}: {item.dueDate.replace(/-/g, '/')}
               </span>
             )}
+            {voteButton && <span className="ml-auto">{voteButton}</span>}
           </div>
         )}
       </div>
-      {/* 投票ボタン */}
-      {onVote && (
-        <VoteButton
-          voteCount={item.voteCount ?? 0}
-          hasVoted={item.hasVoted ?? false}
-          voters={item.voters ?? []}
-          onVote={handleVoteClick}
-          size="sm"
-          className="absolute right-2 bottom-3"
-          itemText={item.text}
-          stopPropagation
-          totalMemberCount={totalMemberCount}
-        />
-      )}
       {onClick && (
         <button
           type="button"
           onClick={handleCardClick}
-          className="bg-background text-foreground focus:ring-ring sr-only rounded px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2 focus:ring-2 focus:outline-none"
+          className="bg-card text-foreground focus:ring-ring sr-only rounded px-2 py-1 text-xs shadow focus:not-sr-only focus:absolute focus:right-2 focus:bottom-2 focus:ring-2 focus:outline-none"
           aria-expanded={isSelected}
         >
           {t('詳細を開く')}
@@ -218,10 +232,10 @@ export function KPTCard({
         <button
           type="button"
           onClick={handleDeleteClick}
-          className="text-muted-foreground hover:bg-muted absolute top-2 right-2 inline-flex h-6 w-6 items-center justify-center rounded-full"
+          className="text-icon hover:text-foreground absolute top-2 right-4 inline-flex h-6 w-6 items-center justify-center rounded-md transition-colors"
           aria-label={t('「{{text}}」カードを削除', { text: item.text })}
         >
-          <X className="h-4 w-4" aria-hidden="true" />
+          <X className="h-4 w-4" strokeWidth={2.2} aria-hidden="true" />
         </button>
       )}
     </article>
@@ -296,7 +310,7 @@ export const SortableKPTCard = React.memo(function SortableKPTCard({
         'relative',
         // ドラッグ中に元の位置のカードを薄く表示する
         isDragging && 'opacity-30',
-        'focus-visible:ring-ring focus-visible:ring-offset-background rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+        'focus-visible:ring-ring focus-visible:ring-offset-card rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
         className
       )}
       {...restAttributes}

@@ -238,7 +238,7 @@ export function KPTBoard(): ReactElement {
               </div>
             )}
 
-            <div className="flex min-h-0 flex-1 flex-col items-stretch gap-x-4 gap-y-4 overflow-y-auto py-4 lg:flex-row">
+            <div className="flex min-h-0 flex-1 flex-col items-stretch gap-5 overflow-y-auto py-4 lg:flex-row">
               <KPTBoardColumns itemsByColumn={itemsByColumn} onCardClick={handleCardClick} />
             </div>
 

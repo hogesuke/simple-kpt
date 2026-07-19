@@ -196,39 +196,40 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
           aria-label={t('カード詳細')}
           aria-modal="true"
           className={cn(
-            'border-border bg-background fixed top-0 right-0 z-40 h-screen w-full border-l shadow-2xl',
+            'border-border-subtle bg-card shadow-modal fixed top-0 right-0 z-40 h-screen w-full border-l',
             'sm:w-md',
             'flex flex-col',
             'animate-in slide-in-from-right duration-300'
           )}
         >
           {/* ヘッダー */}
-          <div className="flex items-center justify-between px-6 py-4">
-            <span className="inline-flex items-center gap-2 text-lg font-semibold">
-              <span className={columnDot({ column: item.column, selected: true })} aria-hidden="true" />
+          <div className="border-border-subtle flex items-center justify-between border-b px-6 py-[22px]">
+            <span className="inline-flex items-center gap-2.5 text-lg font-black">
+              <span className={columnDot({ column: item.column, size: 'lg' })} aria-hidden="true" />
               {columnLabels[item.column]}
             </span>
+            {/* 閉じる×ボタンは全モーダル／サイドペインで同一スタイル */}
             <button
               type="button"
               onClick={onClose}
-              className="text-muted-foreground hover:bg-muted inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors"
+              className="text-icon hover:text-foreground inline-flex h-8 w-8 items-center justify-center rounded-md bg-transparent transition-colors"
               aria-label={t('詳細パネルを閉じる')}
             >
-              <X className="h-5 w-5" aria-hidden="true" />
+              <X className="h-[18px] w-[18px]" aria-hidden="true" />
             </button>
           </div>
 
           {/* コンテンツ */}
           <div className="flex-1 overflow-y-auto">
             {/* カード内容 */}
-            <section className="px-6 py-4">
+            <section className="px-6 py-6">
               <div className="mb-3 flex items-center justify-between gap-3">
-                <h3 className="text-muted-foreground text-sm font-medium">{t('内容')}</h3>
+                <h3 className="text-muted-foreground text-[13px] font-bold">{t('内容')}</h3>
                 {!isEditing && (
                   <button
                     type="button"
                     onClick={handleStartEdit}
-                    className="text-muted-foreground hover:bg-muted inline-flex shrink-0 items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                    className="text-primary hover:text-primary-dark inline-flex shrink-0 items-center gap-1.5 rounded text-[13px] font-bold transition-colors"
                   >
                     <Edit2 className="h-3.5 w-3.5" aria-hidden="true" />
                     {t('編集')}
@@ -255,7 +256,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                         }
                       }}
                       className={cn(
-                        'border-input bg-background w-full rounded-md border px-3 py-2',
+                        'border-input bg-card w-full rounded-md border px-3 py-2',
                         'resize-none text-base leading-relaxed',
                         'disabled:cursor-not-allowed disabled:opacity-50'
                       )}
@@ -303,7 +304,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                 <>
                   <div>
                     <div className="prose prose-sm max-w-none">
-                      <p className="text-base leading-relaxed wrap-break-word whitespace-pre-wrap">
+                      <p className="text-[15px] leading-relaxed wrap-break-word whitespace-pre-wrap">
                         <TextWithHashtags text={item.text} onTagClick={handleTagClick} />
                       </p>
                     </div>
@@ -325,14 +326,14 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
 
             {/* Try専用フィールド */}
             {item.column === 'try' && (
-              <section className="border-border/50 space-y-4 border-t px-6 py-6">
-                <h3 className="text-muted-foreground text-sm font-medium">{t('対応状況')}</h3>
+              <section className="border-border-subtle border-t px-6 py-6">
+                <h3 className="text-muted-foreground mb-4 text-[13px] font-bold">{t('対応状況')}</h3>
 
-                {/* ステータス */}
-                <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-16 shrink-0 text-xs">{t('ステータス')}</span>
+                {/* ステータス / 担当者 / 期日 は 76px + 1fr のグリッドで揃える */}
+                <div className="grid grid-cols-[76px_1fr] items-center gap-x-3.5 gap-y-3">
+                  <span className="text-muted-foreground-subtle text-[13px] whitespace-nowrap">{t('ステータス')}</span>
                   <Select value={item.status ?? 'pending'} onValueChange={(v) => handleStatusChange(v as TryStatus)}>
-                    <SelectTrigger className="h-8 flex-1">
+                    <SelectTrigger className="h-10 w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -343,17 +344,14 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
 
-                {/* 担当者 */}
-                <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-16 shrink-0 text-xs">{t('担当者')}</span>
+                  <span className="text-muted-foreground-subtle text-[13px]">{t('担当者')}</span>
                   <Select
                     value={item.assigneeId ?? 'unassigned'}
                     onValueChange={handleAssigneeChange}
                     disabled={item.status === 'wont_fix'}
                   >
-                    <SelectTrigger className="h-8 flex-1">
+                    <SelectTrigger className="h-10 w-full">
                       <SelectValue placeholder={t('ui:未設定')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -367,16 +365,13 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
 
-                {/* 期日 */}
-                <div className="flex items-center gap-3">
-                  <span className="text-muted-foreground w-16 shrink-0 text-xs">{t('期日')}</span>
+                  <span className="text-muted-foreground-subtle text-[13px]">{t('期日')}</span>
                   <Popover open={dueDateOpen} onOpenChange={setDueDateOpen}>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
-                        className={cn('h-8 flex-1 justify-start text-left font-normal', !item.dueDate && 'text-muted-foreground')}
+                        className={cn('h-10 w-full justify-start text-left font-normal', !item.dueDate && 'text-muted-foreground')}
                         disabled={item.status === 'wont_fix'}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
@@ -405,21 +400,21 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
             )}
 
             {/* メタ情報 */}
-            <section className="border-border/50 border-t px-6 py-6">
-              <dl className="grid grid-cols-[5rem_1fr] items-center gap-x-3 gap-y-3">
+            <section className="border-border-subtle border-t px-6 py-6">
+              <dl className="grid grid-cols-[72px_1fr] items-center gap-x-3.5 gap-y-3">
                 {/* 作成者情報 */}
-                <dt className="text-muted-foreground text-xs font-medium">{t('作成者')}</dt>
-                <dd className="text-sm">{item.authorNickname || 'Unknown User'}</dd>
+                <dt className="text-muted-foreground-subtle text-[13px]">{t('作成者')}</dt>
+                <dd className="text-[13.5px]">{item.authorNickname || 'Unknown User'}</dd>
 
                 {/* 作成日時 */}
-                <dt className="text-muted-foreground text-xs font-medium">{t('作成日時')}</dt>
-                <dd className="text-sm">{formatDate(item.createdAt)}</dd>
+                <dt className="text-muted-foreground-subtle text-[13px]">{t('作成日時')}</dt>
+                <dd className="text-[13.5px]">{formatDate(item.createdAt)}</dd>
 
                 {/* 更新日時 */}
                 {item.updatedAt && item.updatedAt !== item.createdAt && (
                   <>
-                    <dt className="text-muted-foreground text-xs font-medium">{t('更新日時')}</dt>
-                    <dd className="text-sm">{formatDate(item.updatedAt)}</dd>
+                    <dt className="text-muted-foreground-subtle text-[13px]">{t('更新日時')}</dt>
+                    <dd className="text-[13.5px]">{formatDate(item.updatedAt)}</dd>
                   </>
                 )}
               </dl>

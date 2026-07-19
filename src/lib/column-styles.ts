@@ -2,31 +2,31 @@ import { cva } from 'class-variance-authority';
 
 import type { KptColumnType } from '@/types/kpt';
 
-export const columnDot = cva('h-2 w-2 rounded-full', {
+// ドットは選択状態に関わらずカテゴリ色で表示する（デザイン仕様）
+export const columnDot = cva('rounded-full', {
   variants: {
     column: {
-      keep: '',
-      problem: '',
-      try: '',
+      keep: 'bg-kpt-keep',
+      problem: 'bg-kpt-problem',
+      try: 'bg-kpt-try',
     },
-    selected: {
-      true: '',
-      false: 'bg-gray-400',
+    size: {
+      sm: 'size-[7px]',
+      md: 'size-[9px]',
+      lg: 'size-2.5',
     },
   },
-  compoundVariants: [
-    { column: 'keep', selected: true, class: 'bg-lime-500' },
-    { column: 'problem', selected: true, class: 'bg-red-400' },
-    { column: 'try', selected: true, class: 'bg-blue-500' },
-  ],
+  defaultVariants: {
+    size: 'md',
+  },
 });
 
-export const columnButton = cva('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm transition-colors', {
+// 選択時はカテゴリ色のボーダー1.5px+テキスト、非選択は淡いボーダー+補足テキスト色のピル
+export const columnButton = cva('inline-flex items-center gap-1.5 rounded-full bg-card px-[13px] py-[5px] text-[13px] transition-colors', {
   variants: {
     selected: {
-      true: 'border-2',
-      false:
-        'border-2 border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-600 dark:border-gray-600 dark:text-gray-400 dark:hover:border-gray-500 dark:hover:text-gray-300',
+      true: 'border-[1.5px] font-bold shadow-chip',
+      false: 'border border-border text-muted-foreground-subtle font-medium hover:border-input hover:text-foreground',
     },
     column: {
       keep: '',
@@ -35,18 +35,9 @@ export const columnButton = cva('inline-flex items-center gap-1.5 rounded-full p
     },
   },
   compoundVariants: [
-    // Keep - ライトモード
-    { column: 'keep', selected: true, class: 'border-primary bg-primary/10 text-primary-dark' },
-    // Keep - ダークモード（ネオングリーン）
-    { column: 'keep', selected: true, class: 'dark:border-lime-400/60 dark:bg-lime-900/30 dark:text-lime-300' },
-    // Problem - ライトモード
-    { column: 'problem', selected: true, class: 'border-primary bg-primary/10 text-primary-dark' },
-    // Problem - ダークモード（ネオンレッド）
-    { column: 'problem', selected: true, class: 'dark:border-red-400/60 dark:bg-red-900/30 dark:text-red-300' },
-    // Try - ライトモード
-    { column: 'try', selected: true, class: 'border-primary bg-primary/10 text-primary-dark' },
-    // Try - ダークモード（ネオンブルー）
-    { column: 'try', selected: true, class: 'dark:border-sky-400/60 dark:bg-sky-900/30 dark:text-sky-300' },
+    { column: 'keep', selected: true, class: 'border-kpt-keep/60 text-kpt-keep-strong' },
+    { column: 'problem', selected: true, class: 'border-kpt-problem/60 text-kpt-problem-strong' },
+    { column: 'try', selected: true, class: 'border-kpt-try/60 text-kpt-try-strong' },
   ],
   defaultVariants: {
     selected: false,

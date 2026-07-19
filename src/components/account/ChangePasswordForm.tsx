@@ -61,18 +61,18 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {error && <FormErrorAlert>{error}</FormErrorAlert>}
 
-      <div className="space-y-1">
-        <label htmlFor="currentPassword" className="block text-sm font-medium">
+      <div className="space-y-2">
+        <label htmlFor="currentPassword" className="block text-[13.5px] font-bold">
           {t('現在のパスワード')}
         </label>
         <PasswordInput id="currentPassword" error={errors.currentPassword?.message} {...register('currentPassword')} />
       </div>
 
-      <div className="space-y-1">
-        <label htmlFor="newPassword" className="block text-sm font-medium">
+      <div className="space-y-2">
+        <label htmlFor="newPassword" className="block text-[13.5px] font-bold">
           {t('新しいパスワード')}
         </label>
         <PasswordInput
@@ -83,8 +83,8 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
         />
       </div>
 
-      <div className="space-y-1">
-        <label htmlFor="confirmPassword" className="block text-sm font-medium">
+      <div className="space-y-2">
+        <label htmlFor="confirmPassword" className="block text-[13.5px] font-bold">
           {t('新しいパスワード（確認）')}
         </label>
         <PasswordInput
@@ -95,8 +95,8 @@ export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps): Reac
         />
       </div>
 
-      <div className="flex justify-end">
-        <LoadingButton type="submit" loading={isSubmitting}>
+      <div className="flex justify-end pt-0.5">
+        <LoadingButton type="submit" loading={isSubmitting} className="h-auto px-7 py-[11px]">
           {t('ui:変更')}
         </LoadingButton>
       </div>

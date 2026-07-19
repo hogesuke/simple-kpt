@@ -14,14 +14,15 @@ const mockBoard: KptBoard = {
   ownerId: 'user-1',
 };
 
+// 列幅は実際のボード一覧（Home）と同じ指定にする
 const TableWrapper = ({ children }: { children: React.ReactNode }) => (
   <Table>
     <TableHeader>
       <TableRow>
         <TableHead>ボード名</TableHead>
-        <TableHead>役割</TableHead>
-        <TableHead>作成日</TableHead>
-        <TableHead className="w-12"></TableHead>
+        <TableHead className="w-[130px]">役割</TableHead>
+        <TableHead className="w-[130px]">作成日</TableHead>
+        <TableHead className="w-[68px]"></TableHead>
       </TableRow>
     </TableHeader>
     <TableBody>{children}</TableBody>

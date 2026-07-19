@@ -1,7 +1,7 @@
+import { Check } from 'lucide-react';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Checkbox } from '@/components/shadcn/checkbox';
 import { cn } from '@/lib/cn';
 import { getStatusLabels } from '@/lib/kpt-helpers';
 import { TryStatus } from '@/types/kpt';
@@ -11,14 +11,6 @@ interface StatusFilterProps {
   selectedStatuses: TryStatus[];
   onStatusChange: (statuses: TryStatus[]) => void;
 }
-
-const statusSelectedStyleLight = 'border-primary/30 bg-primary/10 text-primary-dark';
-const statusSelectedStylesDark: Record<TryStatus, string> = {
-  pending: 'dark:border-amber-400/60 dark:bg-amber-900/30 dark:text-amber-300',
-  in_progress: 'dark:border-sky-400/60 dark:bg-sky-900/30 dark:text-sky-300',
-  done: 'dark:border-emerald-400/60 dark:bg-emerald-900/30 dark:text-emerald-300',
-  wont_fix: 'dark:border-slate-400/60 dark:bg-slate-700/30 dark:text-slate-300',
-};
 
 export function StatusFilter({ selectedStatuses, onStatusChange }: StatusFilterProps): ReactElement {
   const { t } = useTranslation('board');
@@ -33,29 +25,31 @@ export function StatusFilter({ selectedStatuses, onStatusChange }: StatusFilterP
 
   return (
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label={t('ステータスフィルター')}>
-      <span className="text-muted-foreground text-sm">{t('フィルター')}:</span>
+      <span className="text-muted-foreground-subtle text-[13px] font-bold">{t('フィルター')}</span>
       {VALID_TRY_STATUSES.map((status) => {
         const isSelected = selectedStatuses.includes(status);
         return (
-          <label
+          // 選択中はチェックマーク、未選択は空の円を表示するピル（デザイン仕様）
+          <button
             key={status}
-            htmlFor={`status-filter-${status}`}
+            type="button"
+            role="checkbox"
+            aria-checked={isSelected}
+            onClick={() => toggleStatus(status, !isSelected)}
             className={cn(
-              'flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1 text-sm transition-colors',
+              'bg-card focus-visible:ring-ring inline-flex items-center gap-1.5 rounded-full px-[13px] py-1.5 text-[12.5px] transition-colors focus-visible:ring-2 focus-visible:ring-offset-1',
               isSelected
-                ? `${statusSelectedStyleLight} ${statusSelectedStylesDark[status]}`
-                : 'border-border bg-background hover:bg-muted/50'
+                ? 'border-primary/45 text-primary-dark shadow-chip border-[1.5px] font-bold'
+                : 'border-border text-muted-foreground-subtle hover:text-foreground border font-semibold'
             )}
           >
-            <Checkbox
-              id={`status-filter-${status}`}
-              checked={isSelected}
-              onCheckedChange={(checked) => toggleStatus(status, checked === true)}
-              aria-label={getStatusLabels()[status]}
-              className="data-[state=unchecked]:border-muted-foreground/50 data-[state=checked]:text-foreground dark:data-[state=checked]:bg-primary dark:data-[state=checked]:text-primary-foreground dark:data-[state=checked]:border-primary h-4 w-4 rounded-full shadow-none data-[state=checked]:border-transparent data-[state=checked]:bg-white"
-            />
-            <span className="select-none">{getStatusLabels()[status]}</span>
-          </label>
+            {isSelected ? (
+              <Check className="size-[13px]" strokeWidth={3} aria-hidden="true" />
+            ) : (
+              <span className="border-icon/70 size-[13px] rounded-full border-[1.5px]" aria-hidden="true" />
+            )}
+            {getStatusLabels()[status]}
+          </button>
         );
       })}
     </div>

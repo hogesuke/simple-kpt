@@ -46,7 +46,7 @@ export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps): Reac
       {error && <FormErrorAlert>{error}</FormErrorAlert>}
 
       <div className="space-y-1">
-        <label htmlFor="email" className="block text-sm font-medium">
+        <label htmlFor="email" className="block text-[13.5px] font-bold">
           {t('メールアドレス')}
         </label>
         <Input
@@ -60,7 +60,7 @@ export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps): Reac
         <FieldError id="email-error" message={errors.email?.message} />
       </div>
 
-      <LoadingButton type="submit" className="h-10 w-full" loading={isSubmitting}>
+      <LoadingButton type="submit" className="h-12 w-full text-[15px]" loading={isSubmitting}>
         {t('パスワードリセット用のメールを送信')}
       </LoadingButton>
 

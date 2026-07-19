@@ -231,8 +231,8 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
               </>
             )}
 
-            <div className="max-h-60 overflow-y-auto rounded-md border">
-              <Table>
+            <div className="max-h-60 overflow-y-auto">
+              <Table containerClassName="rounded-[12px] shadow-none">
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t('board:ボード名')}</TableHead>
@@ -286,8 +286,8 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
             {boardsNeedingTransfer.length > 0 && (
               <div className="flex flex-col gap-2">
                 <p className="text-muted-foreground text-sm">{t('以下のボードは所有権が譲渡されます。')}</p>
-                <div className="max-h-40 overflow-y-auto rounded-md border">
-                  <Table>
+                <div className="max-h-40 overflow-y-auto">
+                  <Table containerClassName="rounded-[12px] shadow-none">
                     <TableHeader>
                       <TableRow>
                         <TableHead>{t('board:ボード名')}</TableHead>
@@ -322,7 +322,7 @@ export function AccountDeleteDialog({ isOpen, onOpenChange }: AccountDeleteDialo
           </div>
         )}
 
-        <DialogFooter className="gap-2 sm:gap-0">
+        <DialogFooter>
           {step === 'transfer' && (
             <>
               <Button variant="outline" onClick={() => handleOpenChange(false)}>

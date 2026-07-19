@@ -36,8 +36,12 @@ function generateEmptyTryWeeklyData(period: StatsPeriod): { week: string; cumula
   }));
 }
 
-const CHART_COLOR = 'hsl(217, 62%, 54%)';
-const CHART_COLOR_LIGHT = 'hsl(217, 62%, 70%)';
+// グラフはカードごとにKPTのカテゴリ色を使う
+const CHART_COLOR_KEEP = 'var(--kpt-keep)';
+const CHART_COLOR_PROBLEM = 'var(--kpt-problem)';
+const CHART_COLOR_TRY = 'var(--kpt-try)';
+// Tryカードは累計と完了の2本線なので、累計側を淡くして区別する
+const CHART_COLOR_TRY_LIGHT = 'color-mix(in oklch, var(--kpt-try) 45%, white)';
 
 // 基底カードコンポーネント
 interface StatsCardContainerProps {
@@ -50,16 +54,19 @@ interface StatsCardContainerProps {
 
 function StatsCardContainer({ label, dotColorClass, totalCount, subtitle, children }: StatsCardContainerProps) {
   return (
-    <div className="relative h-32 rounded-xl border border-slate-200 bg-linear-to-br from-slate-50 to-white dark:border-slate-700 dark:from-slate-800 dark:to-slate-900">
-      <div className="absolute top-3 left-4 z-10">
-        <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
-          <span className={`h-2 w-2 rounded-full ${dotColorClass}`} />
+    <div className="border-border-subtle bg-card rounded-column shadow-card relative h-[150px] overflow-hidden">
+      <div className="absolute top-[22px] left-6 z-10">
+        <div className="flex items-center gap-2 text-sm font-bold">
+          <span className={`size-[9px] rounded-full ${dotColorClass}`} />
           {label}
         </div>
-        <div className="text-2xl font-semibold text-neutral-700 tabular-nums dark:text-neutral-200">{totalCount}</div>
-        {subtitle && <div className="text-muted-foreground text-sm tabular-nums">{subtitle}</div>}
+        <div className="mt-1.5 flex items-baseline gap-2.5">
+          <span className="text-[38px] leading-none font-black tabular-nums">{totalCount}</span>
+          {subtitle && <span className="text-muted-foreground-subtle text-[13px] font-semibold tabular-nums">{subtitle}</span>}
+        </div>
       </div>
-      <div className="absolute inset-3 overflow-hidden">{children}</div>
+      {/* スパークラインはカード下端に敷く */}
+      <div className="absolute right-0 bottom-0 left-0 h-[66px] overflow-hidden">{children}</div>
     </div>
   );
 }
@@ -79,11 +86,11 @@ function SimpleStatsCard({ label, dotColorClass, totalCount, weeklyData, gradien
   return (
     <StatsCardContainer label={label} dotColorClass={dotColorClass} totalCount={totalCount}>
       <ChartContainer config={chartConfig} className="h-full w-full">
-        <AreaChart data={weeklyData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
+        <AreaChart data={weeklyData} margin={{ top: 8, right: 0, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={CHART_COLOR} stopOpacity={0.2} />
-              <stop offset="100%" stopColor={CHART_COLOR} stopOpacity={0} />
+              <stop offset="0%" stopColor="var(--color-cumulativeCount)" stopOpacity={0.09} />
+              <stop offset="100%" stopColor="var(--color-cumulativeCount)" stopOpacity={0.09} />
             </linearGradient>
           </defs>
           <XAxis dataKey="week" hide />
@@ -93,7 +100,7 @@ function SimpleStatsCard({ label, dotColorClass, totalCount, weeklyData, gradien
             type="monotone"
             dataKey="cumulativeCount"
             stroke="var(--color-cumulativeCount)"
-            strokeWidth={1.5}
+            strokeWidth={2.5}
             fill={`url(#${gradientId})`}
             dot={false}
             activeDot={{ r: 4 }}
@@ -117,13 +124,13 @@ interface TryStatsCardProps {
 
 function TryStatsCard({ label, subtitle, totalCount, weeklyData, chartConfig, yAxisMax }: TryStatsCardProps) {
   return (
-    <StatsCardContainer label={label} dotColorClass="bg-blue-500" totalCount={totalCount} subtitle={subtitle}>
+    <StatsCardContainer label={label} dotColorClass="bg-kpt-try" totalCount={totalCount} subtitle={subtitle}>
       <ChartContainer config={chartConfig} className="h-full w-full">
-        <AreaChart data={weeklyData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
+        <AreaChart data={weeklyData} margin={{ top: 8, right: 0, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="tryCompletedGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={CHART_COLOR} stopOpacity={0.2} />
-              <stop offset="100%" stopColor={CHART_COLOR} stopOpacity={0} />
+              <stop offset="0%" stopColor="var(--color-cumulativeCompletedCount)" stopOpacity={0.09} />
+              <stop offset="100%" stopColor="var(--color-cumulativeCompletedCount)" stopOpacity={0.09} />
             </linearGradient>
           </defs>
           <XAxis dataKey="week" hide />
@@ -133,7 +140,7 @@ function TryStatsCard({ label, subtitle, totalCount, weeklyData, chartConfig, yA
             type="monotone"
             dataKey="cumulativeCount"
             stroke="var(--color-cumulativeCount)"
-            strokeWidth={1.5}
+            strokeWidth={2.5}
             fill="none"
             dot={false}
             activeDot={{ r: 4 }}
@@ -143,7 +150,7 @@ function TryStatsCard({ label, subtitle, totalCount, weeklyData, chartConfig, yA
             type="monotone"
             dataKey="cumulativeCompletedCount"
             stroke="var(--color-cumulativeCompletedCount)"
-            strokeWidth={1.5}
+            strokeWidth={2.5}
             fill="url(#tryCompletedGradient)"
             dot={false}
             activeDot={{ r: 3 }}
@@ -177,7 +184,7 @@ export function StatsSummary(): ReactElement | null {
       ({
         cumulativeCount: {
           label: t('累計Keep'),
-          color: CHART_COLOR,
+          color: CHART_COLOR_KEEP,
         },
       }) satisfies ChartConfig,
     [t]
@@ -188,7 +195,7 @@ export function StatsSummary(): ReactElement | null {
       ({
         cumulativeCount: {
           label: t('累計Problem'),
-          color: CHART_COLOR,
+          color: CHART_COLOR_PROBLEM,
         },
       }) satisfies ChartConfig,
     [t]
@@ -199,11 +206,11 @@ export function StatsSummary(): ReactElement | null {
       ({
         cumulativeCount: {
           label: t('累計Try'),
-          color: CHART_COLOR_LIGHT,
+          color: CHART_COLOR_TRY_LIGHT,
         },
         cumulativeCompletedCount: {
           label: t('完了Try'),
-          color: CHART_COLOR,
+          color: CHART_COLOR_TRY,
         },
       }) satisfies ChartConfig,
     [t]
@@ -267,7 +274,7 @@ export function StatsSummary(): ReactElement | null {
         <div className="mb-2 flex items-center justify-end">
           <Skeleton className="h-8 w-20" />
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-5">
           <Skeleton className="h-32 rounded-xl" />
           <Skeleton className="h-32 rounded-xl" />
           <Skeleton className="h-32 rounded-xl" />
@@ -287,17 +294,17 @@ export function StatsSummary(): ReactElement | null {
         <RadioGroup
           value={period}
           onValueChange={(value) => handlePeriodChange(value as StatsPeriod)}
-          className="inline-flex rounded-lg bg-slate-50 p-0.5 dark:bg-slate-900"
+          className="bg-card border-border shadow-chip inline-flex rounded-[10px] border p-[3px]"
           aria-label={t('グラフ表示の期間範囲')}
         >
           {periodOptions.map((option) => (
             <Label
               key={option.value}
               htmlFor={`period-${option.value}`}
-              className={`has-focus-visible:ring-ring cursor-pointer rounded-md px-2.5 py-1 text-sm font-medium transition-colors has-focus-visible:ring-2 has-focus-visible:ring-offset-1 ${
+              className={`has-focus-visible:ring-ring cursor-pointer rounded-[7px] px-3.5 py-1.5 text-[13px] transition-colors has-focus-visible:ring-2 has-focus-visible:ring-offset-1 ${
                 period === option.value
-                  ? 'bg-white text-blue-600 shadow-sm dark:bg-slate-100 dark:text-blue-600'
-                  : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200'
+                  ? 'bg-primary text-primary-foreground font-bold'
+                  : 'text-muted-foreground-subtle hover:text-foreground font-semibold'
               }`}
             >
               <RadioGroupItem value={option.value} id={`period-${option.value}`} className="sr-only" aria-label={option.ariaLabel} />
@@ -307,10 +314,10 @@ export function StatsSummary(): ReactElement | null {
         </RadioGroup>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-5">
         <SimpleStatsCard
           label={t('累計Keep')}
-          dotColorClass="bg-lime-500"
+          dotColorClass="bg-kpt-keep"
           totalCount={stats.keepStats.totalCount}
           weeklyData={keepWeeklyData}
           gradientId="keepGradient"
@@ -319,7 +326,7 @@ export function StatsSummary(): ReactElement | null {
         />
         <SimpleStatsCard
           label={t('累計Problem')}
-          dotColorClass="bg-red-400"
+          dotColorClass="bg-kpt-problem"
           totalCount={stats.problemStats.totalCount}
           weeklyData={problemWeeklyData}
           gradientId="problemGradient"

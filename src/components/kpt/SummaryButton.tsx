@@ -1,4 +1,4 @@
-import { Bot } from 'lucide-react';
+import { Sparkle } from 'lucide-react';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,9 +20,9 @@ export function SummaryButton({ onClick, disabled, title }: SummaryButtonProps):
       onClick={onClick}
       disabled={disabled}
       title={title}
-      className="border-input hover:bg-muted flex h-9 items-center gap-2 rounded-full border px-3 text-sm transition-colors disabled:opacity-50"
+      className="border-input bg-card shadow-chip hover:bg-accent flex h-9 items-center gap-[7px] rounded-lg border px-4 text-[13.5px] font-bold transition-colors disabled:opacity-50"
     >
-      <Bot className="h-4 w-4" />
+      <Sparkle className="h-4 w-4" />
       {t('AIサマリー')}
     </button>
   );
