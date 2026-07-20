@@ -5,6 +5,11 @@ import { ReactElement } from 'react';
  *
  * Zen Kaku Gothic New Black (SIL OFL) をアウトライン化したパス（letter-spacing -.01em 相当）。
  * currentColorで塗るため、ライト/ダークの文字色にそのまま追従する。
+ *
+ * 同じパスをREADME用に public/logotype.svg（ライト）と public/logotype-dark.svg（ダーク）にも
+ * 置いている。ロゴタイプを変更する際は3ファイルすべてを更新すること。
+ * （アプリ側はテーマをlocalStorage+.darkクラスで切り替えるため、prefers-color-schemeに依存する
+ *   picture要素では追従できず、currentColorが使えるインラインSVGにしている）
  */
 export function Logotype({ className }: { className?: string }): ReactElement {
   return (

@@ -3,13 +3,13 @@
 </p>
 
 <div align="center">
-  <img height="48" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
+  <img height="36" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
   &nbsp;&nbsp;&nbsp;
   <a href="https://simple-kpt.com" target="_blank" rel="noopener">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./public/logotype-dark.svg">
       <source media="(prefers-color-scheme: light)" srcset="./public/logotype.svg">
-      <img height="64" src="./public/logotype.svg" alt="Simple KPT" align="middle">
+      <img height="28" src="./public/logotype.svg" alt="Simple KPT" align="middle">
     </picture>
   </a>
 </div>
@@ -17,13 +17,8 @@
 <br>
 
 <div align="center">
-  <h2>
-    Make team retrospectives refreshingly simple.<br>
-    Minimal preparation, minimal effort. <br>
-    Focus on your retrospectives with this KPT tool.
-    <br>
-    <br>
-  </h2>
+  <h3>Make team retrospectives refreshingly simple.</h3>
+  <p>Minimal preparation, minimal effort.<br>Focus on your retrospectives with this KPT tool.</p>
 </div>
 
 <br>
