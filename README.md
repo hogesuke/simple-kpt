@@ -3,13 +3,13 @@
 </p>
 
 <div align="center">
-  <img height="48" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
+  <img height="36" src="./public/logo.svg" alt="Simple KPT logo" align="middle">
   &nbsp;&nbsp;&nbsp;
   <a href="https://simple-kpt.com" target="_blank" rel="noopener">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./public/logotype-dark.svg">
       <source media="(prefers-color-scheme: light)" srcset="./public/logotype.svg">
-      <img height="64" src="./public/logotype.svg" alt="Simple KPT" align="middle">
+      <img height="28" src="./public/logotype.svg" alt="Simple KPT" align="middle">
     </picture>
   </a>
 </div>
@@ -17,12 +17,8 @@
 <br>
 
 <div align="center">
-  <h2>
-    チームの振り返りをもっとシンプルに<br>
-    準備も操作も最小限。振り返りに集中できるKPTツール
-    <br>
-    <br>
-  </h2>
+  <h3>チームの振り返りをもっとシンプルに</h3>
+  <p>準備も操作も最小限。振り返りに集中できるKPTツール</p>
 </div>
 
 <br>
