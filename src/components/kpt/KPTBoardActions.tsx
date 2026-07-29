@@ -45,6 +45,7 @@ export function KPTBoardActions(): ReactElement {
   useEffect(() => {
     const state = location.state as LocationState | null;
     if (state?.justCreated && board) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- router stateに基づくダイアログ表示のため必要
       setShareDialogOpen(true);
 
       // stateをクリアしてリロード時に再表示されないようにする

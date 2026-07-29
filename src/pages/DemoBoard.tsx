@@ -107,6 +107,7 @@ export function DemoBoard(): ReactElement {
   // タイマー開始時にデフォルトの表示設定を適用
   useEffect(() => {
     if (timerState?.startedAt) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- タイマー開始時の表示設定の同期のため必要
       setLocalHideOthersCards(timerState.hideOthersCards);
     } else {
       setLocalHideOthersCards(false);

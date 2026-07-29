@@ -68,6 +68,7 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
 
   // Detail表示が別itemに変更されたら編集モードを解除
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 表示対象itemの切り替えに伴う編集状態のリセットのため必要
     setIsEditing(false);
     setEditingText('');
   }, [item?.id]);

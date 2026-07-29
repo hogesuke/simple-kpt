@@ -87,6 +87,7 @@ export function Timer({ disabled }: TimerProps) {
   // 残り時間の計算
   useEffect(() => {
     if (!timerState?.startedAt || !timerState.durationSeconds) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- タイマー状態のクリアに伴う残り時間のリセットのため必要
       setRemainingSeconds(null);
       hasNotifiedRef.current = false;
       return;
