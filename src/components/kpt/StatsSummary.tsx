@@ -244,19 +244,19 @@ export function StatsSummary(): ReactElement | null {
   const keepWeeklyData = useMemo(
     () =>
       stats?.keepStats.weeklyData && stats.keepStats.weeklyData.length > 0 ? stats.keepStats.weeklyData : generateEmptyWeeklyData(period),
-    [stats?.keepStats.weeklyData, period]
+    [stats, period]
   );
   const problemWeeklyData = useMemo(
     () =>
       stats?.problemStats.weeklyData && stats.problemStats.weeklyData.length > 0
         ? stats.problemStats.weeklyData
         : generateEmptyWeeklyData(period),
-    [stats?.problemStats.weeklyData, period]
+    [stats, period]
   );
   const tryWeeklyData = useMemo(
     () =>
       stats?.tryStats.weeklyData && stats.tryStats.weeklyData.length > 0 ? stats.tryStats.weeklyData : generateEmptyTryWeeklyData(period),
-    [stats?.tryStats.weeklyData, period]
+    [stats, period]
   );
 
   // 全グラフのY軸スケールを統一するために最大値を計算
