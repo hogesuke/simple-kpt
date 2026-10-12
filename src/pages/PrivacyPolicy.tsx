@@ -76,7 +76,7 @@ function PrivacyJa(): ReactElement {
         <ul className="text-muted-foreground list-disc space-y-2 pl-6 leading-relaxed">
           <li>
             <strong>Cloudflare</strong>:
-            参加者同士の接続を仲介するサーバーとして利用。暗号化された接続情報を中継するのみで、ボードの内容は経由しません。運営者は、接続元のIPアドレスなどをログとして保存しない設定で運用しています。なお、Cloudflare社による情報の取り扱いについては、同社の
+            参加者同士の接続を仲介するサーバーとして利用しています。暗号化された接続情報を中継するのみで、ボードの内容は経由しません。接続の仲介にあたり、Cloudflare社がIPアドレスなどのアクセス情報を取得する場合があります。Cloudflare社による情報の取り扱いについては、同社の
             <a
               href="https://www.cloudflare.com/privacypolicy/"
               target="_blank"
@@ -247,8 +247,8 @@ function PrivacyEn(): ReactElement {
         <ul className="text-muted-foreground list-disc space-y-2 pl-6 leading-relaxed">
           <li>
             <strong>Cloudflare</strong>: Used as the server that relays connections between participants. It only relays encrypted
-            connection information, and board contents do not pass through it. The operator runs it with settings that do not store logs
-            such as client IP addresses. For how Cloudflare itself handles information, please refer to Cloudflare&apos;s{' '}
+            connection information, and board contents do not pass through it. Cloudflare may collect access information such as IP
+            addresses when relaying connections. For how Cloudflare handles information, please refer to Cloudflare&apos;s{' '}
             <a
               href="https://www.cloudflare.com/privacypolicy/"
               target="_blank"
@@ -355,7 +355,7 @@ export function Privacy(): ReactElement {
         <h1 className="mb-8 text-3xl font-semibold">{t('プライバシーポリシー')}</h1>
 
         <div className="prose prose-gray max-w-none">
-          <p className="text-muted-foreground mb-8">{t('最終更新日: {{date}}', { date: '2026-10-11' })}</p>
+          <p className="text-muted-foreground mb-8">{t('最終更新日: {{date}}', { date: '2026-10-12' })}</p>
           {isJapanese ? <PrivacyJa /> : <PrivacyEn />}
         </div>
       </div>
