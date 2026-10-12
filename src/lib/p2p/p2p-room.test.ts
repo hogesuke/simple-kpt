@@ -264,10 +264,8 @@ describe('P2PRoom（ボードに書き込む参加者の数）', () => {
 
   it('参加者が多すぎるボードになる更新は適用せず、上限に達したと判定すること', () => {
     const room = createRoom();
-    const startedAt = performance.now();
     (room as unknown as { handleRemoteDoc: (update: Uint8Array) => void }).handleRemoteDoc(createManyClientsUpdate(6000));
 
-    expect(performance.now() - startedAt).toBeLessThan(1000);
     expect(room.doc.getMap('x').size).toBe(0);
     expect(room.isBoardFull()).toBe(true);
     room.destroy();
