@@ -23,16 +23,33 @@ function injectThemeInitPlugin(): Plugin {
   };
 }
 
+/** ライブラリをまとめるチャンクと、そこに含めるパッケージ */
+const CHUNK_PACKAGES: Record<string, string[]> = {
+  vendor: ['react', 'react-dom', 'react-router'],
+  ui: ['lucide-react', 'sonner', 'class-variance-authority', 'clsx', 'tailwind-merge'],
+  forms: ['react-hook-form', 'zod'],
+  dnd: ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+};
+
+/**
+ * モジュールのパスから、含めるチャンクの名前を求める（該当しない場合はundefined）
+ */
+function findChunkName(id: string): string | undefined {
+  const normalizedId = id.replace(/\\/g, '/');
+  for (const [chunkName, packages] of Object.entries(CHUNK_PACKAGES)) {
+    if (packages.some((name) => normalizedId.includes(`/node_modules/${name}/`))) return chunkName;
+  }
+  return undefined;
+}
+
 export default defineConfig({
   plugins: [react(), tailwindcss(), tsconfigPaths(), injectThemeInitPlugin()],
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router'],
-          ui: ['lucide-react', 'sonner', 'class-variance-authority', 'clsx', 'tailwind-merge'],
-          forms: ['react-hook-form', 'zod'],
-          dnd: ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+        // Vite 8（Rolldown）ではオブジェクト形式に対応していないため、関数形式でチャンクを振り分ける
+        manualChunks(id) {
+          return findChunkName(id);
         },
       },
       plugins: [
