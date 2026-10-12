@@ -1,5 +1,4 @@
 import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { formatInTimeZone } from 'date-fns-tz';
 import { ArrowLeft, Download } from 'lucide-react';
 import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,29 +10,16 @@ import { FilterBar } from '@/components/kpt/FilterBar';
 import { ItemAddForm } from '@/components/kpt/ItemAddForm';
 import { ItemDetailPanel } from '@/components/kpt/ItemDetailPanel';
 import { KPTCard } from '@/components/kpt/KPTCard';
-import { SummaryButton } from '@/components/kpt/SummaryButton';
-import { SummaryDialog } from '@/components/kpt/SummaryDialog';
 import { Timer } from '@/components/kpt/Timer';
 import { HeaderActions } from '@/components/layout/HeaderActions';
 import { Button } from '@/components/shadcn/button';
 import { DemoBoardProvider } from '@/contexts/DemoBoardProvider';
-import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { useKPTCardDnD } from '@/hooks/useKPTCardDnD';
 import { selectActiveItem, selectItemsByColumn } from '@/lib/item-selectors';
-import { generateSummaryDemo } from '@/lib/kpt-api';
-import { DEMO_EXPLANATION_ITEM_IDS, getDemoMembers, useDemoStore } from '@/stores/useDemoStore';
+import { getDemoMembers, useDemoStore } from '@/stores/useDemoStore';
 import { VALID_COLUMNS } from '@shared/constants';
 
 import type { KptColumnType, KptItem } from '@/types/kpt';
-
-const DEMO_SUMMARY_STORAGE_KEY = 'demo_summary_used_date';
-
-/**
- * 日本時間での本日日付をYYYY-MM-DD形式で取得
- */
-function getTodayInJST(): string {
-  return formatInTimeZone(new Date(), 'Asia/Tokyo', 'yyyy-MM-dd');
-}
 
 // デモユーザーID（タイマーの「他の人のカードを隠す」機能用）
 const DEMO_USER_ID = 'demo-user-1';
@@ -41,7 +27,6 @@ const DEMO_USER_ID = 'demo-user-1';
 export function DemoBoard(): ReactElement {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { handleError } = useErrorHandler();
 
   const items = useDemoStore((state) => state.items);
   const selectedItem = useDemoStore((state) => state.selectedItem);
@@ -60,42 +45,6 @@ export function DemoBoard(): ReactElement {
   const [newItemColumn, setNewItemColumn] = useState<KptColumnType>('keep');
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
   const [localHideOthersCards, setLocalHideOthersCards] = useState(false);
-
-  // サマリー生成用の状態
-  const [isSummaryDialogOpen, setIsSummaryDialogOpen] = useState(false);
-  const [summary, setSummary] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [hasSummaryUsed, setHasSummaryUsed] = useState(() => {
-    const usedDate = localStorage.getItem(DEMO_SUMMARY_STORAGE_KEY);
-    return usedDate === getTodayInJST();
-  });
-
-  const handleOpenSummaryDialog = useCallback(() => {
-    setSummary('');
-    setIsSummaryDialogOpen(true);
-  }, []);
-
-  const handleGenerateSummary = useCallback(async () => {
-    setIsGenerating(true);
-
-    try {
-      const itemsForApi = items
-        .filter((item) => !DEMO_EXPLANATION_ITEM_IDS.includes(item.id))
-        .map((item) => ({
-          column: item.column,
-          text: item.text,
-        }));
-      const result = await generateSummaryDemo(itemsForApi);
-      setSummary(result.summary);
-      localStorage.setItem(DEMO_SUMMARY_STORAGE_KEY, getTodayInJST());
-      setHasSummaryUsed(true);
-    } catch (error) {
-      setIsSummaryDialogOpen(false);
-      handleError(error, t('error:サマリーの生成に失敗しました'));
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [items, handleError, t]);
 
   // ページ離脱時にリセット
   useEffect(() => {
@@ -246,11 +195,6 @@ export function DemoBoard(): ReactElement {
                 <div className="flex items-center justify-between gap-4">
                   <h1 className="text-2xl font-semibold">{t('landing:デモボード')}</h1>
                   <div className="flex items-center gap-2">
-                    <SummaryButton
-                      onClick={handleOpenSummaryDialog}
-                      disabled={hasSummaryUsed}
-                      title={hasSummaryUsed ? t('landing:デモでは1回のみ利用可能です') : undefined}
-                    />
                     <Timer />
                   </div>
                 </div>
@@ -328,17 +272,6 @@ export function DemoBoard(): ReactElement {
 
           {/* エクスポートダイアログ */}
           <ExportDialog boardName={t('landing:デモボード')} items={items} isOpen={exportDialogOpen} onOpenChange={setExportDialogOpen} />
-
-          {/* AIサマリーダイアログ */}
-          <SummaryDialog
-            isOpen={isSummaryDialogOpen}
-            onOpenChange={setIsSummaryDialogOpen}
-            onGenerate={handleGenerateSummary}
-            summary={summary}
-            remainingCount={hasSummaryUsed ? 0 : 1}
-            isLoading={isGenerating}
-            boardName={t('landing:デモボード')}
-          />
         </DndContext>
       </DemoBoardProvider>
     </>

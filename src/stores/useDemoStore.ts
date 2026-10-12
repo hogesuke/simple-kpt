@@ -20,9 +20,6 @@ function createDemoMembers(): BoardMember[] {
   ];
 }
 
-// サマリー生成時に除外するアイテム
-export const DEMO_EXPLANATION_ITEM_IDS = ['demo-keep-1', 'demo-keep-2'];
-
 // デモ用の初期データを生成する関数
 function createInitialItems(): KptItem[] {
   const user1 = i18n.t('board:デモユーザー1');

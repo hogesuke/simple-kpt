@@ -18,7 +18,7 @@
 
 <div align="center">
   <h3>Make team retrospectives refreshingly simple.</h3>
-  <p>Minimal preparation, minimal effort.<br>Focus on your retrospectives with this KPT tool.</p>
+  <p>No sign-up. Just share a URL<br>and start your team retrospective right away.</p>
 </div>
 
 <br>
@@ -62,20 +62,41 @@
 
 ## Features
 
-- 🔄 KPT Framework
-- ⏱️ Timer
-- ✅ Try Progress Tracking
-- 📥 Export
-- 🤖 AI Summary
-- 📈 Trend Charts
+- 🔗 No sign-up. Just share a URL to join as a team
+- 🔒 No server storage. Board contents stay on participants' devices
+- 👥 Real-time collaborative editing
+- 🔄 Resume by reopening the same URL
+- ⏱️ Timer (with an option to hide other people's cards)
+- 👍 Voting
+- ✅ Assignees, statuses, and due dates for Try items
+- 📥 Export (Markdown / CSV / JSON for resuming)
 - 🌓 Dark Mode
 - 🌐 Multilingual Support (Japanese / English)
+
+## How It Works
+
+Board contents are not stored on any server. Participants' browsers sync directly with each other over WebRTC.
+
+```
+Participant A ─┐                                   ┌─ Participant B
+               │  (1) Connection relay (encrypted)  │
+               └──────── Signaling server ──────────┘
+                        (Cloudflare Workers)
+Participant A ◀────── (2) Direct sync (WebRTC) ──────▶ Participant B
+```
+
+- **Sync**: [Yjs](https://github.com/yjs/yjs) (CRDT) merges concurrent edits without conflicts.
+- **Connection relay**: Uses a self-hosted signaling server (Cloudflare Workers + Durable Objects) with the same message format as [Trystero](https://github.com/dmotz/trystero)'s ws-relay strategy. Connection information is encrypted with the key after `#` in the invite URL, so the signaling server cannot read it. Board contents never pass through it.
+- **Storage**: Boards you join are stored in each participant's browser (IndexedDB), and you can resume by reopening the same invite URL.
+- **Clock skew**: The timer uses a "room clock" based on the room creator's clock to correct differences between participants' device clocks.
 
 ## Tech Stack
 
 - TypeScript
 - React 19
 - Tailwind CSS 4
+- Yjs
+- Trystero
 - Zustand
 - React Hook Form
 - Zod
@@ -88,8 +109,8 @@
 
 ## Infrastructure
 
-- Supabase
-- Vercel
+- Vercel (frontend)
+- Cloudflare Workers (signaling server)
 
 ## Requirements
 
@@ -101,26 +122,47 @@
 
 ```bash
 pnpm install --frozen-lockfile
-
-brew install supabase/tap/supabase
 ```
 
 ### Environment Variables
 
-Create `.env.local` and set the values displayed by `supabase start`.
+Create `.env.local` if needed (see `.env.local.example`).
 
 ```bash
-VITE_SUPABASE_URL=<Supabase URL> # e.g., http://127.0.0.1:54321
-VITE_SUPABASE_ANON_KEY=<Supabase Anon Key> # e.g., sb_publishable_xxxxxxxx...
+# Signaling server URL (if not set, ws://localhost:8787 is used during development)
+VITE_SIGNALING_URL=ws://localhost:8787
 ```
 
 ### Start
 
-```bash
-supabase start
+Start the signaling server and the app in separate terminals.
 
+```bash
+# Signaling server (http://localhost:8787)
+pnpm signaling:dev
+
+# App (http://localhost:5173)
 pnpm dev
 ```
+
+To check syncing between multiple people, open the same invite URL in browsers with separate storage, such as a normal window and a private window.
+
+## Deployment
+
+### Signaling server (Cloudflare Workers)
+
+```bash
+npx wrangler login
+pnpm signaling:deploy
+```
+
+- Allowed origins are configured with `ALLOWED_ORIGINS` in `signaling/wrangler.jsonc`.
+- Workers Logs is disabled so that logs such as client IP addresses are not stored.
+
+### Frontend (Vercel)
+
+- Set the environment variable `VITE_SIGNALING_URL` to the signaling server URL (e.g., `wss://signaling.simple-kpt.com`).
+- Include the signaling server URL in the Content-Security-Policy (`connect-src`) in `vercel.json`.
 
 ## Testing
 
@@ -155,15 +197,14 @@ https://hogesuke.github.io/simple-kpt/
 │   ├── components/   # UI Components
 │   ├── contexts/     # React Context
 │   ├── hooks/        # Custom Hooks
-│   ├── lib/          # Utilities & API
+│   ├── lib/
+│   │   └── p2p/      # P2P sync, room clock, storage, resume files
 │   ├── pages/        # Page Components
-│   ├── stores/       # Zustand Stores
+│   ├── stores/       # Zustand Stores (demo board)
 │   └── types/        # Type Definitions
 │
-└── supabase/
-    ├── functions/    # Edge Functions
-    ├── migrations/   # Migrations
-    └── seed.sql      # Seed Data
+├── signaling/        # Signaling server (Cloudflare Workers)
+└── shared/           # Shared constants
 ```
 
 ## License

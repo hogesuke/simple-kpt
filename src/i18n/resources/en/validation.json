@@ -1,19 +1,5 @@
 {
-  "ニックネームを入力してください": "Please enter a nickname",
   "{{max}}文字以内で入力してください": "Please enter {{max}} characters or less",
-  "ボード名を入力してください": "Please enter a board name",
   "テキストを入力してください": "Please enter text",
-  "有効なメールアドレスを入力してください": "Please enter a valid email address",
-  "メールアドレスを入力してください": "Please enter an email address",
-  "メールアドレスは{{max}}文字以内で入力してください": "Email must be {{max}} characters or less",
-  "パスワードを入力してください": "Please enter a password",
-  "パスワードは{{max}}文字以内で入力してください": "Password must be {{max}} characters or less",
-  "パスワードは{{min}}文字以上で入力してください": "Password must be at least {{min}} characters",
-  "確認用パスワードを入力してください": "Please enter confirmation password",
-  "パスワードが一致しません": "Passwords do not match",
-  "現在のパスワードを入力してください": "Please enter your current password",
-  "新しいパスワードは{{min}}文字以上で入力してください": "New password must be at least {{min}} characters",
-  "新しいパスワードは{{max}}文字以内で入力してください": "New password must be {{max}} characters or less",
-  "現在のパスワードと同じパスワードは設定できません": "New password cannot be the same as current password",
-  "利用規約への同意が必要です": "You must agree to the Terms of Service"
+  "パスワードが一致しません": "Passwords do not match"
 }

@@ -239,4 +239,52 @@ describe('generateCSV', () => {
     expect(lines).toHaveLength(2);
     expect(lines[1]).toContain('Keep,テストテキスト');
   });
+
+  it("数式として解釈される文字で始まる値は、先頭に'を付けて無害化されること", () => {
+    const items: KptItem[] = [
+      createMockItem({ text: '=HYPERLINK("https://example.com","click")', authorNickname: '+cmd', assigneeNickname: '@SUM(A1)' }),
+    ];
+    const [, row] = generateCSV(items, t).split('\n');
+
+    expect(row).toContain(`"'=HYPERLINK(""https://example.com"",""click"")"`);
+    expect(row).toContain("'+cmd");
+    expect(row).toContain("'@SUM(A1)");
+  });
+
+  it('ニックネームに含まれるカンマや改行で列や行が崩れないこと', () => {
+    const items: KptItem[] = [createMockItem({ authorNickname: 'a,b\nc', status: null })];
+    const lines = generateCSV(items, t).split('\n');
+
+    expect(lines.join('\n')).toContain('"a,b\nc"');
+  });
+});
+
+describe('generateMarkdown（エスケープ）', () => {
+  it('ニックネームに含まれるパイプや改行でテーブルが崩れないこと', () => {
+    const items: KptItem[] = [createMockItem({ authorNickname: 'a|b\nc' })];
+    const result = generateMarkdown('ボード', items, t);
+
+    expect(result).toContain('a\\|b c');
+  });
+
+  it('ボード名に含まれる改行が見出しの外に出ないこと', () => {
+    const result = generateMarkdown('ボード\n# 偽の見出し', [], t);
+
+    expect(result.split('\n')[0]).toBe('# ボード # 偽の見出し');
+  });
+});
+
+describe('generateMarkdown（画像・リンク・HTMLのエスケープ）', () => {
+  it('画像・リンク・HTMLとして解釈される文字をエスケープすること', () => {
+    const items: KptItem[] = [createMockItem({ text: '![x](https://example.com/x.png) <img src=x> [link](https://example.com) \\|' })];
+    const result = generateMarkdown('ボード', items, t);
+
+    expect(result).toContain('\\!\\[x\\](https://example.com/x.png) \\<img src=x\\> \\[link\\](https://example.com) \\\\\\|');
+    expect(result).not.toMatch(/(^|[^\\])!\[/);
+  });
+
+  it('ボード名の画像記法もエスケープすること', () => {
+    const result = generateMarkdown('![x](https://example.com/x.png)', [], t);
+    expect(result.split('\n')[0]).toBe('# \\!\\[x\\](https://example.com/x.png)');
+  });
 });

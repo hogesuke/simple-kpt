@@ -3,6 +3,7 @@
 interface ImportMetaEnv {
   readonly VITE_SENTRY_DSN: string | undefined;
   readonly VITE_GA4_MEASUREMENT_ID: string | undefined;
+  readonly VITE_SIGNALING_URL: string | undefined;
 }
 
 interface ImportMeta {

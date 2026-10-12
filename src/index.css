@@ -453,37 +453,6 @@
   }
 }
 
-/* Supabase Auth UIのカスタムスタイル */
-a[href='#auth-sign_up'],
-a[href='#auth-sign-up'],
-a[href='#auth-sign_in'],
-a[href='#auth-sign-in'] {
-  display: block !important;
-  width: 100%;
-  padding: 10px 15px;
-  margin-top: 16px;
-  background-color: transparent;
-  border: 1px solid #9ca3af;
-  border-radius: 0.375rem;
-  text-align: center;
-  text-decoration: none !important;
-  color: #374151 !important;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-a[href='#auth-sign_up']:hover,
-a[href='#auth-sign-up']:hover,
-a[href='#auth-sign_in']:hover,
-a[href='#auth-sign-in']:hover {
-  background-color: #f9fafb;
-}
-
-a[href='#auth-forgot-password'],
-a[href='#auth-forgot_password'] {
-  margin-top: -8px;
-}
-
 /* Sonner Toastのスタイル */
 [data-sonner-toast] {
   width: 400px !important;

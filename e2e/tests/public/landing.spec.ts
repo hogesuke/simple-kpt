@@ -9,7 +9,7 @@ test.describe('ランディングページ', () => {
 
     await expect(landingPage.heading).toBeVisible();
     await expect(landingPage.heroDemoButton).toBeVisible();
-    await expect(landingPage.startLoginButton).toBeVisible();
+    await expect(landingPage.startButton).toBeVisible();
     await expect(landingPage.featureSection).toBeVisible();
   });
 
@@ -29,20 +29,12 @@ test.describe('ランディングページ', () => {
     await expect(page).toHaveURL('/demo');
   });
 
-  test('ヒーローセクションの今すぐ始めるボタンをクリックするとサインアップページに遷移すること', async ({ page }) => {
+  test('ヒーローセクションの今すぐ始めるボタンをクリックするとボード作成ページに遷移すること', async ({ page }) => {
     const landingPage = new LandingPage(page);
     await landingPage.goto();
-    await landingPage.clickStartLogin();
+    await landingPage.clickStart();
 
-    await expect(page).toHaveURL('/signup');
-  });
-
-  test('ヘッダーのログインボタンをクリックするとログインページに遷移すること', async ({ page }) => {
-    const landingPage = new LandingPage(page);
-    await landingPage.goto();
-    await landingPage.clickHeaderLogin();
-
-    await expect(page).toHaveURL('/login');
+    await expect(page).toHaveURL('/new');
   });
 
   test('ページタイトルが正しいこと', async ({ page }) => {

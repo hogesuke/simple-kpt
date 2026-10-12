@@ -11,6 +11,7 @@ import { Calendar } from '@/components/shadcn/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn/select';
 import { useBoardContext } from '@/contexts/BoardContext';
+import { buildAssigneeOptions } from '@/lib/assignee-options';
 import { cn } from '@/lib/cn';
 import { columnDot } from '@/lib/column-styles';
 import { ITEM_TEXT_MAX_LENGTH } from '@shared/constants';
@@ -40,7 +41,9 @@ function formatDate(dateString?: string): string {
 
 export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactElement | null {
   const { t, i18n } = useTranslation('board');
-  const { updateItem, setFilterTag, members, toggleVote } = useBoardContext();
+  const { updateItem, setFilterTag, members, items, toggleVote } = useBoardContext();
+  // 不在の人が担当者でも空欄にならないよう、ボードに登場する人も担当者の選択肢に含める
+  const assigneeOptions = useMemo(() => buildAssigneeOptions(members, items), [members, items]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingText, setEditingText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -120,10 +123,10 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
     async (assigneeId: string) => {
       if (!item) return;
       const newAssigneeId = assigneeId === 'unassigned' ? null : assigneeId;
-      const newAssigneeNickname = newAssigneeId ? (members.find((m) => m.userId === newAssigneeId)?.nickname ?? null) : null;
+      const newAssigneeNickname = newAssigneeId ? (assigneeOptions.find((o) => o.userId === newAssigneeId)?.nickname ?? null) : null;
       await updateItem({ ...item, assigneeId: newAssigneeId, assigneeNickname: newAssigneeNickname });
     },
-    [item, members, updateItem]
+    [item, assigneeOptions, updateItem]
   );
 
   const handleDueDateChange = useCallback(
@@ -359,9 +362,9 @@ export function ItemDetailPanel({ item, onClose }: ItemDetailPanelProps): ReactE
                       <SelectItem value="unassigned">
                         <span className="text-muted-foreground">{t('ui:未設定')}</span>
                       </SelectItem>
-                      {members.map((member) => (
-                        <SelectItem key={member.userId} value={member.userId}>
-                          {member.nickname ?? 'Unknown User'}
+                      {assigneeOptions.map((option) => (
+                        <SelectItem key={option.userId} value={option.userId}>
+                          {option.isConnected ? option.nickname : t('{{name}}（未接続）', { name: option.nickname })}
                         </SelectItem>
                       ))}
                     </SelectContent>

@@ -156,3 +156,6 @@ storybook-static
 
 # Lighthouse CI
 .lighthouseci
+
+# Wrangler（シグナリングサーバーのローカル実行時の状態）
+.wrangler/

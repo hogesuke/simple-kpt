@@ -31,7 +31,14 @@ export interface BoardContextValue {
 
   // タイマー操作
   startTimer: (durationSeconds: number, hideOthersCards: boolean) => void | Promise<void>;
-  stopTimer: () => void | Promise<void>;
+  /**
+   * タイマーを停止する
+   * expiredは時間切れによる停止を表す。P2Pのボードでは、時間切れは各自の画面で判定するため、ルーム全体の状態を書き換えない
+   */
+  stopTimer: (options?: { expired?: boolean }) => void | Promise<void>;
+
+  // 自分のニックネームの変更（変更できるボードのみ）
+  changeNickname?: (nickname: string) => void;
 
   // デモモードフラグ
   isDemo: boolean;

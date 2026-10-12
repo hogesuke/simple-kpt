@@ -15,35 +15,42 @@ function TermsJa(): ReactElement {
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">第2条（利用登録）</h2>
+        <h2 className="mb-4 text-xl font-semibold">第2条（本サービスの利用）</h2>
         <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
-          <li>本サービスの利用を希望する方は、本規約に同意の上、所定の方法によって利用登録を申請してください。</li>
+          <li>本サービスは、アカウント登録をせずに利用できます。</li>
+          <li>ユーザーは、本規約に同意のうえ本サービスを利用するものとし、本サービスを利用した時点で本規約に同意したものとみなします。</li>
+        </ol>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="mb-4 text-xl font-semibold">第3条（招待URLの管理）</h2>
+        <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
           <li>
-            運営者は、利用登録の申請者に以下の事由があると判断した場合、利用登録の申請を承認しないことがあります。
-            <ul className="mt-2 list-disc space-y-1 pl-6">
-              <li>虚偽の事項を届け出た場合</li>
-              <li>本規約に違反したことがある者からの申請である場合</li>
-              <li>その他、運営者が利用登録を相当でないと判断した場合</li>
-            </ul>
+            招待URLを知っている人は誰でもボードに参加し、内容を閲覧・編集できます。ユーザーは、自己の責任において招待URLを管理し、意図しない第三者に共有しないものとします。
+          </li>
+          <li>
+            運営者は、招待URLが第三者に知られたことによりユーザーに生じた損害について、運営者の故意又は重過失による場合を除き、一切の責任を負いません。
           </li>
         </ol>
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">第3条（ユーザーIDおよびパスワードの管理）</h2>
+        <h2 className="mb-4 text-xl font-semibold">第4条（データの保存）</h2>
         <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
-          <li>ユーザーは、自己の責任において、本サービスのユーザーIDおよびパスワードを適切に管理するものとします。</li>
           <li>
-            ユーザーは、いかなる場合にも、ユーザーIDおよびパスワードを第三者に譲渡または貸与し、もしくは第三者と共用することはできません。
+            ボードの内容は運営者のサーバーに保存されず、参加者の端末に保存されます。運営者はボードの内容を保持しておらず、復元または提供することはできません。
           </li>
           <li>
-            ユーザーIDとパスワードの組み合わせが登録情報と一致してログインされた場合には、そのユーザーIDを登録しているユーザー自身による利用とみなします。
+            すべての参加者の端末から保存データが削除された場合、ボードの内容は失われます。ユーザーは、必要なデータをエクスポートにより自己の責任で保存するものとします。
+          </li>
+          <li>
+            共用の端末で本サービスを利用する場合、ユーザーは、利用後に端末に保存されたデータを削除するなど、自己の責任において適切に管理するものとします。
           </li>
         </ol>
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">第4条（禁止事項）</h2>
+        <h2 className="mb-4 text-xl font-semibold">第5条（禁止事項）</h2>
         <p className="text-muted-foreground mb-4 leading-relaxed">ユーザーは、本サービスの利用にあたり、以下の行為をしてはなりません。</p>
         <ul className="text-muted-foreground list-disc space-y-2 pl-6 leading-relaxed">
           <li>法令または公序良俗に違反する行為</li>
@@ -59,12 +66,13 @@ function TermsJa(): ReactElement {
           <li>他のユーザーに成りすます行為</li>
           <li>運営者が許諾しない本サービス上での宣伝、広告、勧誘、または営業行為</li>
           <li>反社会的勢力に対して直接または間接に利益を供与する行為</li>
+          <li>本サービスの接続の仲介サーバーを、本サービスの利用以外の目的で利用する行為</li>
           <li>その他、運営者が不適切と判断する行為</li>
         </ul>
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">第5条（本サービスの提供の停止等）</h2>
+        <h2 className="mb-4 text-xl font-semibold">第6条（本サービスの提供の停止等）</h2>
         <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
           <li>
             運営者は、以下のいずれかの事由があると判断した場合、ユーザーに事前に通知することなく本サービスの全部または一部の提供を停止または中断することができるものとします。
@@ -82,27 +90,13 @@ function TermsJa(): ReactElement {
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">第6条（利用制限および登録抹消）</h2>
+        <h2 className="mb-4 text-xl font-semibold">第7条（利用制限）</h2>
         <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
           <li>
-            運営者は、ユーザーが以下のいずれかに該当する場合には、事前の通知なく、ユーザーに対して、本サービスの全部もしくは一部の利用を制限し、またはユーザーとしての登録を抹消することができるものとします。
-            <ul className="mt-2 list-disc space-y-1 pl-6">
-              <li>本規約のいずれかの条項に違反した場合</li>
-              <li>登録事項に虚偽の事実があることが判明した場合</li>
-              <li>運営者からの連絡に対し、一定期間返答がない場合</li>
-              <li>本サービスについて、最終の利用から一定期間利用がない場合</li>
-              <li>その他、運営者が本サービスの利用を適当でないと判断した場合</li>
-            </ul>
+            運営者は、ユーザーが本規約のいずれかの条項に違反した場合、その他運営者が本サービスの利用を適当でないと判断した場合には、事前の通知なく、当該ユーザーによる本サービスの全部または一部の利用を制限することができるものとします。
           </li>
           <li>運営者は、本条に基づき運営者が行った行為によりユーザーに生じた損害について、一切の責任を負いません。</li>
         </ol>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">第7条（退会）</h2>
-        <p className="text-muted-foreground leading-relaxed">
-          ユーザーは、運営者の定める退会手続により、本サービスから退会できるものとします。
-        </p>
       </section>
 
       <section className="mb-8">
@@ -118,7 +112,10 @@ function TermsJa(): ReactElement {
             運営者は、本サービスに関して、ユーザーと他のユーザーまたは第三者との間において生じた取引、連絡または紛争等について一切責任を負いません。
           </li>
           <li>
-            本サービスは現状有姿で提供されるものであり、運営者はデータの保全、バックアップ等について一切の責任を負いません。ユーザーは自己の責任においてデータのバックアップを行うものとします。
+            本サービスは現状有姿で提供されるものであり、運営者はデータの保全について一切の責任を負いません。ユーザーは、エクスポートなどにより自己の責任においてデータを保存するものとします。
+          </li>
+          <li>
+            本サービスは参加者の端末間の直接通信を利用するため、ユーザーのネットワーク環境によっては参加者同士が接続できない場合があります。運営者は、これによって生じたいかなる損害についても、一切責任を負いません。
           </li>
           <li>運営者は、本サービスの内容変更、中断、終了によって生じたいかなる損害についても、一切責任を負いません。</li>
           <li>運営者は、ユーザーが本サービスを利用する際に使用するいかなる機器、ソフトウェアについても、その動作保証を一切行いません。</li>
@@ -170,36 +167,50 @@ function TermsEn(): ReactElement {
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">Article 2 (User Registration)</h2>
+        <h2 className="mb-4 text-xl font-semibold">Article 2 (Use of the Service)</h2>
         <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
+          <li>The Service can be used without account registration.</li>
           <li>
-            Those who wish to use the Service shall agree to these Terms and apply for user registration through the prescribed method.
-          </li>
-          <li>
-            The operator may not approve a registration application if it determines that the applicant falls under any of the following:
-            <ul className="mt-2 list-disc space-y-1 pl-6">
-              <li>False information was submitted</li>
-              <li>The application is from a person who has previously violated these Terms</li>
-              <li>The operator otherwise deems the registration inappropriate</li>
-            </ul>
+            Users shall use the Service after agreeing to these Terms, and shall be deemed to have agreed to these Terms when they use the
+            Service.
           </li>
         </ol>
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">Article 3 (Management of User ID and Password)</h2>
+        <h2 className="mb-4 text-xl font-semibold">Article 3 (Management of Invite URLs)</h2>
         <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
-          <li>Users shall appropriately manage their user ID and password for the Service at their own responsibility.</li>
-          <li>Users may not transfer, lend, or share their user ID and password with any third party under any circumstances.</li>
           <li>
-            When a login is made with a combination of user ID and password that matches the registered information, it shall be deemed as
-            use by the user who registered that user ID.
+            Anyone with the invite URL can join the board and view or edit its contents. Users shall manage invite URLs at their own
+            responsibility and shall not share them with unintended third parties.
+          </li>
+          <li>
+            The operator shall not be liable for any damage caused to users because an invite URL became known to a third party, except in
+            cases of intentional or gross negligence by the operator.
           </li>
         </ol>
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">Article 4 (Prohibited Acts)</h2>
+        <h2 className="mb-4 text-xl font-semibold">Article 4 (Data Storage)</h2>
+        <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
+          <li>
+            Board contents are not stored on the operator&apos;s servers but on participants&apos; devices. The operator does not hold board
+            contents and cannot restore or provide them.
+          </li>
+          <li>
+            If the stored data is deleted from all participants&apos; devices, the board contents will be lost. Users shall save necessary
+            data at their own responsibility by exporting it.
+          </li>
+          <li>
+            When using the Service on a shared device, users shall appropriately manage the data stored on the device at their own
+            responsibility, such as by deleting it after use.
+          </li>
+        </ol>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="mb-4 text-xl font-semibold">Article 5 (Prohibited Acts)</h2>
         <p className="text-muted-foreground mb-4 leading-relaxed">
           Users shall not engage in any of the following acts when using the Service:
         </p>
@@ -217,12 +228,13 @@ function TermsEn(): ReactElement {
           <li>Acts of impersonating other users</li>
           <li>Advertising, solicitation, or business activities on the Service without the operator&apos;s permission</li>
           <li>Acts of providing benefits directly or indirectly to antisocial forces</li>
+          <li>Acts of using the Service&apos;s connection relay server for purposes other than using the Service</li>
           <li>Other acts that the operator deems inappropriate</li>
         </ul>
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">Article 5 (Suspension of Service)</h2>
+        <h2 className="mb-4 text-xl font-semibold">Article 6 (Suspension of Service)</h2>
         <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
           <li>
             The operator may suspend or interrupt all or part of the Service without prior notice to users if it determines that any of the
@@ -245,28 +257,14 @@ function TermsEn(): ReactElement {
       </section>
 
       <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">Article 6 (Usage Restrictions and Account Deletion)</h2>
+        <h2 className="mb-4 text-xl font-semibold">Article 7 (Usage Restrictions)</h2>
         <ol className="text-muted-foreground list-decimal space-y-2 pl-6 leading-relaxed">
           <li>
-            The operator may restrict all or part of the Service usage or delete user registration without prior notice if the user falls
-            under any of the following:
-            <ul className="mt-2 list-disc space-y-1 pl-6">
-              <li>Violation of any provision of these Terms</li>
-              <li>False facts are found in the registered information</li>
-              <li>No response to contact from the operator for a certain period</li>
-              <li>No use of the Service for a certain period since the last use</li>
-              <li>The operator otherwise deems the use of the Service inappropriate</li>
-            </ul>
+            If a user violates any provision of these Terms, or the operator otherwise deems the user&apos;s use of the Service
+            inappropriate, the operator may restrict all or part of that user&apos;s use of the Service without prior notice.
           </li>
           <li>The operator shall not be liable for any damage caused to users by actions taken based on this article.</li>
         </ol>
-      </section>
-
-      <section className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">Article 7 (Withdrawal)</h2>
-        <p className="text-muted-foreground leading-relaxed">
-          Users may withdraw from the Service by following the withdrawal procedures prescribed by the operator.
-        </p>
       </section>
 
       <section className="mb-8">
@@ -286,8 +284,12 @@ function TermsEn(): ReactElement {
             parties regarding the Service.
           </li>
           <li>
-            The Service is provided &quot;as is,&quot; and the operator shall not be liable for data preservation, backup, etc. Users shall
-            back up data at their own responsibility.
+            The Service is provided &quot;as is,&quot; and the operator shall not be liable for data preservation. Users shall save data at
+            their own responsibility, such as by exporting it.
+          </li>
+          <li>
+            Because the Service uses direct communication between participants&apos; devices, participants may be unable to connect to each
+            other depending on their network environment. The operator shall not be liable for any damage caused by this.
           </li>
           <li>The operator shall not be liable for any damage caused by changes to, interruption of, or termination of the Service.</li>
           <li>The operator does not guarantee the operation of any equipment or software used by users when using the Service.</li>
@@ -352,7 +354,7 @@ export function Terms(): ReactElement {
         <h1 className="mb-8 text-3xl font-semibold">{t('利用規約')}</h1>
 
         <div className="prose prose-gray max-w-none">
-          <p className="text-muted-foreground mb-8">{t('最終更新日: {{date}}', { date: '2026-01-17' })}</p>
+          <p className="text-muted-foreground mb-8">{t('最終更新日: {{date}}', { date: '2026-10-11' })}</p>
           {isJapanese ? <TermsJa /> : <TermsEn />}
         </div>
       </div>

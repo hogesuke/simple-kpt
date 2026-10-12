@@ -97,14 +97,15 @@ export function Timer({ disabled }: TimerProps) {
       const startTime = new Date(timerState.startedAt!).getTime();
       const endTime = startTime + timerState.durationSeconds! * 1000;
       const now = Date.now();
-      const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+      // 切り上げることで、終了時刻まで実行中として表示する（他の人のカードを隠す期間と表示をそろえるため）
+      const remaining = Math.max(0, Math.ceil((endTime - now) / 1000));
 
       setRemainingSeconds(remaining);
 
       // タイマー終了時に自動停止
       if (remaining <= 0 && !hasNotifiedRef.current) {
         hasNotifiedRef.current = true;
-        void stopTimer();
+        void stopTimer({ expired: true });
       }
     };
 
@@ -114,7 +115,7 @@ export function Timer({ disabled }: TimerProps) {
     return () => clearInterval(interval);
   }, [timerState, stopTimer]);
 
-  // タイマー停止時の通知（Realtime経由で全メンバーに通知）
+  // タイマー停止時の通知（他の参加者がタイマーを止めた場合も、同期されたタイマーの状態の変化で全員に通知される）
   useEffect(() => {
     // timerStateが有効な状態からnullに変わった時に通知
     if (prevTimerStateRef.current && !timerState) {

@@ -1,18 +1,16 @@
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import enAccount from './resources/en/account.json';
-import enAuth from './resources/en/auth.json';
 import enBoard from './resources/en/board.json';
 import enError from './resources/en/error.json';
 import enLanding from './resources/en/landing.json';
+import enRoom from './resources/en/room.json';
 import enUi from './resources/en/ui.json';
 import enValidation from './resources/en/validation.json';
-import jaAccount from './resources/ja/account.json';
-import jaAuth from './resources/ja/auth.json';
 import jaBoard from './resources/ja/board.json';
 import jaError from './resources/ja/error.json';
 import jaLanding from './resources/ja/landing.json';
+import jaRoom from './resources/ja/room.json';
 import jaUi from './resources/ja/ui.json';
 import jaValidation from './resources/ja/validation.json';
 
@@ -22,19 +20,17 @@ export type SupportedLanguage = (typeof supportedLanguages)[number];
 const resources = {
   ja: {
     ui: jaUi,
-    auth: jaAuth,
     board: jaBoard,
-    account: jaAccount,
     landing: jaLanding,
+    room: jaRoom,
     error: jaError,
     validation: jaValidation,
   },
   en: {
     ui: enUi,
-    auth: enAuth,
     board: enBoard,
-    account: enAccount,
     landing: enLanding,
+    room: enRoom,
     error: enError,
     validation: enValidation,
   },
@@ -45,7 +41,7 @@ void i18n.use(LanguageDetector).init({
   fallbackLng: 'ja',
   supportedLngs: supportedLanguages,
 
-  ns: ['ui', 'auth', 'board', 'account', 'landing', 'error', 'validation'],
+  ns: ['ui', 'board', 'landing', 'room', 'error', 'validation'],
   defaultNS: 'ui',
 
   detection: {

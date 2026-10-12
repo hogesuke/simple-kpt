@@ -1,13 +1,6 @@
 import * as Sentry from '@sentry/react';
 
-const UUID_REGEX = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
-
-/**
- * URLパス中のUUIDを[Filtered]に置換する
- */
-export function filterUUIDsFromUrl(url: string): string {
-  return url.replace(UUID_REGEX, '[Filtered]');
-}
+import { sanitizeUrl } from '@/lib/url-sanitizer';
 
 /**
  * Sentryの初期化処理
@@ -40,20 +33,22 @@ export function initSentry(): void {
         delete event.user.username;
       }
 
-      // URLからクエリパラメータを削除（トークン等が含まれる可能性があるため）
+      // URLからクエリ文字列・ハッシュ・ルームIDを削除（ルームURLの#以降には接続用の鍵が含まれるため）
       if (event.request?.url) {
-        try {
-          const url = new URL(event.request.url);
-          url.search = '';
-          event.request.url = filterUUIDsFromUrl(url.toString());
-        } catch {
-          // NOOP
-        }
+        event.request.url = sanitizeUrl(event.request.url);
       }
 
       // クエリ文字列を削除
       if (event.request?.query_string) {
         delete event.request.query_string;
+      }
+
+      // エラーイベントにも、画面遷移に基づくトランザクション名（URLのパス）が付くため、ルームIDを削除する
+      if (event.transaction) {
+        event.transaction = sanitizeUrl(event.transaction);
+      }
+      if (typeof event.tags?.transaction === 'string') {
+        event.tags.transaction = sanitizeUrl(event.tags.transaction);
       }
 
       return event;
@@ -65,20 +60,52 @@ export function initSentry(): void {
         return null;
       }
 
-      // HTTPリクエストのURLからクエリパラメータを削除
-      if (breadcrumb.category === 'fetch' || breadcrumb.category === 'xhr') {
-        if (breadcrumb.data?.url) {
-          try {
-            const url = new URL(breadcrumb.data.url);
-            url.search = '';
-            breadcrumb.data.url = filterUUIDsFromUrl(url.toString());
-          } catch {
-            // NOOP
+      // クリックや入力のブレッドクラムは除外する
+      // 要素のaria-labelやtitleが記録され、カードの本文・ニックネーム・ボード名が送信されてしまうため
+      if (breadcrumb.category?.startsWith('ui.')) {
+        return null;
+      }
+
+      // HTTPリクエストのURLからクエリ文字列・ハッシュ・ルームIDを削除
+      if ((breadcrumb.category === 'fetch' || breadcrumb.category === 'xhr') && typeof breadcrumb.data?.url === 'string') {
+        breadcrumb.data.url = sanitizeUrl(breadcrumb.data.url);
+      }
+
+      // 画面遷移の履歴からルームIDと鍵を削除
+      if (breadcrumb.category === 'navigation' && breadcrumb.data) {
+        for (const key of ['from', 'to']) {
+          if (typeof breadcrumb.data[key] === 'string') {
+            breadcrumb.data[key] = sanitizeUrl(breadcrumb.data[key]);
           }
         }
       }
 
       return breadcrumb;
+    },
+
+    beforeSendTransaction(event) {
+      // パフォーマンス監視のトランザクション名にはURLのパスが使われるため、ルームIDを削除する
+      if (event.transaction) {
+        event.transaction = sanitizeUrl(event.transaction);
+      }
+      if (event.request?.url) {
+        event.request.url = sanitizeUrl(event.request.url);
+      }
+      // 画面遷移などの計測区間にも、URLが説明やデータとして含まれる
+      for (const span of event.spans ?? []) {
+        if (span.description?.includes('/r/')) span.description = sanitizeUrl(span.description);
+        for (const key of ['url', 'http.url', 'url.full']) {
+          const value = span.data?.[key];
+          if (typeof value === 'string') span.data[key] = sanitizeUrl(value);
+        }
+      }
+      const traceData = event.contexts?.trace?.data;
+      if (traceData) {
+        for (const key of ['url', 'http.url', 'url.full']) {
+          if (typeof traceData[key] === 'string') traceData[key] = sanitizeUrl(traceData[key]);
+        }
+      }
+      return event;
     },
 
     integrations: [Sentry.browserTracingIntegration()],

@@ -1,4 +1,4 @@
-const baseUrls = ['http://localhost:4173/', 'http://localhost:4173/demo', 'http://localhost:4173/login', 'http://localhost:4173/not-found'];
+const baseUrls = ['http://localhost:4173/', 'http://localhost:4173/demo', 'http://localhost:4173/new', 'http://localhost:4173/not-found'];
 
 /** @type {import('@lhci/cli').LighthouseConfig} */
 module.exports = {
