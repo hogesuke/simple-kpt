@@ -1,4 +1,4 @@
-import { ArrowRight, Download, Link2, ShieldCheck } from 'lucide-react';
+import { ArrowRight, FileText, RefreshCw, ShieldCheck, Zap } from 'lucide-react';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -65,22 +65,23 @@ export function Landing(): ReactElement {
               <div className="mb-12 text-center">
                 {/* 英字のセクションラベル（13px / letter-spacing .14em） */}
                 <div className="text-primary mb-2.5 text-[13px] font-bold tracking-[0.14em]">FEATURES</div>
-                <h2 className="text-[32px] font-black">{t('主な機能')}</h2>
+                <h2 className="text-[32px] font-black">{t('特徴')}</h2>
               </div>
-              <div className="grid gap-5.5 md:grid-cols-3">
-                <FeatureCard
-                  icon={<Link2 className="h-6 w-6" />}
-                  title={t('登録不要')}
-                  description={t('URLを共有するだけで、すぐに参加')}
-                />
+              <div className="grid gap-5.5 sm:grid-cols-2 lg:grid-cols-4">
+                <FeatureCard icon={<Zap className="h-6 w-6" />} title={t('登録不要')} description={t('URLを共有するだけで、すぐに参加')} />
                 <FeatureCard
                   icon={<ShieldCheck className="h-6 w-6" />}
                   title={t('サーバー保存なし')}
                   description={t('ボードの内容は参加者の端末にだけ保存')}
                 />
                 <FeatureCard
-                  icon={<Download className="h-6 w-6" />}
-                  title={t('board:エクスポート')}
+                  icon={<RefreshCw className="h-6 w-6" />}
+                  title={t('リアルタイムに同期')}
+                  description={t('参加者同士が直接つながり、書いた内容をすぐに共有')}
+                />
+                <FeatureCard
+                  icon={<FileText className="h-6 w-6" />}
+                  title={t('記録して、続きから再開')}
                   description={t('Markdown・CSVで記録、ファイルで続きから再開')}
                 />
               </div>

@@ -17,7 +17,7 @@ export class LandingPage {
     this.heroDemoButton = page.getByRole('link', { name: 'デモを試す' }).first();
     this.bottomDemoButton = page.getByRole('link', { name: 'デモを試す' }).last();
     this.startButton = page.getByRole('link', { name: '今すぐ始める' }).first();
-    this.featureSection = page.getByRole('heading', { name: '主な機能' });
+    this.featureSection = page.getByRole('heading', { name: '特徴' });
   }
 
   async goto() {
