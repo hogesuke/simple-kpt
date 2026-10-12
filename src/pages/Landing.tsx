@@ -1,28 +1,12 @@
-import { ArrowRight, CheckCircle, Download, RefreshCw, Timer } from 'lucide-react';
-import { ReactElement, useEffect } from 'react';
+import { ArrowRight, Download, Link2, ShieldCheck } from 'lucide-react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 
 import { Button } from '@/components/shadcn/button';
-import { useAuthStore } from '@/stores/useAuthStore';
 
 export function Landing(): ReactElement {
   const { t } = useTranslation('landing');
-  const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
-  const initialized = useAuthStore((state) => state.initialized);
-
-  // ログイン済みユーザーは/boardsにリダイレクト
-  useEffect(() => {
-    if (initialized && user) {
-      navigate('/boards', { replace: true });
-    }
-  }, [initialized, user, navigate]);
-
-  // 認証状態の確認中、またはログイン済みの場合は何も表示しない
-  if (!initialized || user) {
-    return <></>;
-  }
 
   return (
     <>
@@ -46,17 +30,17 @@ export function Landing(): ReactElement {
                     );
                   })()}
                   <p className="text-muted-foreground mb-8 max-w-[420px] text-[17px] leading-[1.85] whitespace-pre-line">
-                    {t('準備も操作も最小限。ツールの使い方ではなく、\n振り返りそのものに集中できるKPTツールです。')}
+                    {t('登録不要。URLを共有するだけ。\nすぐにチームで振り返りを始められます。')}
                   </p>
                   <div className="flex flex-wrap gap-3.5">
                     <Button className="h-[54px] rounded-xl px-7 text-base" asChild>
-                      <Link to="/demo">
-                        {t('デモを試す')}
+                      <Link to="/new">
+                        {t('今すぐ始める')}
                         <ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
                     <Button variant="outline" className="h-[54px] rounded-xl px-6.5 text-base" asChild>
-                      <Link to="/signup">{t('今すぐ始める')}</Link>
+                      <Link to="/demo">{t('デモを試す')}</Link>
                     </Button>
                   </div>
                 </div>
@@ -83,42 +67,44 @@ export function Landing(): ReactElement {
                 <div className="text-primary mb-2.5 text-[13px] font-bold tracking-[0.14em]">FEATURES</div>
                 <h2 className="text-[32px] font-black">{t('主な機能')}</h2>
               </div>
-              <div className="grid gap-5.5 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-5.5 md:grid-cols-3">
                 <FeatureCard
-                  icon={<RefreshCw className="h-6 w-6" />}
-                  title={t('KPTフレームワーク')}
-                  description={t('Keep・Problem・Tryの3つで整理')}
+                  icon={<Link2 className="h-6 w-6" />}
+                  title={t('登録不要')}
+                  description={t('URLを共有するだけで、すぐに参加')}
                 />
                 <FeatureCard
-                  icon={<Timer className="h-6 w-6" />}
-                  title={t('タイマー機能')}
-                  description={t('時間を決めて集中して振り返り')}
-                />
-                <FeatureCard
-                  icon={<CheckCircle className="h-6 w-6" />}
-                  title={t('Tryの進捗管理')}
-                  description={t('誰が何をやるか、チームで管理')}
+                  icon={<ShieldCheck className="h-6 w-6" />}
+                  title={t('サーバー保存なし')}
+                  description={t('ボードの内容は参加者の端末にだけ保存')}
                 />
                 <FeatureCard
                   icon={<Download className="h-6 w-6" />}
                   title={t('board:エクスポート')}
-                  description={t('MarkdownやCSVで書き出し')}
+                  description={t('Markdown・CSVで記録、ファイルで続きから再開')}
                 />
               </div>
             </div>
           </section>
 
-          {/* デモ誘導 */}
+          {/* 利用開始の誘導 */}
           <section className="py-20">
             <div className="mx-auto max-w-3xl px-4 text-center">
-              <h2 className="mb-4 text-[32px] font-black">{t('まずはデモから')}</h2>
-              <p className="text-muted-foreground mb-8 leading-relaxed">{t('登録なしで、実際の使い心地をそのまま試せます。')}</p>
-              <Button className="h-[54px] rounded-xl px-7 text-base" asChild>
-                <Link to="/demo">
-                  {t('デモを試す')}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
+              <h2 className="mb-4 text-[32px] font-black">{t('さっそく始めましょう')}</h2>
+              <p className="text-muted-foreground mb-8 leading-relaxed">
+                {t('登録は不要です。ボードを作ってURLを共有すれば、すぐにチームで振り返りを始められます。')}
+              </p>
+              <div className="flex flex-wrap justify-center gap-3.5">
+                <Button className="h-[54px] rounded-xl px-7 text-base" asChild>
+                  <Link to="/new">
+                    {t('今すぐ始める')}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button variant="outline" className="h-[54px] rounded-xl px-6.5 text-base" asChild>
+                  <Link to="/demo">{t('デモを試す')}</Link>
+                </Button>
+              </div>
             </div>
           </section>
         </main>

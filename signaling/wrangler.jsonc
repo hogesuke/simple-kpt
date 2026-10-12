@@ -1,0 +1,21 @@
+{
+  // シグナリングサーバー（参加者同士のWebRTC接続を仲介する。ボードの内容は扱わない）
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "simple-kpt-signaling",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-25",
+  "durable_objects": {
+    "bindings": [{ "name": "SIGNALING_ROOM", "class_name": "SignalingRoom" }],
+  },
+  // 無料プランではSQLiteストレージ版のDurable Objectのみ利用できる（ストレージ自体は使わない）
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SignalingRoom"] }],
+  "vars": {
+    // 接続を許可するOrigin（カンマ区切り）。ローカル開発時は`pnpm signaling:dev`でlocalhostに上書きする
+    "ALLOWED_ORIGINS": "https://simple-kpt.com",
+  },
+  // 接続元IPアドレスごとの接続回数の制限（1分あたり60回）
+  // 同じIPアドレスを共有する社内ネットワークなどで、正規の利用者が制限されないよう緩めに設定する
+  "ratelimits": [{ "name": "CONNECTION_RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } }],
+  // 接続元のIPアドレスなどがログとして保存されないよう、Workers Logsは無効にする
+  "observability": { "enabled": false },
+}

@@ -1,0 +1,65 @@
+diff --git a/dist/action-wire.mjs b/dist/action-wire.mjs
+index 06dc2fb95a829144a0a475179c82cf6a1e4e0307..0a7eabaf7181dd1369e57f298cab86480506c310 100644
+--- a/dist/action-wire.mjs
++++ b/dist/action-wire.mjs
+@@ -139,11 +139,26 @@ const createActionWireManager = ({ getPeer, getPeerIds, canReceiveFromPeer, thro
+ 			onProgress: actions[type].setOnProgress
+ 		};
+ 	};
++	// [simple-kpt patch] 悪意ある参加者が最後の断片を送らずに分割データを送り続けると、受信側のメモリを使い果たせるため、
++	// 参加者ごとに受信途中のデータ量の上限を設け、超えた場合はその参加者の受信途中のデータを破棄する。
++	// また、登録されていないactionのデータはためずに捨てる（simple-kptは接続直後にすべてのactionを登録するため）。
++	// actionの種類名を変えながら送り続けることで、上限をすり抜けてメモリを使い果たされないようにする。
++	const maxPendingBytesPerPeer = 4 * 1024 * 1024;
++	const pendingBytes = {};
+ 	const handleData = (id, data) => {
+ 		const buffer = new Uint8Array(data);
+ 		const type = decodeBytes(buffer.subarray(typeIndex, nonceIndex)).replaceAll("\0", "");
+ 		const action = actions[type];
++		if (!action) return;
++		// simple-kptはメディア（音声・映像）を使わないため、メディアのメタ情報は受信しない（取り出されずに溜まり続けるため）
++		if (type === "@_stream" || type === "@_track") return;
+ 		if (!canReceiveFromPeer(id, Boolean(action?.options.receiveWhilePending))) return;
++		pendingBytes[id] = (pendingBytes[id] ?? 0) + buffer.byteLength;
++		if (pendingBytes[id] > maxPendingBytesPerPeer) {
++			delete pendingTransmissions[id];
++			pendingBytes[id] = 0;
++			return;
++		}
+ 		const nonce = (buffer[nonceIndex] ?? 0) << 8 | (buffer[33] ?? 0);
+ 		const tag = buffer[tagIndex] ?? 0;
+ 		const progress = buffer[progressIndex] ?? 0;
+@@ -165,6 +180,8 @@ const createActionWireManager = ({ getPeer, getPeerIds, canReceiveFromPeer, thro
+ 			return a + c.byteLength;
+ 		}, 0);
+ 		delete pendingTransmissions[id][type][nonce];
++		// 受信途中のデータがなくなったら、受信量の計測をリセットする
++		if (Object.values(pendingTransmissions[id]).every((transmissions) => Object.keys(transmissions).length === 0)) pendingBytes[id] = 0;
+ 		const payloadValue = isBinary ? full : isJson ? fromJson(decodeBytes(full)) : decodeBytes(full);
+ 		if (action) {
+ 			action.onComplete(payloadValue, id, target.meta);
+@@ -181,6 +198,7 @@ const createActionWireManager = ({ getPeer, getPeerIds, canReceiveFromPeer, thro
+ 		handleData,
+ 		clearPeer: (id) => {
+ 			delete pendingTransmissions[id];
++			delete pendingBytes[id];
+ 		}
+ 	};
+ };
+diff --git a/dist/offer-pool.mjs b/dist/offer-pool.mjs
+index 7340a4f4bd7192c2c9f064d40311433436effc0f..3eb501f335798956c6132d5b836a828807e1a739 100644
+--- a/dist/offer-pool.mjs
++++ b/dist/offer-pool.mjs
+@@ -43,6 +43,12 @@ var OfferPool = class {
+ 			const peer = this.pool.shift();
+ 			if (!peer) break;
+ 			this.pooled.delete(peer);
++			// [simple-kpt patch] 作成から一定時間が経った接続の申し込みは、ICEの再取得で使い回すと接続できないことがあるため、
++			// 破棄して新しく作り直す（参加から約1分後に新しい参加者が接続できなかった問題への対策）
++			if (peer.isDead || Date.now() - peer.created > offerTtl) {
++				if (!peer.isDead) peer.destroy();
++				continue;
++			}
+ 			peers.push(peer);
+ 		}
+ 		return peers;

@@ -33,6 +33,9 @@ jobs:
       - name: TypeScript type check
         run: pnpm exec tsc -b --noEmit
 
+      - name: TypeScript type check (signaling)
+        run: pnpm exec tsc -p signaling/tsconfig.json
+
       - name: Build
         run: pnpm build
 

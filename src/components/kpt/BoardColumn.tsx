@@ -60,7 +60,6 @@ export function BoardColumn({
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- リアルDOMに基づく状態更新のためuseEffect内での実行が必要
     checkScrollability();
 
     container.addEventListener('scroll', checkScrollability);
@@ -76,7 +75,6 @@ export function BoardColumn({
 
   // アイテム変更時にスクロール状態を再確認
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM測定に基づく状態更新のため必要
     checkScrollability();
   }, [items, checkScrollability]);
 

@@ -19,12 +19,6 @@ const config: StorybookConfig = {
       ...config.resolve.alias,
       '@storybook-mocks': fileURLToPath(new URL('./mocks', import.meta.url)),
     };
-    // Storybook用のダミー環境変数（実際のSupabase接続は行わない）
-    config.define = {
-      ...config.define,
-      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify('https://dummy.supabase.co'),
-      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify('dummy-anon-key'),
-    };
     return config;
   },
 };

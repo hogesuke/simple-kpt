@@ -48,7 +48,15 @@ function formatDate(dateString: string | null | undefined): string {
  * Markdownテーブルのセルをエスケープする
  */
 function escapeMarkdownCell(value: string): string {
-  return value.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+  return escapeMarkdownText(value).replace(/\|/g, '\\|');
+}
+
+/**
+ * Markdownのテキストをエスケープする
+ * 他の参加者が入力した文字列で、画像・リンク・HTMLとして解釈され、描画時に外部への通信が起きないようにする
+ */
+function escapeMarkdownText(value: string): string {
+  return value.replace(/[\\`![\]<>]/g, '\\$&').replace(/\r?\n|\r/g, ' ');
 }
 
 /**
@@ -87,7 +95,8 @@ export function generateMarkdown(boardName: string, items: KptItem[], t: TFuncti
   const columnLabels = getColumnLabels(t);
   const headers = getExportHeaders(t);
 
-  lines.push(`# ${boardName}`);
+  // ボード名は他の参加者も設定できるため、改行で見出しの外に文字列を差し込まれないようにする
+  lines.push(`# ${escapeMarkdownText(boardName)}`);
   lines.push('');
 
   // テーブルヘッダー
@@ -97,7 +106,7 @@ export function generateMarkdown(boardName: string, items: KptItem[], t: TFuncti
   for (const item of sortItems(items)) {
     const row = [
       columnLabels[item.column],
-      escapeMarkdownCell(item.text),
+      item.text,
       item.authorNickname ?? '',
       formatDateTime(item.createdAt),
       formatDateTime(item.updatedAt),
@@ -106,20 +115,26 @@ export function generateMarkdown(boardName: string, items: KptItem[], t: TFuncti
       item.assigneeNickname ?? '',
       formatDate(item.dueDate),
     ];
-    lines.push(`| ${row.join(' | ')} |`);
+    // ニックネームなども他の参加者が自由に設定できるため、すべての列をエスケープする
+    lines.push(`| ${row.map(escapeMarkdownCell).join(' | ')} |`);
   }
 
   return lines.join('\n');
 }
 
+/** 表計算ソフトで数式として解釈される先頭文字 */
+const CSV_FORMULA_PREFIXES = ['=', '+', '-', '@', '\t', '\r'];
+
 /**
  * CSVのフィールドをエスケープする
+ * 表計算ソフトで開いた際に数式として実行されないよう、数式として解釈される文字で始まる値は先頭に'を付ける（CSVインジェクション対策）
  */
 function escapeCsvField(value: string): string {
-  if (value.includes(',') || value.includes('"') || value.includes('\n') || value.includes('\r')) {
-    return `"${value.replace(/"/g, '""')}"`;
+  const neutralized = CSV_FORMULA_PREFIXES.some((prefix) => value.startsWith(prefix)) ? `'${value}` : value;
+  if (neutralized.includes(',') || neutralized.includes('"') || neutralized.includes('\n') || neutralized.includes('\r')) {
+    return `"${neutralized.replace(/"/g, '""')}"`;
   }
-  return value;
+  return neutralized;
 }
 
 /**
@@ -135,7 +150,7 @@ export function generateCSV(items: KptItem[], t: TFunction): string {
   for (const item of sortItems(items)) {
     const row = [
       columnLabels[item.column],
-      escapeCsvField(item.text),
+      item.text,
       item.authorNickname ?? '',
       formatDateTime(item.createdAt),
       formatDateTime(item.updatedAt),
@@ -144,7 +159,8 @@ export function generateCSV(items: KptItem[], t: TFunction): string {
       item.assigneeNickname ?? '',
       formatDate(item.dueDate),
     ];
-    lines.push(row.join(','));
+    // ニックネームなども他の参加者が自由に設定できるため、すべての列をエスケープする
+    lines.push(row.map(escapeCsvField).join(','));
   }
 
   return lines.join('\n');

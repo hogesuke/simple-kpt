@@ -5,6 +5,7 @@ import { ErrorBoundary } from '@/components/layout/ErrorBoundary';
 import { Header } from '@/components/layout/Header';
 import { HeaderPortalProvider } from '@/contexts/HeaderPortalContext';
 import { trackPageView } from '@/lib/gtag';
+import { sanitizeUrl } from '@/lib/url-sanitizer';
 
 export function Layout(): ReactElement {
   const location = useLocation();
@@ -17,7 +18,7 @@ export function Layout(): ReactElement {
 
   // GA4ページビュートラッキング
   useEffect(() => {
-    trackPageView(location.pathname);
+    trackPageView(sanitizeUrl(location.pathname));
   }, [location.pathname]);
 
   return (

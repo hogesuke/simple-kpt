@@ -18,9 +18,9 @@ export default tseslint.config(
       'dist/',
       'node_modules/',
       'coverage/',
-      'supabase/',
       'storybook-static/',
       'playwright-report/',
+      '**/.wrangler/',
       'lighthouserc.cjs',
       'lighthouserc.badge.cjs',
     ],
@@ -84,6 +84,13 @@ export default tseslint.config(
     rules: {
       ...vitest.configs.recommended.rules,
       'vitest/no-focused-tests': 'error',
+    },
+  },
+  {
+    // シグナリングサーバー（Cloudflare Workers）のランタイム組み込みモジュールは解決できないため除外する
+    files: ['signaling/**/*.ts'],
+    rules: {
+      'import-x/no-unresolved': ['error', { ignore: ['^cloudflare:'] }],
     },
   },
   {

@@ -46,10 +46,6 @@ jobs:
 
       - name: Build
         run: pnpm build
-        env:
-          # Lighthouse CIは認証不要ページのみテストするため、ダミー値で問題なし
-          VITE_SUPABASE_URL: https://dummy.supabase.co
-          VITE_SUPABASE_ANON_KEY: dummy-anon-key
 
       - name: Run Lighthouse CI
         id: lighthouse

@@ -18,7 +18,7 @@
 
 <div align="center">
   <h3>チームの振り返りをもっとシンプルに</h3>
-  <p>準備も操作も最小限。振り返りに集中できるKPTツール</p>
+  <p>登録不要。URLを共有するだけで、すぐにチームで振り返りを始められます。</p>
 </div>
 
 <br>
@@ -62,20 +62,41 @@
 
 ## 機能
 
-- 🔄 KPTフレームワーク
-- ⏱️ タイマー
-- ✅ Tryの進捗管理
-- 📥 エクスポート
-- 🤖 AIサマリー
-- 📈 推移のグラフ表示
+- 🔗 登録不要。URLを共有するだけでチームで参加
+- 🔒 サーバー保存なし。ボードの内容は参加者の端末にのみ保存
+- 👥 リアルタイムの同時編集
+- 🔄 同じURLを開き直して続きから再開
+- ⏱️ タイマー（他の人のカードを隠す機能つき）
+- 👍 投票
+- ✅ Tryの担当者・ステータス・期日の管理
+- 📥 エクスポート（Markdown / CSV / 再開用JSON）
 - 🌓 ダークモード
 - 🌐 多言語対応（日本語 / English）
+
+## 仕組み
+
+ボードの内容はサーバーに保存せず、参加者のブラウザ同士がWebRTCで直接同期します。
+
+```
+参加者A ─┐                         ┌─ 参加者B
+          │  ① 接続の仲介（暗号化済み）  │
+          └──── シグナリングサーバー ────┘
+               (Cloudflare Workers)
+参加者A ◀──────── ② 直接同期（WebRTC） ────────▶ 参加者B
+```
+
+- **同期**：[Yjs](https://github.com/yjs/yjs)（CRDT）で、同時に編集しても内容が矛盾なく統合されます。
+- **接続の仲介**：[Trystero](https://github.com/dmotz/trystero)のws-relay方式と同じメッセージ形式で、自前のシグナリングサーバー（Cloudflare Workers + Durable Objects）を経由します。接続情報は招待URLの`#`以降の鍵で暗号化されるため、シグナリングサーバーは内容を読めません。ボードの内容は経由しません。
+- **保存**：参加したボードは各参加者のブラウザ（IndexedDB）に保存され、同じ招待URLを開き直すと続きから再開できます。
+- **時刻のずれ**：タイマーはルーム作成者の時計を基準とする「ルーム時計」で、参加者の端末の時計のずれを補正します。
 
 ## 技術スタック
 
 - TypeScript
 - React 19
 - Tailwind CSS 4
+- Yjs
+- Trystero
 - Zustand
 - React Hook Form
 - Zod
@@ -88,8 +109,8 @@
 
 ## 実行環境
 
-- Supabase
-- Vercel
+- Vercel（フロントエンド）
+- Cloudflare Workers（シグナリングサーバー）
 
 ## 動作確認環境
 
@@ -101,26 +122,47 @@
 
 ```bash
 pnpm install --frozen-lockfile
-
-brew install supabase/tap/supabase
 ```
 
 ### 環境変数の設定
 
-`.env.local`を作成し、`supabase start`で表示される値を設定してください。
+必要に応じて`.env.local`を作成してください（`.env.local.example`を参照）。
 
 ```bash
-VITE_SUPABASE_URL=<Supabase URL> # e.g., http://127.0.0.1:54321
-VITE_SUPABASE_ANON_KEY=<Supabase Anon Key> # e.g., sb_publishable_xxxxxxxx...
+# シグナリングサーバーのURL（未設定の場合、開発時はws://localhost:8787を用いる）
+VITE_SIGNALING_URL=ws://localhost:8787
 ```
 
 ### 起動
 
-```bash
-supabase start
+シグナリングサーバーとアプリを、それぞれ別のターミナルで起動します。
 
+```bash
+# シグナリングサーバー（http://localhost:8787）
+pnpm signaling:dev
+
+# アプリ（http://localhost:5173）
 pnpm dev
 ```
+
+複数人での同期を確認する場合は、通常ウィンドウとシークレットウィンドウなど、保存データが分かれるブラウザで同じ招待URLを開いてください。
+
+## デプロイ
+
+### シグナリングサーバー（Cloudflare Workers）
+
+```bash
+npx wrangler login
+pnpm signaling:deploy
+```
+
+- 接続を許可するOriginは`signaling/wrangler.jsonc`の`ALLOWED_ORIGINS`で設定します。
+- 接続元のIPアドレスなどがログとして保存されないよう、Workers Logsは無効にしています。
+
+### フロントエンド（Vercel）
+
+- 環境変数`VITE_SIGNALING_URL`にシグナリングサーバーのURL（例：`wss://signaling.simple-kpt.com`）を設定します。
+- `vercel.json`のContent-Security-Policy（`connect-src`）に、シグナリングサーバーのURLを含めてください。
 
 ## テスト
 
@@ -155,15 +197,14 @@ https://hogesuke.github.io/simple-kpt/
 │   ├── components/   # UIコンポーネント
 │   ├── contexts/     # React Context
 │   ├── hooks/        # カスタムフック
-│   ├── lib/          # ユーティリティ・API
+│   ├── lib/
+│   │   └── p2p/      # P2P同期・ルーム時計・保存・再開用ファイル
 │   ├── pages/        # ページコンポーネント
-│   ├── stores/       # Zustandストア
+│   ├── stores/       # Zustandストア（デモボード）
 │   └── types/        # 型定義
 │
-└── supabase/
-    ├── functions/    # Edge Functions
-    ├── migrations/   # マイグレーション
-    └── seed.sql      # シードデータ
+├── signaling/        # シグナリングサーバー（Cloudflare Workers）
+└── shared/           # 共通の定数
 ```
 
 ## ライセンス

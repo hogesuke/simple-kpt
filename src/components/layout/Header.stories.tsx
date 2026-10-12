@@ -1,7 +1,6 @@
 import { MemoryRouter } from 'react-router';
 
 import { HeaderPortalProvider } from '@/contexts/HeaderPortalContext';
-import { MockAuthProvider } from '@storybook-mocks/MockAuthProvider';
 
 import { Header } from './Header';
 
@@ -28,13 +27,6 @@ const meta: Meta<typeof Header> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const LoggedIn: Story = {
+export const Default: Story = {
   name: 'デフォルト',
-  decorators: [
-    (Story) => (
-      <MockAuthProvider>
-        <Story />
-      </MockAuthProvider>
-    ),
-  ],
 };

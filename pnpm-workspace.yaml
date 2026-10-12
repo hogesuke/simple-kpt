@@ -1,0 +1,2 @@
+patchedDependencies:
+  '@trystero-p2p/core@0.25.4': patches/@trystero-p2p__core@0.25.4.patch

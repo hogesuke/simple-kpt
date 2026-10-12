@@ -14,15 +14,6 @@ export interface TimerState {
   startedBy: string | null;
 }
 
-export interface KptBoard {
-  id: string;
-  name: string;
-  isMember?: boolean;
-  ownerId?: string;
-  createdAt: string;
-  timer?: TimerState;
-}
-
 /**
  * Try専用のプロパティ
  */
@@ -57,22 +48,6 @@ export interface KptItem extends Partial<TryItemProperties> {
   voteCount?: number;
   hasVoted?: boolean;
   voters?: Voter[];
-}
-
-export const isTryItem = (item: KptItem): item is KptItem & TryItemProperties => item.column === 'try';
-
-/**
- * ボード名を含むTryアイテム（Tryリスト表示用）
- */
-export interface TryItemWithBoard extends Omit<KptItem, keyof TryItemProperties>, TryItemProperties {
-  boardName: string | null;
-}
-
-export interface UserProfile {
-  id: string;
-  nickname: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface BoardMember {
