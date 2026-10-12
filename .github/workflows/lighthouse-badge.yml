@@ -2,8 +2,8 @@ name: Lighthouse Badge
 
 on:
   schedule:
-    # 毎日0時（UTC, 日本時間9時）に実行
-    - cron: "0 0 * * *"
+    # 毎月1日0時（UTC, 日本時間9時）に実行
+    - cron: "0 0 1 * *"
   workflow_dispatch:
 
 permissions:
