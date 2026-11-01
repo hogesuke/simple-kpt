@@ -50,7 +50,7 @@
     "date-fns": "^4.4.0",
     "i18next": "^26.4.2",
     "i18next-browser-languagedetector": "^8.2.1",
-    "immer": "^11.1.21",
+    "immer": "^11.1.23",
     "lucide-react": "^1.48.0",
     "react": "^19.3.0",
     "react-day-picker": "^10.0.2",
