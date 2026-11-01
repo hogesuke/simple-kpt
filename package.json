@@ -83,9 +83,9 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react-swc": "^4.3.3",
-    "@vitest/browser-playwright": "5.0.0",
-    "@vitest/coverage-v8": "5.0.0",
-    "@vitest/eslint-plugin": "^1.6.27",
+    "@vitest/browser-playwright": "5.0.5",
+    "@vitest/coverage-v8": "5.0.5",
+    "@vitest/eslint-plugin": "^1.6.28",
     "autoprefixer": "^10.5.4",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10",
@@ -111,7 +111,7 @@
     "typescript-eslint": "^8.70.1",
     "vite": "^8.3.0",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^5.0.0",
+    "vitest": "^5.0.5",
     "wrangler": "4.141.0"
   },
   "repository": {
